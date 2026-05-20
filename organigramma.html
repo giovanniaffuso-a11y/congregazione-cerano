@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organigramma – Congregazione di Cerano</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --hdr-from:#1a3a5c; --hdr-to:#2563a8;
+    --blue-dark:#1a3a5c; --blue-mid:#2563a8; --blue-light:#dbeafe;
+    --accent:#c9a84c;
+    --bg:#f1f5f9; --card:#ffffff;
+    --text:#1e293b; --text2:#334155; --muted:#64748b; --border:#cbd5e1;
+    --row-hover:#f8fafc; --row-sep:#f1f5f9;
+    --badge-bg:#bfdbfe; --badge-txt:#1e3a5f; --badge-brd:#93c5fd;
+    --act-bg:#dbeafe; --act-brd:#bfdbfe;
+    --danger:#dc2626; --success:#16a34a;
+    --radius:10px; --shadow:0 2px 14px rgba(26,58,92,.10);
+  }
+  body.dark {
+    --hdr-from:#0f1f35; --hdr-to:#1a3a5c;
+    --blue-dark:#93c5fd; --blue-mid:#60a5fa; --blue-light:#1e3a5c;
+    --accent:#f0c96b;
+    --bg:#0f172a; --card:#1e293b;
+    --text:#e2e8f0; --text2:#cbd5e1; --muted:#94a3b8; --border:#334155;
+    --row-hover:#253347; --row-sep:#253347;
+    --badge-bg:#1e3a5c; --badge-txt:#93c5fd; --badge-brd:#2563a8;
+    --act-bg:#162032; --act-brd:#1e3a5c;
+    --danger:#f87171; --success:#4ade80;
+    --shadow:0 2px 14px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+
+  /* HEADER */
+  header{background:linear-gradient(135deg,var(--hdr-from) 0%,var(--hdr-to) 100%);color:#fff;padding:20px 26px 16px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.25);position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 20px)}
+  .logo-box{width:50px;height:50px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:21px;font-weight:700;color:var(--accent);flex-shrink:0;position:relative;z-index:1}
+  .hdr-text{position:relative;z-index:1;flex:1;min-width:0}
+  .hdr-text h1{font-family:'Lora',serif;font-size:1.4rem;font-weight:700;letter-spacing:.2px;line-height:1.2}
+  .hdr-meta{display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap}
+  .hdr-meta span{font-size:.81rem;opacity:.82;display:flex;align-items:center;gap:4px}
+  .ef{cursor:pointer;border-radius:4px;padding:1px 5px;margin:-1px -5px;transition:background .15s;display:inline-block}
+  .ef:hover{background:rgba(255,255,255,.18)}
+  .ef::after{content:' ✏️';font-size:.6em;opacity:.5}
+  .hdr-actions{margin-left:auto;display:flex;gap:7px;position:relative;z-index:1;flex-wrap:wrap;align-items:center}
+
+  /* BUTTONS */
+  .btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .18s;white-space:nowrap}
+  .btn-white{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.28)}
+  .btn-white:hover{background:rgba(255,255,255,.26)}
+  .btn-accent{background:var(--accent);color:#1a3a5c;font-weight:700}
+  .btn-accent:hover{filter:brightness(1.08)}
+  .btn-primary{background:var(--blue-mid);color:#fff}
+  .btn-primary:hover{filter:brightness(1.1)}
+  .btn-danger{background:#fee2e2;color:var(--danger)}
+  .btn-danger:hover{background:#fecaca}
+  body.dark .btn-danger{background:#3f1212}
+  body.dark .btn-danger:hover{background:#5a1a1a}
+  .btn-success{background:#dcfce7;color:var(--success)}
+  .btn-success:hover{background:#bbf7d0}
+  body.dark .btn-success{background:#14321e}
+  body.dark .btn-success:hover{background:#1a4228}
+  .btn-sm{padding:5px 10px;font-size:.78rem;border-radius:5px}
+  .btn-icon{padding:5px 7px;border-radius:5px;border:none;cursor:pointer;font-size:.85rem;transition:all .15s}
+  .btn-icon-del{background:#fee2e2;color:var(--danger)}
+  .btn-icon-del:hover{background:#fecaca}
+  body.dark .btn-icon-del{background:#3f1212}
+  .btn-icon-edit{background:#eff6ff;color:#2563a8}
+  .btn-icon-edit:hover{background:#dbeafe}
+  body.dark .btn-icon-edit{background:#1e3a5c;color:#93c5fd}
+  .dark-toggle{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:6px 13px;cursor:pointer;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s}
+  .dark-toggle:hover{background:rgba(255,255,255,.26)}
+
+  /* LAYOUT */
+  main{max-width:1020px;margin:0 auto;padding:24px 16px 60px}
+
+  /* SECTION CARD */
+  .section-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;border:1px solid var(--border);transition:background .3s,border-color .3s,box-shadow .2s}
+  .section-header{background:linear-gradient(90deg,var(--hdr-from) 0%,var(--hdr-to) 100%);color:#fff;padding:13px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+  .section-header.reparto{background:linear-gradient(90deg,#1e4d7a 0%,#2563a8 100%);padding:10px 14px}
+  body.dark .section-header.reparto{background:linear-gradient(90deg,#0f2236 0%,#1a3a5c 100%)}
+  .section-header h2{font-family:'Lora',serif;font-size:1.06rem;font-weight:600;letter-spacing:.2px;flex:1}
+  .toggle-icon{font-size:.76rem;opacity:.7;transition:transform .2s}
+  .section-header.collapsed .toggle-icon{transform:rotate(-90deg)}
+  .section-body{padding:0}
+  .section-body.collapsed{display:none}
+  .section-actions{padding:8px 18px 10px;background:var(--act-bg);display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--act-brd)}
+  .count-badge{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.32);border-radius:20px;padding:1px 9px;font-size:.71rem;font-weight:700;margin-left:6px;vertical-align:middle}
+
+  /* MEMBER ROWS */
+  .member-row{display:grid;grid-template-columns:180px 1fr auto;gap:12px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--row-sep);transition:background .15s}
+  .member-row:last-child{border-bottom:none}
+  .member-row:hover{background:var(--row-hover)}
+  .member-name{font-weight:700;font-size:1rem;color:var(--blue-dark);display:flex;align-items:center;gap:8px}
+  .member-role{font-size:.88rem;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .role-badge{background:var(--badge-bg);color:var(--badge-txt);border-radius:20px;padding:3px 11px;font-size:.79rem;font-weight:700;border:1px solid var(--badge-brd);transition:background .3s,color .3s}
+  .member-actions{display:flex;gap:6px}
+
+  /* REPARTI */
+  .reparti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:15px;padding:15px}
+  .reparto-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card);box-shadow:0 1px 6px rgba(0,0,0,.06);transition:box-shadow .2s,background .3s,border-color .3s}
+  .reparto-card:hover{box-shadow:var(--shadow)}
+  .reparto-title-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:2px 8px 2px 0}
+  .reparto-title-row h3{font-family:'Lora',serif;font-size:.91rem;font-weight:600;color:#fff;flex:1}
+  .reparto-body{padding:10px 12px}
+  .reparto-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--row-sep);font-size:.88rem}
+  .reparto-row:last-child{border-bottom:none}
+  .reparto-label{font-weight:800;color:var(--blue-dark);min-width:80px;font-size:.79rem;text-transform:uppercase;letter-spacing:.5px;padding-top:2px;white-space:nowrap}
+  .reparto-names{flex:1;color:var(--text);line-height:1.6;font-size:.91rem;font-weight:500}
+  .reparto-row-actions{display:flex;gap:4px;flex-shrink:0}
+
+  /* ADD / SETTINGS PANELS */
+  .panel{background:var(--card);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;display:none;border:1px solid var(--border);transition:background .3s}
+  .panel.open{display:block}
+  .panel.dashed{border-style:dashed;border-color:var(--border)}
+  .panel h3{font-family:'Lora',serif;font-size:1rem;color:var(--text);margin-bottom:12px}
+  .add-row,.panel-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .panel input[type=text],.panel input[type=password]{padding:7px 11px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.87rem;background:var(--bg);color:var(--text);outline:none;flex:1;min-width:0;transition:border .15s}
+  .panel input:focus{border-color:var(--blue-mid)}
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.settings-grid{grid-template-columns:1fr}}
+  .settings-grid label{font-size:.79rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+  .settings-grid input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.87rem;background:var(--bg);color:var(--text);outline:none}
+  .settings-grid input:focus{border-color:var(--blue-mid)}
+  .sync-status{font-size:.82rem;padding:4px 12px;border-radius:20px;font-weight:600}
+  .sync-ok{background:#dcfce7;color:#166534}
+  .sync-err{background:#fee2e2;color:#991b1b}
+  body.dark .sync-ok{background:#14321e;color:#4ade80}
+  body.dark .sync-err{background:#3f1212;color:#f87171}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:20px;right:20px;background:#1a3a5c;color:#fff;padding:10px 20px;border-radius:8px;font-size:.87rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.25);transform:translateY(60px);opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+  #toast.show{transform:translateY(0);opacity:1}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--card);border-radius:12px;padding:24px 28px;max-width:420px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:fadeUp .2s ease;border:1px solid var(--border)}
+  @keyframes fadeUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+  .modal h3{font-family:'Lora',serif;font-size:1.04rem;color:var(--blue-dark);margin-bottom:14px}
+  .modal label{font-size:.8rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;margin-top:12px;text-transform:uppercase;letter-spacing:.3px}
+  .modal input,.modal textarea{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.9rem;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
+  .modal input:focus,.modal textarea:focus{border-color:var(--blue-mid)}
+  .modal textarea{height:78px;resize:vertical}
+  .modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+
+  /* PRINT */
+  @media print{
+    .hdr-actions,.btn,.section-actions,.member-actions,.reparto-row-actions,.panel{display:none!important}
+    .section-body.collapsed{display:block!important}
+    body{background:white}
+    .section-card{box-shadow:none}
+    .ef::after{content:''}
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:640px){
+    header{flex-wrap:wrap;padding:14px 12px}
+    .hdr-text h1{font-size:1.1rem}
+    .hdr-actions{width:100%}
+    .member-row{grid-template-columns:1fr auto}
+    .member-role{display:none}
+    .reparti-grid{grid-template-columns:1fr;padding:10px}
+    main{padding:12px 10px 60px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-box" id="logo-box">C</div>
+  <div class="hdr-text">
+    <h1><span class="ef" id="hdr-title" onclick="editHeader('title')">Organigramma – Congregazione di Cerano</span></h1>
+    <div class="hdr-meta">
+      <span><span class="ef" id="hdr-sub" onclick="editHeader('sub')">Gestione Anziani · Servitori · Reparti</span></span>
+      <span>📅 <span class="ef" id="hdr-date" onclick="editHeader('date')">Febbraio 2026</span></span>
+    </div>
+  </div>
+  <div class="hdr-actions">
+    <button class="dark-toggle" id="dark-btn" onclick="toggleDark()">🌙 Scuro</button>
+    <button class="btn btn-white" onclick="togglePanel('add-panel')">➕ Reparto</button>
+    <button class="btn btn-white" onclick="togglePanel('settings-panel')">☁️ Sync</button>
+    <button class="btn btn-white" onclick="exportJSON()">📤 Esporta</button>
+    <label class="btn btn-white" style="cursor:pointer" title="Importa file JSON">📥 Importa<input type="file" accept=".json" onchange="importJSON(event)" style="display:none"></label>
+    <button class="btn btn-accent" onclick="window.print()">🖨️ Stampa</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- SYNC PANEL -->
+  <div id="settings-panel" class="panel">
+    <h3>☁️ Sincronizzazione Cloud</h3>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px">La tua API Key è già configurata. Premi <b>⬆️ Salva sul cloud</b> la prima volta: il BIN si crea automaticamente. Poi usa lo stesso tasto per aggiornare, e <b>⬇️ Carica</b> sul cellulare.</p>
+    <div class="settings-grid">
+      <div>
+        <label>API Key</label>
+        <input type="text" id="cfg-key" placeholder="$2a$10$..." style="font-family:monospace;font-size:.78rem">
+      </div>
+      <div>
+        <label>BIN ID <span style="font-weight:400;text-transform:none">(si crea automatico)</span></label>
+        <input type="text" id="cfg-bin" placeholder="Si compila dopo il primo salvataggio" style="font-family:monospace;font-size:.78rem">
+      </div>
+    </div>
+    <div class="panel-row" style="margin-top:12px">
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">💾 Salva credenziali</button>
+      <button class="btn btn-success btn-sm" onclick="syncDown()">⬇️ Carica dal cloud</button>
+      <button class="btn btn-accent  btn-sm" onclick="syncUp()">⬆️ Salva sul cloud</button>
+      <span id="sync-status" class="sync-status"></span>
+    </div>
+  </div>
+
+  <!-- ADD REPARTO PANEL -->
+  <div id="add-panel" class="panel dashed" style="text-align:center">
+    <p style="font-weight:700;color:var(--blue-dark);margin-bottom:10px">➕ Aggiungi nuovo reparto</p>
+    <div class="add-row" style="justify-content:center">
+      <input type="text" id="new-reparto-name" placeholder="Nome reparto" style="max-width:220px">
+      <button class="btn btn-success btn-sm" onclick="addReparto()">✔ Aggiungi</button>
+      <button class="btn btn-danger  btn-sm" onclick="togglePanel('add-panel')">✖ Annulla</button>
+    </div>
+  </div>
+
+  <div id="app"></div>
+</main>
+
+<div id="toast"></div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modal-title">✏️ Modifica</h3>
+    <label id="lbl-name">Nome</label>
+    <input type="text" id="modal-name" placeholder="">
+    <label id="lbl-role">Ruolo / Incarico</label>
+    <textarea id="modal-role" placeholder="es. Sorvegliante del Servizio, Resp. Letteratura"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-danger  btn-sm" onclick="closeModal()">Annulla</button>
+      <button class="btn btn-primary btn-sm" onclick="saveModal()">✔ Salva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+//  DATA
+// ═══════════════════════════════
+const DEF = {
+  anziani:[
+    {id:1,name:"Bellan D.",    role:"Coordinatore Corpo degli Anziani, Coordinatore Comitato di Gestione"},
+    {id:2,name:"Cazzolla P.", role:"Sorvegliante Audio / Video / Microfonisti"},
+    {id:3,name:"Recchia F.",  role:"Responsabile K.H.C.C."},
+    {id:4,name:"Innocenti M.",role:"Sorvegliante Studio Torre di Guardia, Responsabile Pulizie, Responsabile G.V.P."},
+    {id:5,name:"Orrico G.",   role:"Segretario, Responsabile Contabilità"},
+    {id:6,name:"Marinoni D.", role:"Sorvegliante del Servizio, Responsabile Letteratura, Responsabile Territori"}
+  ],
+  servitori:[
+    {id:10,name:"Affuso G.",  role:"Responsabile Uscieri / Microfonisti / Coordinatore Discorsi Pubblici"},
+    {id:11,name:"Mazzotta M.",role:"Assistente Pulizie"},
+    {id:12,name:"Catalano R.",role:"Servitore di Ministero"},
+    {id:13,name:"Mandica G.", role:"Servitore di Ministero"},
+    {id:14,name:"Palano G.",  role:"Servitore di Ministero"}
+  ],
+  reparti:[
+    {id:100,name:"Audio / Video",
+     responsabile:["Cazzolla P."],assistente:["Barberi A."],
+     collaboratori:["Aula G.","Barberi S.","Bocchino D.","Braghin C.","Braghin P.","Circosta V. (Mixer)","Colombo M. (Mixer)","Conte D.","Luisi F."]},
+    {id:101,name:"Uscieri / Microfonisti",
+     responsabile:["Affuso G."],assistente:["Aula G.","Aula V."],collaboratori:[]},
+    {id:102,name:"Contabilità",
+     responsabile:["Orrico G."],assistente:["Bocchino D."],collaboratori:[]},
+    {id:103,name:"Letteratura",
+     responsabile:["Marinoni D."],assistente:["Aula L.","Circosta V.","Luisi F."],collaboratori:[]},
+    {id:104,name:"Territori",
+     responsabile:["Marinoni D."],assistente:["Aula G.","Barberi S.","Cazzolla G."],collaboratori:[]},
+    {id:105,name:"Pulizie",
+     responsabile:["Innocenti M."],assistente:["Mazzotta M.","Guarnieri F."],collaboratori:[]}
+  ]
+};
+
+let data   = JSON.parse(localStorage.getItem('org_data')   || 'null') || JSON.parse(JSON.stringify(DEF));
+let hdr    = JSON.parse(localStorage.getItem('org_header') || 'null') || {title:'Organigramma – Congregazione di Cerano',sub:'Gestione Anziani · Servitori · Reparti',date:'Febbraio 2026'};
+
+// API Key precompilata – BIN ID si crea automaticamente al primo salvataggio
+const API_KEY_DEFAULT = '$2a$10$40sWcOQrCASIrvDUztKHg.x8vJ0PsMJnmjCvYQ/FtHf.pVWlYKIjK';
+const BIN_DEFAULT = '6a04a0bec0954111d81ac7c7';
+let cfg = JSON.parse(localStorage.getItem('org_cfg') || 'null') || {};
+cfg.key = cfg.key || API_KEY_DEFAULT;
+cfg.bin = BIN_DEFAULT; // sempre fisso
+
+let modalCb= null;
+let nextId = 300;
+
+// ═══════════════════════════════
+//  DARK MODE
+// ═══════════════════════════════
+function applyDark(d){
+  document.body.classList.toggle('dark',d);
+  document.getElementById('dark-btn').textContent = d ? '☀️ Chiaro' : '🌙 Scuro';
+}
+function toggleDark(){
+  const d = !document.body.classList.contains('dark');
+  localStorage.setItem('org_dark',d);
+  applyDark(d);
+}
+
+// ═══════════════════════════════
+//  HEADER
+// ═══════════════════════════════
+function loadHeader(){
+  setText('hdr-title', hdr.title);
+  setText('hdr-sub',   hdr.sub);
+  setText('hdr-date',  hdr.date);
+  document.getElementById('logo-box').textContent =
+    (hdr.title.includes('–') ? hdr.title.split('–')[1] : hdr.title).trim().charAt(0) || 'C';
+}
+function setText(id,v){ const el=document.getElementById(id); el.childNodes[0] ? el.childNodes[0].nodeValue=v : el.textContent=v; }
+function editHeader(f){
+  const labels={title:'Titolo',sub:'Sottotitolo',date:'Data aggiornamento'};
+  openModal('✏️ '+labels[f], hdr[f], '', true, v=>{
+    if(!v.trim())return; hdr[f]=v.trim();
+    localStorage.setItem('org_header',JSON.stringify(hdr));
+    loadHeader(); toast('Intestazione aggiornata ✔');
+  });
+}
+
+// ═══════════════════════════════
+//  RENDER
+// ═══════════════════════════════
+function render(){
+  document.getElementById('app').innerHTML =
+    sec('Anziani','anziani') + sec('Servitori di Ministero','servitori') + secReparti();
+}
+function sec(title,key){
+  const icon = key==='anziani' ? '🕊️' : '⚙️';
+  const rows = data[key].map(m=>`
+    <div class="member-row">
+      <div class="member-name">${icon} ${h(m.name)}</div>
+      <div class="member-role">${m.role.split(',').map(r=>`<span class="role-badge">${h(r.trim())}</span>`).join('')}</div>
+      <div class="member-actions">
+        <button class="btn-icon btn-icon-edit" onclick="editMember('${key}',${m.id})">✏️</button>
+        <button class="btn-icon btn-icon-del"  onclick="delMember('${key}',${m.id})">🗑️</button>
+      </div>
+    </div>`).join('');
+  return `<div class="section-card">
+    <div class="section-header" onclick="toggleSec(this)">
+      <h2>${title} <span class="count-badge">${data[key].length}</span></h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body">${rows}
+      <div class="section-actions">
+        <button class="btn btn-success btn-sm" onclick="addMember('${key}')">➕ Aggiungi membro</button>
+      </div>
+    </div>
+  </div>`;
+}
+function secReparti(){
+  const cards = data.reparti.map(r=>`
+    <div class="reparto-card">
+      <div class="section-header reparto">
+        <div class="reparto-title-row">
+          <h3>📋 ${h(r.name)}</h3>
+          <div style="display:flex;gap:4px">
+            <button class="btn-icon btn-icon-edit" onclick="renRep(${r.id})">✏️</button>
+            <button class="btn-icon btn-icon-del"  onclick="delRep(${r.id})">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="reparto-body">
+        ${rrow(r,'responsabile','🔑 Resp.')}
+        ${rrow(r,'assistente',  '🤝 Assist.')}
+        ${rrow(r,'collaboratori','👥 Collab.')}
+      </div>
+    </div>`).join('');
+  return `<div class="section-card">
+    <div class="section-header" onclick="toggleSec(this)">
+      <h2>Reparti <span class="count-badge">${data.reparti.length}</span></h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="section-body"><div class="reparti-grid">${cards}</div></div>
+  </div>`;
+}
+function rrow(r,field,label){
+  const v=r[field];
+  const display=v.length?v.map(h).join(', '):'<em style="color:var(--muted)">—</em>';
+  return `<div class="reparto-row">
+    <div class="reparto-label">${label}</div>
+    <div class="reparto-names">${display}</div>
+    <div class="reparto-row-actions">
+      <button class="btn-icon btn-icon-edit" onclick="editRF(${r.id},'${field}','${label}')">✏️</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════
+//  HELPERS
+// ═══════════════════════════════
+function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(msg,ok=true){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=ok?'#1a3a5c':'#b91c1c';
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
+}
+function toggleSec(hd){ hd.classList.toggle('collapsed'); hd.nextElementSibling.classList.toggle('collapsed'); }
+function togglePanel(id){ document.getElementById(id).classList.toggle('open'); }
+function saveData(){ localStorage.setItem('org_data',JSON.stringify(data)); }
+function saveAndSync(){ saveData(); syncUp().catch(function(e){console.warn(e);}); }
+
+// ═══════════════════════════════
+//  CRUD MEMBRI
+// ═══════════════════════════════
+function addMember(key){
+  openModal('➕ Nuovo membro','','',false,(name,role)=>{
+    if(!name.trim())return;
+    data[key].push({id:nextId++,name:name.trim(),role:(role||'').trim()});
+    render();saveAndSync();toast('Membro aggiunto ✔');
+  });
+}
+function editMember(key,id){
+  const m=data[key].find(x=>x.id===id);
+  openModal('✏️ Modifica membro',m.name,m.role,false,(name,role)=>{
+    if(!name.trim())return; m.name=name.trim();m.role=(role||'').trim();
+    render();saveAndSync();toast('Modificato ✔');
+  });
+}
+function delMember(key,id){
+  if(!confirm('Rimuovere questo membro?'))return;
+  data[key]=data[key].filter(x=>x.id!==id);
+  render();saveAndSync();toast('Rimosso ✔');
+}
+
+// ═══════════════════════════════
+//  CRUD REPARTI
+// ═══════════════════════════════
+function addReparto(){
+  const name=document.getElementById('new-reparto-name').value.trim();
+  if(!name)return;
+  data.reparti.push({id:nextId++,name,responsabile:[],assistente:[],collaboratori:[]});
+  document.getElementById('new-reparto-name').value='';
+  togglePanel('add-panel');render();saveAndSync();toast('Reparto aggiunto ✔');
+}
+function renRep(id){
+  const r=data.reparti.find(x=>x.id===id);
+  openModal('✏️ Rinomina reparto',r.name,'',true,v=>{if(!v.trim())return;r.name=v.trim();render();saveAndSync();toast('Rinominato ✔');});
+}
+function delRep(id){
+  if(!confirm('Eliminare questo reparto?'))return;
+  data.reparti=data.reparti.filter(x=>x.id!==id);
+  render();saveAndSync();toast('Eliminato ✔');
+}
+function editRF(id,field,label){
+  const r=data.reparti.find(x=>x.id===id);
+  openModal(`✏️ ${label} – ${r.name}`,r[field].join(', '),'',true,v=>{
+    r[field]=v.split(',').map(s=>s.trim()).filter(Boolean);
+    render();saveAndSync();toast('Aggiornato ✔');
+  },'Nomi separati da virgola');
+}
+
+// ═══════════════════════════════
+//  MODAL
+// ═══════════════════════════════
+function openModal(title,nameVal,roleVal,nameOnly,cb,namePh=''){
+  modalCb=cb;
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-name').value=nameVal;
+  document.getElementById('modal-name').placeholder=namePh||'';
+  const rl=document.getElementById('lbl-role'), rt=document.getElementById('modal-role');
+  if(nameOnly){rl.style.display='none';rt.style.display='none';}
+  else{rl.style.display='block';rt.style.display='block';rt.value=roleVal||'';}
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-name').focus(),80);
+}
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal-overlay'))return;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function saveModal(){
+  const name=document.getElementById('modal-name').value;
+  const role=document.getElementById('modal-role').value;
+  if(modalCb)modalCb(name,role);
+  document.getElementById('modal-overlay').classList.remove('open');
+  // Sincronizza automaticamente sul cloud dopo ogni modifica
+  setTimeout(function(){ syncUp(); }, 500);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.getElementById('modal-overlay').classList.remove('open');
+  if(e.key==='Enter'&&document.getElementById('modal-overlay').classList.contains('open'))saveModal();
+});
+
+// ═══════════════════════════════
+//  SETTINGS / SYNC
+// ═══════════════════════════════
+document.getElementById('settings-panel').addEventListener('transitionend',()=>{});
+function saveSettings(){
+  cfg.bin=document.getElementById('cfg-bin').value.trim();
+  cfg.key=document.getElementById('cfg-key').value.trim();
+  localStorage.setItem('org_cfg',JSON.stringify(cfg));
+  toast('Credenziali salvate ✔');
+}
+function setSyncSt(msg,ok){
+  const el=document.getElementById('sync-status');
+  el.textContent=msg; el.className='sync-status '+(ok?'sync-ok':'sync-err');
+}
+function loadCfgInputs(){
+  document.getElementById('cfg-bin').value = cfg.bin || '';
+  document.getElementById('cfg-key').value = cfg.key || API_KEY_DEFAULT;
+  document.getElementById('sync-status').textContent='';
+  document.getElementById('sync-status').className='sync-status';
+}
+// Carica credenziali quando si apre il pannello
+document.querySelector('[onclick="togglePanel(\'settings-panel\')"]').addEventListener('click',()=>{
+  setTimeout(loadCfgInputs,50);
+});
+async function syncDown(){
+  const key = cfg.key || API_KEY_DEFAULT;
+  if(!cfg.bin){setSyncSt('⚠️ Nessun BIN ancora — premi prima ⬆️ Salva',false);return;}
+  setSyncSt('⏳ Caricamento…',true);
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${cfg.bin}/latest`,{headers:{'X-Master-Key':key}});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const json=await res.json();
+    const rec=json.record;
+    if(rec.data){data=rec.data;saveAndSync();render();}
+    if(rec.hdr){hdr=rec.hdr;localStorage.setItem('org_header',JSON.stringify(hdr));loadHeader();}
+    setSyncSt('✔ Dati caricati',true);toast('Sincronizzato dal cloud ✔');
+  }catch(e){setSyncSt('❌ '+e.message,false);toast('Errore sync ❌',false);}
+}
+async function syncUp(){
+  const key = cfg.key || API_KEY_DEFAULT;
+  if(!key){setSyncSt('⚠️ API Key mancante',false);return;}
+  setSyncSt('⏳ Salvataggio…',true);
+  try{
+    // Se non c'è un BIN lo crea automaticamente
+    if(!cfg.bin){
+      setSyncSt('⏳ Creo il BIN automaticamente…',true);
+      const cr = await fetch('https://api.jsonbin.io/v3/b',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Name':'OrganigrammaCerano'},
+        body:JSON.stringify({data,hdr})
+      });
+      if(!cr.ok) throw new Error('HTTP '+cr.status);
+      const cj = await cr.json();
+      cfg.bin = cj.metadata.id;
+      cfg.key = key;
+      localStorage.setItem('org_cfg',JSON.stringify(cfg));
+      document.getElementById('cfg-bin').value = cfg.bin;
+      setSyncSt('✔ BIN creato e salvato: '+cfg.bin,true);
+      toast('BIN creato e salvato sul cloud ✔');
+      return;
+    }
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${cfg.bin}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':key},
+      body:JSON.stringify({data,hdr})
+    });
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    setSyncSt('✔ Salvato sul cloud',true);toast('Caricato sul cloud ✔');
+  }catch(e){setSyncSt('❌ '+e.message,false);toast('Errore upload ❌',false);}
+}
+
+// ═══════════════════════════════
+//  EXPORT / IMPORT
+// ═══════════════════════════════
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({data,hdr},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='organigramma_cerano_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('File esportato ✔');
+}
+function importJSON(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const p=JSON.parse(ev.target.result);
+      if(!p.data)throw new Error('Formato non valido');
+      data=p.data; if(p.hdr){hdr=p.hdr;localStorage.setItem('org_header',JSON.stringify(hdr));loadHeader();}
+      saveData();render();toast('File importato ✔');
+    }catch(err){toast('Errore: '+err.message,false);}
+  };
+  reader.readAsText(file); e.target.value='';
+}
+
+// ═══════════════════════════════
+//  INIT
+// ═══════════════════════════════
+applyDark(localStorage.getItem('org_dark')==='true');
+loadHeader();
+render();
+
+// ═══ AUTO-SYNC ALL'AVVIO ═══
+window.addEventListener('load', function(){
+  // Forza sempre BIN corretto
+  cfg.bin = BIN_DEFAULT;
+  localStorage.setItem('org_cfg', JSON.stringify(cfg));
+  // Scarica dati aggiornati dal cloud
+  setTimeout(function(){ syncDown(); }, 800);
+});
+</script>
+</body>
+</html>
