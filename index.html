@@ -1,284 +1,206 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="light">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cruscotto">
-<meta name="theme-color" content="#1a1a2e">
-<title>Cruscotto Congregazione Cerano</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Cruscotto – Congregazione di Cerano</title>
 <style>
-:root {
-  --ink:#1a1a2e; --ink2:#2d2d4e; --muted:#64748b;
-  --sky:#2563eb; --gold:#c9943a;
-  --bg:#f0f4ff; --card:#ffffff; --border:#e2e8f0;
-  --input-bg:#f8fafc;
-  --shadow:0 4px 24px rgba(37,99,235,.12);
-  --radius:20px;
-}
-[data-theme="dark"] {
-  --ink:#f1f5f9; --ink2:#cbd5e1; --muted:#94a3b8;
-  --bg:#0f172a; --card:#1e293b; --border:#334155;
-  --input-bg:#0f172a;
-  --shadow:0 4px 24px rgba(0,0,0,.4);
-}
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; transition:background .3s,color .3s; }
-body::before { content:''; position:fixed; top:0; left:0; right:0; height:300px; background:linear-gradient(135deg,#1a1a2e 0%,#2563eb 60%,#1e3a8a 100%); z-index:0; }
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-.container { max-width:700px; margin:0 auto; padding:0 18px 60px; position:relative; z-index:1; }
+  :root {
+    --bg:#1a2a4a; --bg2:#1e3458; --card:#ffffff;
+    --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --shadow:0 4px 24px rgba(0,0,0,.10);
+  }
+  body.dark {
+    --bg:#0a1628; --bg2:#0f1f38; --card:#1e293b;
+    --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+    --shadow:0 4px 24px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);min-height:100vh;transition:background .3s}
 
-/* HEADER */
-.header { padding:40px 0 30px; text-align:center; color:#fff; }
-.header-icon { font-size:48px; display:block; margin-bottom:10px; filter:drop-shadow(0 2px 10px rgba(201,148,58,.5)); }
-.header h1 { font-family:'Playfair Display',serif; font-size:30px; font-weight:700; margin-bottom:4px; }
-.header p  { font-size:13px; opacity:.7; }
-.header-actions { display:flex; justify-content:center; gap:8px; margin-top:14px; }
-.hdr-btn { padding:7px 14px; border-radius:10px; border:none; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; cursor:pointer; background:rgba(255,255,255,.15); color:#fff; backdrop-filter:blur(6px); transition:background .18s; }
-.hdr-btn:hover { background:rgba(255,255,255,.28); }
+  /* HEADER */
+  .hdr{text-align:center;padding:52px 20px 36px;color:#fff;position:relative}
+  .hdr-icon{font-size:52px;margin-bottom:14px;display:block}
+  .hdr h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;letter-spacing:.3px;line-height:1.2}
+  .hdr p{font-size:.95rem;opacity:.7;margin-top:8px}
+  .dark-btn{
+    margin-top:18px;display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.15);color:#fff;
+    border:1px solid rgba(255,255,255,.25);border-radius:20px;
+    padding:7px 18px;cursor:pointer;font-family:'DM Sans',sans-serif;
+    font-size:.85rem;font-weight:600;transition:all .2s;
+  }
+  .dark-btn:hover{background:rgba(255,255,255,.25)}
 
-/* GRID APP */
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; margin-top:8px; }
+  /* GRID */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:20px;
+    max-width:900px;margin:0 auto;
+    padding:0 20px 60px;
+  }
 
-/* APP CARD */
-.app-card {
-  background:var(--card); border-radius:22px; padding:20px;
-  box-shadow:var(--shadow); border:1.5px solid transparent;
-  transition:all .2s; position:relative; overflow:hidden;
-}
-.app-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:4px;
-  background:var(--card-color, var(--sky));
-}
-.app-card:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(37,99,235,.18); border-color:var(--card-color, var(--sky)); }
+  /* CARD */
+  .card{
+    background:var(--card);border-radius:16px;
+    padding:22px 22px 20px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+    display:flex;flex-direction:column;gap:14px;
+    transition:transform .2s,box-shadow .2s,background .3s;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+  .card-top{display:flex;align-items:flex-start;gap:14px}
+  .card-icon{
+    width:46px;height:46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex-shrink:0;
+  }
+  .card-info{flex:1}
+  .card-info h3{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:600;color:var(--text);line-height:1.3}
+  .card-info p{font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.4}
+  .card-file{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:.75rem;font-weight:600;padding:3px 10px;
+    border-radius:20px;margin-top:6px;
+  }
+  .card-btn{
+    display:block;width:100%;padding:12px;
+    border:none;border-radius:12px;
+    font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
+    cursor:pointer;text-align:center;
+    text-decoration:none;
+    transition:filter .18s,transform .15s;
+    color:#fff;
+  }
+  .card-btn:hover{filter:brightness(1.1);transform:scale(1.01)}
+  .card-divider{border:none;border-top:1px solid var(--border);margin:0}
 
-.card-header { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-.card-icon { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
-.card-info { flex:1; min-width:0; }
-.card-title { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--ink); line-height:1.2; }
-.card-desc  { font-size:12px; color:var(--muted); margin-top:3px; }
+  /* FOOTER */
+  .footer{text-align:center;color:rgba(255,255,255,.45);font-size:.78rem;padding:0 20px 30px}
 
-.card-actions { display:flex; gap:8px; }
-.btn-apri { flex:1; padding:11px; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:700; cursor:pointer; color:#fff; background:var(--card-color, var(--sky)); transition:opacity .15s,transform .15s; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
-.btn-apri:hover { opacity:.88; transform:translateY(-1px); }
-.btn-apri.disabled { background:var(--border); color:var(--muted); cursor:default; }
-.btn-set { width:38px; height:38px; border-radius:10px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--muted); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; flex-shrink:0; }
-.btn-set:hover { background:var(--card-color, var(--sky)); color:#fff; border-color:var(--card-color, var(--sky)); }
-
-/* STATUS */
-.status-ok  { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; color:#16a34a; background:#dcfce7; padding:3px 8px; border-radius:20px; margin-top:6px; }
-.status-no  { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; color:var(--muted); background:var(--input-bg); padding:3px 8px; border-radius:20px; margin-top:6px; border:1px solid var(--border); }
-
-/* MODAL */
-.overlay { position:fixed; inset:0; background:rgba(10,10,30,.65); backdrop-filter:blur(8px); z-index:100; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s; }
-.overlay.open { opacity:1; pointer-events:all; }
-.modal { background:var(--card); border-radius:24px; padding:28px; width:92%; max-width:440px; box-shadow:0 24px 60px rgba(0,0,0,.25); transform:translateY(18px); transition:transform .25s; }
-.overlay.open .modal { transform:translateY(0); }
-.modal h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:6px; }
-.modal p  { font-size:13px; color:var(--muted); margin-bottom:18px; line-height:1.5; }
-.modal label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
-.modal input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; background:var(--input-bg); color:var(--ink); outline:none; transition:border-color .2s; margin-bottom:14px; }
-.modal input:focus { border-color:var(--sky); }
-.modal-actions { display:flex; gap:8px; }
-.btn-save { flex:1; padding:12px; border:none; border-radius:12px; background:linear-gradient(135deg,var(--sky),#1d4ed8); color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; }
-.btn-cancel { padding:12px 18px; border:1.5px solid var(--border); border-radius:12px; background:transparent; color:var(--ink); font-family:'DM Sans',sans-serif; font-size:15px; cursor:pointer; }
-
-/* TOAST */
-.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(14px); background:var(--ink2); color:#fff; padding:10px 20px; border-radius:12px; font-size:13px; opacity:0; transition:all .28s; z-index:200; pointer-events:none; white-space:nowrap; }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* FOOTER */
-.footer { text-align:center; padding:20px 0 0; font-size:11px; color:var(--muted); }
-
-@media(max-width:480px) {
-  .grid { grid-template-columns:1fr; }
-  .header h1 { font-size:24px; }
-}
+  /* RESPONSIVE */
+  @media(max-width:500px){
+    .hdr h1{font-size:1.7rem}
+    .grid{grid-template-columns:1fr;padding:0 14px 50px}
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <span class="header-icon">📖</span>
-    <h1>Congregazione di Cerano</h1>
-    <p>Circoscrizione Lombardia 4 — Le mie Applicazioni</p>
-    <div class="header-actions">
-      <button class="hdr-btn" onclick="toggleDark()"><span id="darkIcon">🌙</span> <span id="darkLabel">Scuro</span></button>
-      <button class="hdr-btn" id="btnInstall" style="display:none" onclick="installPWA()">📲 Installa App</button>
-    </div>
-  </div>
-
-  <div class="grid" id="appGrid"></div>
-
-  <div class="footer">
-    <p>Tutti i file devono essere nella <strong>stessa cartella</strong> di questo cruscotto</p>
-    <p style="margin-top:4px">Tocca <strong>🔗</strong> per cambiare il nome file di un'app</p>
-  </div>
+<div class="hdr">
+  <span class="hdr-icon">📖</span>
+  <h1>Congregazione di Cerano</h1>
+  <p>Circoscrizione Lombardia 4 — Le mie Applicazioni</p>
+  <button class="dark-btn" id="dark-btn" onclick="toggleDark()">🌙 Scuro</button>
 </div>
 
-<!-- MODAL IMPOSTAZIONE FILE -->
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <h3 id="modalTitle">Imposta file</h3>
-    <p id="modalDesc">Inserisci il nome esatto del file HTML (es. <code>rubrica.html</code>). Il file deve essere nella stessa cartella di questo cruscotto.</p>
-    <label>Nome file</label>
-    <input type="text" id="modalInput" placeholder="nome_file.html">
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Annulla</button>
-      <button class="btn-save" onclick="saveFile()">💾 Salva</button>
+<div class="grid">
+
+  <!-- AGENDA -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#ede9fe">📓</div>
+      <div class="card-info">
+        <h3>Agenda Giovanni</h3>
+        <p>Diario personale con note, promemoria e calendario</p>
+        <span class="card-file" style="background:#ede9fe;color:#7c3aed">📄 agenda-giovanni_1_.html</span>
+      </div>
     </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#7c3aed" href="agenda-giovanni_1_.html" target="_blank">📖 Apri App</a>
   </div>
+
+  <!-- ORGANIGRAMMA -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#dcfce7">🗂️</div>
+      <div class="card-info">
+        <h3>Organigramma Cerano</h3>
+        <p>Incarichi e responsabilità della congregazione</p>
+        <span class="card-file" style="background:#dcfce7;color:#16a34a">📄 organigramma.html</span>
+      </div>
+    </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#16a34a" href="organigramma.html" target="_blank">🗂️ Apri App</a>
+  </div>
+
+  <!-- ORATORI ASSEMBLEA -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#fef9c3">🎤</div>
+      <div class="card-info">
+        <h3>Oratori Assemblea</h3>
+        <p>Gestione oratori per le assemblee</p>
+        <span class="card-file" style="background:#fef9c3;color:#a16207">📄 oratori_assemblea.html</span>
+      </div>
+    </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#b45309" href="oratori_assemblea.html" target="_blank">🎤 Apri App</a>
+  </div>
+
+  <!-- SCHEMI DISCORSI -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#fce7f3">📋</div>
+      <div class="card-info">
+        <h3>Schemi Discorsi</h3>
+        <p>Raccolta e gestione degli schemi dei discorsi</p>
+        <span class="card-file" style="background:#fce7f3;color:#be185d">📄 schemi_discorsi_-_Copia.html</span>
+      </div>
+    </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#be185d" href="schemi_discorsi_-_Copia.html" target="_blank">📋 Apri App</a>
+  </div>
+
+  <!-- ELENCO ORATORI -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#ffedd5">👥</div>
+      <div class="card-info">
+        <h3>Elenco Oratori</h3>
+        <p>Lista oratori della Circoscrizione Lombardia 4</p>
+        <span class="card-file" style="background:#ffedd5;color:#c2410c">📄 elenco_oratori_v3.html</span>
+      </div>
+    </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#ea580c" href="elenco_oratori_v3.html" target="_blank">👥 Apri App</a>
+  </div>
+
+  <!-- RUBRICA -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-icon" style="background:#dbeafe">📞</div>
+      <div class="card-info">
+        <h3>Rubrica Congregazione</h3>
+        <p>Contatti fratelli con gruppi, ruoli e sync cloud</p>
+        <span class="card-file" style="background:#dbeafe;color:#1d4ed8">📄 rubrica_cerano.html</span>
+      </div>
+    </div>
+    <hr class="card-divider">
+    <a class="card-btn" style="background:#2563eb" href="rubrica_cerano.html" target="_blank">📞 Apri App</a>
+  </div>
+
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="footer">
+  ⚠️ Tutti i file devono essere nella stessa cartella di questo cruscotto
+</div>
 
 <script>
-// ── DEFINIZIONE APP ──────────────────────────────────────────────────────────
-const APPS = [
-  {
-    id: 'agenda',
-    title: 'Agenda Giovanni',
-    desc: 'Diario personale con note, promemoria e calendario',
-    icon: '📔',
-    color: '#7c3aed',
-    defaultFile: 'agenda-giovanni__1_.html',
-  },
-  {
-    id: 'organigramma',
-    title: 'Organigramma Cerano',
-    desc: 'Incarichi e responsabilità della congregazione',
-    icon: '📋',
-    color: '#0d9488',
-    defaultFile: 'organigramma.html',
-  },
-  {
-    id: 'oratori_assemblea',
-    title: 'Oratori Assemblea',
-    desc: 'Gestione oratori per le assemblee',
-    icon: '🎤',
-    color: '#c9943a',
-    defaultFile: 'oratori.html',
-  },
-  {
-    id: 'schemi',
-    title: 'Schemi Discorsi',
-    desc: 'Raccolta e gestione degli schemi dei discorsi',
-    icon: '📜',
-    color: '#e11d48',
-    defaultFile: 'schemi.html',
-  },
-  {
-    id: 'elenco_oratori',
-    title: 'Elenco Oratori',
-    desc: 'Lista oratori della circoscrizione Lombardia 4',
-    icon: '👥',
-    color: '#ea580c',
-    defaultFile: 'elenco.html',
-  },
-  {
-    id: 'rubrica',
-    title: 'Rubrica Congregazione',
-    desc: 'Contatti fratelli con gruppi, ruoli e sync cloud',
-    icon: '📖',
-    color: '#2563eb',
-    defaultFile: 'rubrica.html',
-  },
-];
-
-// ── STORAGE ──────────────────────────────────────────────────────────────────
-function getFile(id) {
-  return localStorage.getItem('app_file_' + id) || '';
+function applyDark(d){
+  document.body.classList.toggle('dark',d);
+  document.getElementById('dark-btn').textContent = d ? '☀️ Chiaro' : '🌙 Scuro';
 }
-function setFile(id, val) {
-  localStorage.setItem('app_file_' + id, val);
+function toggleDark(){
+  const d = !document.body.classList.contains('dark');
+  localStorage.setItem('cruscotto_dark', d);
+  applyDark(d);
 }
-
-// ── RENDER GRID ──────────────────────────────────────────────────────────────
-function render() {
-  const grid = document.getElementById('appGrid');
-  grid.innerHTML = '';
-  APPS.forEach(app => {
-    const file = app.defaultFile;
-    const card = document.createElement('div');
-    card.className = 'app-card';
-    card.style.setProperty('--card-color', app.color);
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="card-icon" style="background:${app.color}22">${app.icon}</div>
-        <div class="card-info">
-          <div class="card-title">${app.title}</div>
-          <div class="card-desc">${app.desc}</div>
-          <span class="status-ok">✅ ${file}</span>
-        </div>
-      </div>
-      <div class="card-actions">
-        <a href="${file}" class="btn-apri">${app.icon} Apri App</a>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-// ── MODAL ────────────────────────────────────────────────────────────────────
-let _editId = null;
-function openModal(id, title) {
-  _editId = id;
-  document.getElementById('modalTitle').textContent = '🔗 ' + title;
-  document.getElementById('modalInput').value = getFile(id) || APPS.find(a=>a.id===id)?.defaultFile || '';
-  document.getElementById('overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('modalInput').focus(), 200);
-}
-function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-function saveFile() {
-  const val = document.getElementById('modalInput').value.trim();
-  if (!val) { toast('⚠️ Inserisci il nome del file'); return; }
-  if (!val.endsWith('.html')) { toast('⚠️ Il file deve terminare con .html'); return; }
-  setFile(_editId, val);
-  render(); closeModal();
-  toast('✅ File impostato: ' + val);
-}
-
-// ── DARK MODE ────────────────────────────────────────────────────────────────
-function toggleDark() {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
-  document.getElementById('darkIcon').textContent  = dark ? '🌙' : '☀️';
-  document.getElementById('darkLabel').textContent = dark ? 'Scuro' : 'Chiaro';
-  localStorage.setItem('cruscotto_dark', dark ? '0' : '1');
-}
-if (localStorage.getItem('cruscotto_dark') === '1') {
-  document.documentElement.setAttribute('data-theme','dark');
-  document.getElementById('darkIcon').textContent  = '☀️';
-  document.getElementById('darkLabel').textContent = 'Chiaro';
-}
-
-// ── PWA ──────────────────────────────────────────────────────────────────────
-let _pwaPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); _pwaPrompt = e;
-  document.getElementById('btnInstall').style.display = 'flex';
-});
-function installPWA() {
-  if (!_pwaPrompt) { toast('📲 Apri in Chrome per installare'); return; }
-  _pwaPrompt.prompt();
-  _pwaPrompt.userChoice.then(r => {
-    if (r.outcome === 'accepted') { toast('✅ Cruscotto installato!'); document.getElementById('btnInstall').style.display='none'; }
-    _pwaPrompt = null;
-  });
-}
-
-// ── TOAST ────────────────────────────────────────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ── AVVIO ────────────────────────────────────────────────────────────────────
-render();
+applyDark(localStorage.getItem('cruscotto_dark') === 'true');
 </script>
 </body>
 </html>
