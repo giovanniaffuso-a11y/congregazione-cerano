@@ -2142,7 +2142,7 @@ function esportaUsati2027(){
   var usati=[];
   SCHEMI.forEach(function(sc){
     var s=state.schemi[sc.n]||{};
-    if(s[anno]) usati.push(sc.n);
+    if(s[anno]||s[String(anno)]) usati.push(sc.n);
   });
   if(!usati.length){
     alert('Nessuno schema segnato per il '+anno+'.');
