@@ -2138,14 +2138,25 @@ function renderCongList(){
 // ── ESPORTA SCHEMI USATI NEL 2027 ───────────────────────────────────
 function esportaUsati2027(){
   var anno=2027;
-  if(!state.schemi)state.schemi={};
+  // Legge dall'app Oratori Pubblici (circoscrizione) che usa chiave oratoriAppV12
+  var raw=localStorage.getItem('oratoriAppV12');
+  var stateOratori=raw?JSON.parse(raw):{};
+  var schemiOratori=stateOratori.schemi||{};
   var usati=[];
   SCHEMI.forEach(function(sc){
-    var s=state.schemi[sc.n]||{};
+    var s=schemiOratori[sc.n]||schemiOratori[String(sc.n)]||{};
     if(s[anno]||s[String(anno)]) usati.push(sc.n);
   });
   if(!usati.length){
-    alert('Nessuno schema segnato per il '+anno+'.');
+    // Prova anche con state locale
+    if(!state.schemi)state.schemi={};
+    SCHEMI.forEach(function(sc){
+      var s=state.schemi[sc.n]||{};
+      if(s[anno]||s[String(anno)]) usati.push(sc.n);
+    });
+  }
+  if(!usati.length){
+    alert('Nessuno schema segnato per il '+anno+'.\nAssicurati di avere i dati dell\'app Oratori Pubblici sincronizzati su questo browser.');
     return;
   }
   usati.sort(function(a,b){return a-b;});
