@@ -342,16 +342,21 @@
         <div class="pin-title" style="font-size:1rem;">📅 Pianificazione Annuale — Fratelli di Cerano</div>
         <div style="display:flex;gap:6px;">
           <button class="btn btn-primary" onclick="aggiungiOratoreGriglia()" style="font-size:.78rem;padding:5px 10px;">➕ Oratore</button>
+          <button onclick="apriModalUscita()" style="background:#e67e22;color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.78rem;font-weight:700;" title="Aggiungi uscita in altra congregazione">📤 Uscita</button>
           <button onclick="stampaGrigliaCerano()" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.78rem;font-weight:700;">🖨 Stampa</button>
           <button onclick="cancellaGrigliaCerano()" style="background:#c0392b;color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">🗑</button>
+          <button onclick="pulisciGrigliaCerano()" style="background:#27ae60;color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.78rem;font-weight:700;" title="Rimuovi entry con date non valide">🧹 Pulisci</button>
+          <button onclick="sincronizzaTuttoDaProgr()" style="background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.78rem;font-weight:700;" title="Sincronizza tutti gli oratori di Cerano dal Programma">🔄 Sincr.</button>
           <button onclick="salvaGrigliaCerano()" style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:.78rem;font-weight:700;">💾 Salva</button>
         </div>
       </div>
       <div class="pin-subtitle" id="sottotitoloGriglia"></div>
+      <div id="doutStats" style="margin-top:8px;"></div>
       <div style="overflow-x:auto;margin-top:10px;">
         <table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:700px;">
           <thead><tr id="grigliaCeranoHead" style="background:var(--navy);color:#fff;"></tr></thead>
           <tbody id="grigliaCeranoBody"></tbody>
+          <tfoot><tr id="grigliaCeranoFoot" style="background:var(--navy);color:#fff;"></tr></tfoot>
         </table>
       </div>
     </div>
@@ -673,7 +678,7 @@
         </div>
         <div class="form-group full">
           <label>Tema</label>
-          <div id="mgTema" style="font-size:.82rem;color:var(--text-muted);padding:6px 0;min-height:20px;"></div>
+          <input type="text" id="mgTema" style="width:100%;padding:7px 10px;border:1.5px solid #ccc;border-radius:7px;font-size:.84rem;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;" placeholder="Compilato automaticamente — modificabile">
         </div>
       </div>
     </div>
@@ -1135,7 +1140,65 @@ function cancellaGrigliaCerano(){
   buildGrigliaCerano();
 }
 function salvaGrigliaCerano(){salvaStorage();salvaSuCloud();alert('Salvato!');}
+// ── STATISTICHE D-OUT ────────────────────────────────────────────────
+function buildDOutStats(){
+  var el=document.getElementById('doutStats'); if(!el) return;
+  var anno=parseInt(state.anno)||new Date().getFullYear();
+  if(!state.grigliaCerano)state.grigliaCerano={};
+  var sv=state.grigliaCerano;
+  var FC=getFratelliCerano();
+  // Costruisce mappa: fi -> {cong -> count}
+  var frMap={};
+  FC.forEach(function(f,fi){ frMap[fi]={nome:f.cognome+' '+f.nome,cong:{},tot:0}; });
+  var MGN2=['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  Object.keys(sv).forEach(function(ck){
+    var s=sv[ck]; if(!s||!s.cong||s.cong==='Cerano'||s.cong==='') return;
+    var p=ck.split('_');
+    if(parseInt(p[0])!==anno) return;
+    var fi=parseInt(p[3]); if(isNaN(fi)||!frMap[fi]) return;
+    var dataStr=parseInt(p[2])+' '+MGN2[parseInt(p[1])];
+    var congValida=state.congregazioni.some(function(c){return c.nome===s.cong;});
+    var congKey=s.cong+(congValida?'':' ⚠');
+    if(!frMap[fi].cong[congKey]) frMap[fi].cong[congKey]={count:0,date:dataStr,valida:congValida};
+    frMap[fi].cong[congKey].count++;
+    frMap[fi].tot++;
+  });
+  // Conta solo fratelli con almeno un'uscita
+  var hasDati=FC.some(function(f,fi){return frMap[fi]&&frMap[fi].tot>0;});
+  if(!hasDati){el.innerHTML='';return;}
+  var MGN=['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  var html='<div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:8px;">'
+    +'<div style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;">'
+    +'📊 Uscite '+anno+'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  FC.forEach(function(f,fi){
+    var d=frMap[fi]; if(!d||d.tot===0) return;
+    var congList=Object.keys(d.cong).sort(function(a,b){return d.cong[b].count-d.cong[a].count;});
+    html+='<div style="background:#fff;border-radius:8px;padding:8px 12px;border:1px solid var(--cream-dark);min-width:160px;flex:1;">'
+      +'<div style="font-weight:700;color:var(--navy);font-size:.85rem;margin-bottom:6px;">'
+      +f.cognome+' '+f.nome
+      +'<span style="background:var(--navy);color:#fff;border-radius:10px;padding:1px 8px;font-size:.72rem;font-weight:700;margin-left:6px;">'+d.tot+'</span>'
+      +'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+    congList.forEach(function(cong){
+      var info=d.cong[cong];
+      var bg=info.valida?'var(--cream-dark)':'#ffeaea';
+      var badge=info.valida?'var(--teal)':'#c0392b';
+      html+='<div style="background:'+bg+';border-radius:5px;padding:2px 8px;font-size:.75rem;display:flex;align-items:center;gap:4px;" title="'+info.date+'">'
+        +'<span style="color:var(--navy);">'+cong+'</span>'
+        +'<span style="color:#888;font-size:.7rem;">'+info.date+'</span>'
+        +'<span style="background:'+badge+';color:#fff;border-radius:8px;padding:0 5px;font-size:.7rem;font-weight:700;">'+info.count+'</span>'
+        +'</div>';
+    });
+    html+='</div></div>';
+  });
+  html+='</div></div>';
+  el.innerHTML=html;
+}
+
+
 function buildGrigliaCerano(){
+  buildDOutStats();
   var head=document.getElementById('grigliaCeranoHead');
   var tbody=document.getElementById('grigliaCeranoBody');
   if(!head||!tbody) return;
@@ -1149,13 +1212,11 @@ function buildGrigliaCerano(){
   var hh='<th style="padding:8px 10px;text-align:left;white-space:nowrap;">SETT.</th>';
   FC.forEach(function(f,fi){hh+='<th style="padding:8px 10px;text-align:center;min-width:130px;">'+f.cognome.toUpperCase()+'<br><span style="font-weight:600;font-size:.75rem;color:#d0e8ff;">'+f.nome+'</span><br><div style="display:flex;gap:4px;justify-content:center;margin-top:4px;"><button onclick="modificaFratelloCerano('+fi+')" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:.68rem;">✏</button><button onclick="rimuoviFratelloCerano('+fi+')" style="border:none;background:rgba(192,57,43,.5);color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:.68rem;">🗑</button><button onclick="inviaRiepilogoWA('+fi+')" style="border:none;background:#25D366;color:#fff;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.68rem;margin-top:2px;width:100%;">📱 Riepilogo</button></div></th>';});
   head.innerHTML=hh;
-  var d=new Date(anno,0,1);while(d.getDay()!==6)d.setDate(d.getDate()+1);
-  var html='',mp=-1;
-  while(d.getFullYear()===anno){
-    var m=d.getMonth()+1,g=d.getDate();
-    var rk=anno+'_'+String(m).padStart(2,'0')+'_'+String(g).padStart(2,'0');
-    if(m!==mp){html+='<tr style="background:#e8e4dc;"><td colspan="'+(FC.length+1)+'" style="padding:5px 10px;font-weight:700;color:var(--navy);font-size:.8rem;">'+MGC[m].toUpperCase()+' '+anno+'</td></tr>';mp=m;}
-    html+='<tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:5px 10px;font-weight:600;color:var(--navy);white-space:nowrap;">'+g+' '+MGC[m].substring(0,3)+'</td>';
+  var foot=document.getElementById('grigliaCeranoFoot');
+  if(foot) foot.innerHTML=hh;
+
+  function buildRiga(rk,bgStyle){
+    var rowHtml='';
     FC.forEach(function(f,fi){
       var ck=rk+'_'+fi,s=sv[ck]||{cong:'',disc:'',tema:''};
       var co='<option value="">—</option>';
@@ -1165,7 +1226,7 @@ function buildGrigliaCerano(){
       var gi=state.congregazioni.find(function(c){return c.nome===s.cong;});
       var go=gi?(gi.giorno||'')+(gi.orario?' ore '+gi.orario:''):'';
       var tema=s.tema||(s.disc?SCHEMI_MAP[parseInt(s.disc)]||'':'');
-      html+='<td style="padding:3px 5px;vertical-align:top;">'
+      rowHtml+='<td style="padding:3px 5px;vertical-align:top;">'
         +'<select onchange="gSalvaCong('+q+ck+q+',this.value)" style="width:100%;font-size:.88rem;padding:2px;border:1px solid #aaa;border-radius:4px;margin-bottom:2px;background:#fff;color:#1a2744;font-weight:600;">'+co+'</select>'
         +'<div id="go_'+ck+'" style="font-size:.82rem;color:var(--teal);font-weight:600;margin-bottom:2px;white-space:nowrap;">'+go+'</div>'
         +'<select onchange="gSalvaDisc('+q+ck+q+',this.value)" style="width:100%;font-size:.88rem;padding:2px;border:1px solid #aaa;border-radius:4px;margin-bottom:2px;background:#fff;color:#1a2744;font-weight:600;">'+diso+'</select>'
@@ -1176,7 +1237,37 @@ function buildGrigliaCerano(){
         +'</div>'
         +'</td>';
     });
-    html+='</tr>';d.setDate(d.getDate()+7);
+    return rowHtml;
+  }
+  var d=new Date(anno,0,1);while(d.getDay()!==6)d.setDate(d.getDate()+1);
+  var html='',mp=-1;
+  while(d.getFullYear()===anno){
+    var m=d.getMonth()+1,g=d.getDate();
+    var rk=anno+'_'+String(m).padStart(2,'0')+'_'+String(g).padStart(2,'0');
+    // Calcola chiave domenica (sabato+1)
+    var dDom=new Date(anno,m-1,g+1);
+    var hasDomAnno=dDom.getFullYear()===anno;
+    var md=hasDomAnno?dDom.getMonth()+1:0, gd=hasDomAnno?dDom.getDate():0;
+    var rkDom=hasDomAnno?anno+'_'+String(md).padStart(2,'0')+'_'+String(gd).padStart(2,'0'):'';
+    // Controlla se sabato o domenica hanno dati
+    var hasSab=FC.some(function(f,fi){var cs=rk+'_'+fi;return sv[cs]&&(sv[cs].cong||sv[cs].disc);});
+    var hasDom=hasDomAnno&&FC.some(function(f,fi){var cd=rkDom+'_'+fi;return sv[cd]&&(sv[cd].cong||sv[cd].disc);});
+    // Mostra la settimana solo se almeno un giorno ha dati
+    if(hasSab||hasDom){
+      if(m!==mp){html+='<tr style="background:#e8e4dc;"><td colspan="'+(FC.length+1)+'" style="padding:5px 10px;font-weight:700;color:var(--navy);font-size:.8rem;">'+MGC[m].toUpperCase()+' '+anno+'</td></tr>';mp=m;}
+      // Riga sabato solo se ha dati
+      if(hasSab){
+        html+='<tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:5px 10px;font-weight:600;color:var(--navy);white-space:nowrap;">'+g+' '+MGC[m].substring(0,3)+'</td>';
+        html+=buildRiga(rk)+'</tr>';
+      }
+      // Riga domenica solo se ha dati
+      if(hasDom){
+        if(md!==mp){html+='<tr style="background:#e8e4dc;"><td colspan="'+(FC.length+1)+'" style="padding:5px 10px;font-weight:700;color:var(--navy);font-size:.8rem;">'+MGC[md].toUpperCase()+' '+anno+'</td></tr>';mp=md;}
+        html+='<tr style="border-bottom:1px solid var(--cream-dark);background:#fffbf0;"><td style="padding:5px 10px;font-weight:600;color:var(--navy);white-space:nowrap;">'+gd+' '+MGC[md].substring(0,3)+'</td>';
+        html+=buildRiga(rkDom)+'</tr>';
+      }
+    }
+    d.setDate(d.getDate()+7);
   }
   tbody.innerHTML=html;
 }
@@ -1217,23 +1308,22 @@ function apriModalGriglia(ck){
   document.getElementById('mgDisc').innerHTML=diso;
   // Tema
   var tema=s.tema||(s.disc?SCHEMI_MAP[parseInt(s.disc)]||'':'');
-  document.getElementById('mgTema').textContent=tema;
+  document.getElementById('mgTema').value=tema;
   document.getElementById('mgDisc').onchange=function(){
     var t=this.value?SCHEMI_MAP[parseInt(this.value)]||'':'';
-    document.getElementById('mgTema').textContent=t;
+    document.getElementById('mgTema').value=t;
   };
   document.getElementById('modalGriglia').classList.add('open');
 }
 function salvaGrigliaCell(){
   var ck=state._mgCk; if(!ck) return;
-  var sk='grigliaCerano_'+(parseInt(state.anno)||new Date().getFullYear());
-  var sv=JSON.parse(localStorage.getItem(sk)||'{}');
-  if(!sv[ck]) sv[ck]={};
-  sv[ck].cong=document.getElementById('mgCong').value;
+  if(!state.grigliaCerano)state.grigliaCerano={};
+  if(!state.grigliaCerano[ck])state.grigliaCerano[ck]={};
+  state.grigliaCerano[ck].cong=document.getElementById('mgCong').value;
   var disc=document.getElementById('mgDisc').value;
-  sv[ck].disc=disc;
-  sv[ck].tema=disc?SCHEMI_MAP[parseInt(disc)]||'':'';
-  localStorage.setItem(sk,JSON.stringify(sv));
+  state.grigliaCerano[ck].disc=disc;
+  state.grigliaCerano[ck].tema=document.getElementById('mgTema').value.trim();
+  salvaStorage();
   closeModal('modalGriglia');
   buildGrigliaCerano();
 }
@@ -1332,7 +1422,7 @@ function buildEntrataStats(){
   // Ordina oratori per count
   var oratoriList=Object.keys(oratoreMap).sort(function(a,b){return oratoreMap[b].count-oratoreMap[a].count;});
   var html='<div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:4px;">'
-    +'<div style="font-family:\'Crimson Pro\',serif;font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;">'
+    +'<div style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;">'
     +'📊 Anno '+anno+' — <span style="color:var(--teal);">'+totDiscorsi+' discorsi</span> · <span style="color:var(--teal);">'+totFratelli+' fratelli</span> · <span style="color:var(--teal);">'+totCong+' congregazioni</span>'
     +'</div>'
     // Congregazioni
@@ -1452,6 +1542,21 @@ function geSelOratore(ck,val){
   var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
   if(speciali.indexOf(val)<0 && val!==''){
     var o=state.oratoriDb[parseInt(val)];if(o)sv[ck].cong=o.congregazione||'';
+    // Sync automatico in D-Out se e' un fratello di Cerano
+    if(o&&(o.congregazione||'').trim().toLowerCase()==='cerano'){
+      var FC=getFratelliCerano();
+      var fi=FC.findIndex(function(f){
+        return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+            && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+      });
+      if(fi>=0){
+        var doutCk=entrataKeyToDoutKey(ck)+'_'+fi;
+        if(!state.grigliaCerano)state.grigliaCerano={};
+        if(!state.grigliaCerano[doutCk])state.grigliaCerano[doutCk]={};
+        state.grigliaCerano[doutCk].cong=o.congregazione||'Cerano';
+        state.grigliaCerano[doutCk].disc=''; state.grigliaCerano[doutCk].tema='';
+      }
+    }
   }
   salvaStorage(); salvaSuCloud();
   var el=document.getElementById('gecong_'+ck);
@@ -1467,6 +1572,28 @@ function geSelDisc(ck,val){
   if(!state.grigliaEntrata)state.grigliaEntrata={}; var sv=state.grigliaEntrata;
   if(!sv[ck])sv[ck]={};
   sv[ck].disc=val; var tema=val?SCHEMI_MAP[parseInt(val)]||'':''; sv[ck].tema=tema;
+  // Sync automatico disc/tema in D-Out se e' un fratello di Cerano
+  var entry=sv[ck];
+  if(entry&&entry.orIdx!==''&&entry.orIdx!==undefined){
+    var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+    if(speciali.indexOf(entry.orIdx)<0){
+      var o=state.oratoriDb[parseInt(entry.orIdx)];
+      if(o&&(o.congregazione||'').trim().toLowerCase()==='cerano'){
+        var FC=getFratelliCerano();
+        var fi=FC.findIndex(function(f){
+          return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+              && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+        });
+        if(fi>=0){
+          var doutCk=entrataKeyToDoutKey(ck)+'_'+fi;
+          if(!state.grigliaCerano)state.grigliaCerano={};
+          if(!state.grigliaCerano[doutCk])state.grigliaCerano[doutCk]={};
+          state.grigliaCerano[doutCk].disc=val;
+          state.grigliaCerano[doutCk].tema=tema;
+        }
+      }
+    }
+  }
   salvaStorage(); salvaSuCloud();
   var el=document.getElementById('getema_'+ck);if(el){el.textContent=tema;el.title=tema;}
 }
@@ -2216,6 +2343,203 @@ function autoFillTitle(){
   if(SCHEMI_MAP[n]) document.getElementById('fTitolo').value=SCHEMI_MAP[n];
 }
 
+
+// ── TOAST NOTIFICA ─────────────────────────────────────────
+function showToast(msg){
+  var t=document.getElementById('syncToast');
+  if(!t)return;
+  t.textContent=msg; t.style.display='block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(function(){t.style.display='none';},4000);
+}
+
+// ── SYNC PROGRAMMA → D-OUT (solo fratelli di Cerano) ───────
+
+// ── SYNC MASSIVO: tutti i Cerano dal Programma → D-Out ─────
+
+// Converte chiave griglia Entrata → chiave D-Out: mantiene la data esatta
+function entrataKeyToDoutKey(ck){
+  return ck.replace(/^e_/,''); // es. e_2027_12_26 → 2027_12_26
+}
+
+// ── MODAL AGGIUNGI USCITA ────────────────────────────────────────────
+function apriModalUscita(){
+  var FC=getFratelliCerano();
+  // Popola fratelli (escludi Affuso o includi tutti — sceglie l'utente)
+  var selF=document.getElementById('uFratello');
+  selF.innerHTML='';
+  FC.forEach(function(f,fi){
+    var opt=document.createElement('option');
+    opt.value=fi;
+    opt.textContent=f.cognome+' '+f.nome;
+    selF.appendChild(opt);
+  });
+  // Popola giorni
+  var selG=document.getElementById('uGiorno');
+  selG.innerHTML='';
+  for(var d=1;d<=31;d++){var o=document.createElement('option');o.value=String(d).padStart(2,'0');o.textContent=d;selG.appendChild(o);}
+  // Popola mesi
+  var MGN=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  var selM=document.getElementById('uMese');
+  selM.innerHTML='';
+  for(var m=1;m<=12;m++){var o2=document.createElement('option');o2.value=String(m).padStart(2,'0');o2.textContent=MGN[m];selM.appendChild(o2);}
+  // Imposta mese corrente
+  selM.value=String(new Date().getMonth()+1).padStart(2,'0');
+  // Popola congregazioni
+  var selC=document.getElementById('uCong');
+  selC.innerHTML='<option value="">— nessuna —</option>';
+  (state.congregazioni||[]).forEach(function(c){
+    var o3=document.createElement('option');o3.value=c.nome;o3.textContent=c.nome;selC.appendChild(o3);
+  });
+  // Popola discorsi
+  var selD=document.getElementById('uDisc');
+  selD.innerHTML='<option value="">— nessuno —</option>';
+  SCHEMI.forEach(function(sc){var o4=document.createElement('option');o4.value=sc.n;o4.textContent=sc.n+' — '+sc.t;selD.appendChild(o4);});
+  document.getElementById('uTema').value='';
+  document.getElementById('uAnnoLabel').textContent='Anno '+( parseInt(state.anno)||new Date().getFullYear() );
+  document.getElementById('modalUscita').classList.add('open');
+}
+
+function uAutoTema(){
+  var v=document.getElementById('uDisc').value;
+  document.getElementById('uTema').value=v?SCHEMI_MAP[parseInt(v)]||'':'';
+}
+
+function salvaUscita(){
+  var fi=parseInt(document.getElementById('uFratello').value);
+  var gg=document.getElementById('uGiorno').value;
+  var mm=document.getElementById('uMese').value;
+  var anno=parseInt(state.anno)||new Date().getFullYear();
+  var cong=document.getElementById('uCong').value;
+  var disc=document.getElementById('uDisc').value;
+  var tema=document.getElementById('uTema').value.trim();
+  if(isNaN(fi)){alert('Seleziona un fratello.');return;}
+  // Valida che la data sia sabato o domenica
+  var dataCheck=new Date(anno,parseInt(mm)-1,parseInt(gg));
+  var dowCheck=dataCheck.getDay();
+  if(dowCheck!==6 && dowCheck!==0){
+    var giorniIT=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+    alert('Attenzione: il '+parseInt(gg)+'/'+parseInt(mm)+'/'+anno+' è '+giorniIT[dowCheck]+'. Le uscite sono di sabato o domenica.');
+    return;
+  }
+  var ck=anno+'_'+mm+'_'+gg+'_'+fi;
+  if(!state.grigliaCerano)state.grigliaCerano={};
+  if(!state.grigliaCerano[ck])state.grigliaCerano[ck]={};
+  state.grigliaCerano[ck].cong=cong;
+  state.grigliaCerano[ck].disc=disc;
+  state.grigliaCerano[ck].tema=tema||(disc?SCHEMI_MAP[parseInt(disc)]||'':'');
+  salvaStorage();
+  closeModal('modalUscita');
+  showPanel('dout',document.querySelector('.tab-btn[onclick*=dout]'));
+  buildGrigliaCerano();
+  showToast('Uscita salvata!');
+}
+
+
+// ── PULIZIA ENTRY NON VALIDE (date non sab/dom) ──────────────────────
+function pulisciGrigliaCerano(){
+  if(!state.grigliaCerano)return;
+  var sv=state.grigliaCerano;
+  var rimossi=0;
+  Object.keys(sv).forEach(function(ck){
+    var p=ck.split('_');
+    if(p.length<4) return;
+    var anno=parseInt(p[0]),m=parseInt(p[1]),g=parseInt(p[2]);
+    if(isNaN(anno)||isNaN(m)||isNaN(g)) return;
+    var d=new Date(anno,m-1,g);
+    var dow=d.getDay();
+    // Rimuovi se non è sabato (6) né domenica (0)
+    if(dow!==6 && dow!==0){
+      delete sv[ck];
+      rimossi++;
+    }
+  });
+  if(rimossi>0){
+    salvaStorage();
+    buildGrigliaCerano();
+    showToast('Rimossi '+rimossi+' inserimenti con date non valide.');
+  } else {
+    showToast('Nessuna entry non valida trovata.');
+  }
+}
+
+
+function sincronizzaTuttoDaProgr(){
+  var n=0; var debugKeys=[];
+  var FC=getFratelliCerano();
+  // Legge dalla griglia Entrata (dove hai i tuoi oratori)
+  var sv=state.grigliaEntrata||{};
+  Object.keys(sv).forEach(function(ck){
+    var entry=sv[ck];
+    if(!entry||entry.orIdx===''||entry.orIdx===undefined) return;
+    var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+    if(speciali.indexOf(entry.orIdx)>=0) return;
+    var o=state.oratoriDb[parseInt(entry.orIdx)];
+    if(!o) return;
+    if((o.congregazione||'').trim().toLowerCase()!=='cerano') return;
+    // Trova la colonna in D-Out
+    var fi=FC.findIndex(function(f){
+      return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+          && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+    });
+    if(fi<0) return;
+    // ck della griglia Entrata e' ANNO_MM_DD (gia' sabato)
+    // ck della griglia D-Out e' ANNO_MM_DD_FI
+    var doutCk=entrataKeyToDoutKey(ck)+'_'+fi;
+    if(!state.grigliaCerano)state.grigliaCerano={};
+    if(!state.grigliaCerano[doutCk])state.grigliaCerano[doutCk]={};
+    // Cancella chiave sabato SOLO se la chiave domenica e' diversa (evita doppioni senza perdere dati)
+    var dkP=doutCk.split('_');
+    var dkD=new Date(parseInt(dkP[0]),parseInt(dkP[1])-1,parseInt(dkP[2]));
+    if(dkD.getDay()!==6){
+      var dkS=new Date(dkD); var bk=dkD.getDay()===0?1:dkD.getDay()+1; dkS.setDate(dkS.getDate()-bk);
+      var sabKey=dkS.getFullYear()+'_'+String(dkS.getMonth()+1).padStart(2,'0')+'_'+String(dkS.getDate()).padStart(2,'0')+'_'+dkP[3];
+      if(sabKey!==doutCk) delete state.grigliaCerano[sabKey];
+    }
+    state.grigliaCerano[doutCk].cong=entry.cong||'Cerano';
+    state.grigliaCerano[doutCk].disc=entry.disc||'';
+    state.grigliaCerano[doutCk].tema=entry.tema||'';
+    debugKeys.push(doutCk+' -> '+o.cognome+' '+o.nome);
+    n++;
+  });
+  salvaStorage();
+  // Porta l'utente in D-Out e ricostruisce la griglia nel pannello attivo
+  showPanel('dout', document.querySelector('.tab-btn[onclick*=dout]'));
+  buildGrigliaCerano();
+  if(n>0){
+    showToast('Sincronizzati '+n+' oratori di Cerano in D-Out!');
+  } else {
+    alert('Nessun oratore di Cerano trovato nella griglia Entrata.');
+  }
+}
+
+function sincronizzaVersoDOut(o){
+  var FC=getFratelliCerano();
+  var MGN=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  var fi=FC.findIndex(function(f){
+    return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+        && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+  });
+  if(fi<0) return;
+  var anno=parseInt(state.anno)||parseInt(o.anno)||new Date().getFullYear();
+  var m=parseInt(o.mese)||1;
+  var g=parseInt(o.giorno)||1;
+  var d=new Date(anno,m-1,g);
+  var dow=d.getDay();
+  if(dow!==6){ var back=dow===0?1:dow+1; d.setDate(d.getDate()-back); }
+  var rm=d.getMonth()+1, rg=d.getDate();
+  var annoSab=d.getFullYear();
+  var ck=annoSab+'_'+String(rm).padStart(2,'0')+'_'+String(rg).padStart(2,'0')+'_'+fi;
+  if(!state.grigliaCerano)state.grigliaCerano={};
+  if(!state.grigliaCerano[ck])state.grigliaCerano[ck]={};
+  state.grigliaCerano[ck].cong=o.congDest||o.congregazione||'';
+  state.grigliaCerano[ck].disc=o.numDiscorso?String(o.numDiscorso):'';
+  state.grigliaCerano[ck].tema=o.titolo||(o.numDiscorso?SCHEMI_MAP[parseInt(o.numDiscorso)]||'':'');
+  setTimeout(function(){
+    showToast('Sincronizzato in D-Out: '+o.cognome+' '+o.nome+' - '+rg+' '+MGN[rm]+' '+annoSab);
+  },400);
+}
+
 function salvaOratore(){
   const nome=document.getElementById('fNome').value.trim();
   const cognome=document.getElementById('fCognome').value.trim();
@@ -2241,6 +2565,7 @@ function salvaOratore(){
   const ctx=state.editContext;
   const arr=ctx==='pin'?state.dpin:ctx==='out'?state.dout:state.oratori;
   if(state.editIndex!==null){ arr[state.editIndex]=o; } else { arr.push(o); if(ctx==='main'){ if(!state.oratoriAnnuale) state.oratoriAnnuale=[]; state.oratoriAnnuale.push(Object.assign({},o)); } }
+  if(ctx==='main') sincronizzaVersoDOut(o);
   salvaStorage(); salvaSuCloud(); closeModal('modalOratore'); renderAll();
 }
 
@@ -2875,5 +3200,56 @@ function aggiornaStiloSelOratore(sel){
     </div>
   </div>
 </div>
+<!-- MODAL AGGIUNGI USCITA -->
+<div class="modal-overlay" id="modalUscita">
+  <div class="modal-box" style="max-width:480px;border-radius:16px;overflow:hidden;padding:0;">
+    <!-- Header colorato -->
+    <div style="background:linear-gradient(135deg,#e67e22,#d35400);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:#fff;font-size:1.1rem;font-weight:700;">📤 Nuova Uscita</div>
+        <div style="color:rgba(255,255,255,.75);font-size:.8rem;" id="uAnnoLabel"></div>
+      </div>
+      <button onclick="closeModal('modalUscita')" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:1rem;">✕</button>
+    </div>
+    <!-- Corpo -->
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
+      <!-- Fratello -->
+      <div>
+        <label style="display:block;font-size:.78rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">👤 Fratello</label>
+        <select id="uFratello" style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:.95rem;font-weight:600;color:#1a2744;background:#fff;"></select>
+      </div>
+      <!-- Data -->
+      <div>
+        <label style="display:block;font-size:.78rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">📅 Data</label>
+        <div style="display:flex;gap:10px;">
+          <select id="uGiorno" style="flex:1;padding:10px 8px;border:2px solid #e0e0e0;border-radius:10px;font-size:.95rem;color:#1a2744;background:#fff;text-align:center;"></select>
+          <select id="uMese" style="flex:2;padding:10px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:.95rem;color:#1a2744;background:#fff;"></select>
+        </div>
+      </div>
+      <!-- Congregazione -->
+      <div>
+        <label style="display:block;font-size:.78rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">🏠 Congregazione di destinazione</label>
+        <select id="uCong" style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:.95rem;color:#1a2744;background:#fff;"></select>
+      </div>
+      <!-- Discorso -->
+      <div>
+        <label style="display:block;font-size:.78rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">📖 Discorso</label>
+        <select id="uDisc" onchange="uAutoTema()" style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:.9rem;color:#1a2744;background:#fff;"></select>
+      </div>
+      <!-- Tema -->
+      <div>
+        <label style="display:block;font-size:.78rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;">✏️ Tema</label>
+        <input type="text" id="uTema" placeholder="Compilato automaticamente — modificabile" style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:.9rem;color:#1a2744;background:#fff;box-sizing:border-box;">
+      </div>
+    </div>
+    <!-- Footer -->
+    <div style="padding:14px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #eee;">
+      <button onclick="closeModal('modalUscita')" style="padding:10px 22px;border:2px solid #ddd;border-radius:10px;background:#fff;color:#555;font-weight:700;cursor:pointer;font-size:.9rem;">Annulla</button>
+      <button onclick="salvaUscita()" style="padding:10px 28px;border:none;border-radius:10px;background:linear-gradient(135deg,#e67e22,#d35400);color:#fff;font-weight:700;cursor:pointer;font-size:.9rem;">💾 Salva Uscita</button>
+    </div>
+  </div>
+</div>
+
+<div id="syncToast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a2744;color:#fff;padding:12px 22px;border-radius:10px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 18px rgba(0,0,0,.3);text-align:center;max-width:88%;"></div>
 </body>
 </html>
