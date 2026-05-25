@@ -2155,20 +2155,27 @@ function renderCongList(){
 // ── ESPORTA SCHEMI USATI NEL 2027 ───────────────────────────────────
 function esportaUsati2027(){
   var anno=2027;
-  var usati=[];
-  // 1. Schemi predefiniti 2027
-  DISCORSI_2027.forEach(function(n){ usati.push(n); });
-  // 2. Schemi aggiunti manualmente per il 2027
+  var usatiSet={};
+  // 1. Dalla griglia Entrata (stessa logica di renderSchemi)
+  var sv=state.grigliaEntrata||{};
+  Object.keys(sv).forEach(function(ck){
+    var p=ck.split('_'); if(p.length<3) return;
+    var ckAnno=parseInt(p[1]);
+    if(ckAnno!==anno) return;
+    var disc=parseInt(sv[ck].disc||0);
+    if(disc&&!isNaN(disc)) usatiSet[disc]=true;
+  });
+  // 2. Schemi predefiniti 2027
+  DISCORSI_2027.forEach(function(n){ usatiSet[n]=true; });
+  // 3. Schemi aggiunti manualmente
   if(state.schemiAnno&&state.schemiAnno[anno]){
-    state.schemiAnno[anno].forEach(function(n){
-      if(usati.indexOf(n)<0) usati.push(n);
-    });
+    state.schemiAnno[anno].forEach(function(n){ usatiSet[n]=true; });
   }
+  var usati=Object.keys(usatiSet).map(Number).sort(function(a,b){return a-b;});
   if(!usati.length){
-    alert('Nessuno schema segnato per il '+anno+'.');
+    alert('Nessuno schema trovato per il '+anno+'.');
     return;
   }
-  usati.sort(function(a,b){return a-b;});
   alert('Schemi usati nel '+anno+' ('+usati.length+' totali):\n\n'+usati.join(', '));
 }
 
