@@ -1538,9 +1538,26 @@ function buildGrigliaEntrata(){
 function geSelOratore(ck,val){
   if(!state.grigliaEntrata)state.grigliaEntrata={}; var sv=state.grigliaEntrata;
   if(!sv[ck])sv[ck]={};
-  sv[ck].orIdx=val; sv[ck].disc=''; sv[ck].tema=''; sv[ck].cong='';
-  // Speciali: nessuna congregazione, nessun discorso
+  // Se l'oratore viene rimosso (val=''), cancella la cella D-Out se era un ceranista
   var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+  if(val==='' || val===undefined){
+    var prevIdx=sv[ck].orIdx;
+    if(prevIdx!==undefined && prevIdx!=='' && speciali.indexOf(prevIdx)<0){
+      var prevO=state.oratoriDb[parseInt(prevIdx)];
+      if(prevO&&(prevO.congregazione||'').trim().toLowerCase()==='cerano'){
+        var FC=getFratelliCerano();
+        var fi=FC.findIndex(function(f){
+          return f.cognome.trim().toLowerCase()===(prevO.cognome||'').trim().toLowerCase()
+              && f.nome.trim().toLowerCase()===(prevO.nome||'').trim().toLowerCase();
+        });
+        if(fi>=0 && state.grigliaCerano){
+          var doutCkDel=entrataKeyToDoutKey(ck)+'_'+fi;
+          delete state.grigliaCerano[doutCkDel];
+        }
+      }
+    }
+  }
+  sv[ck].orIdx=val; sv[ck].disc=''; sv[ck].tema=''; sv[ck].cong='';
   if(speciali.indexOf(val)<0 && val!==''){
     var o=state.oratoriDb[parseInt(val)];if(o)sv[ck].cong=o.congregazione||'';
     // Sync automatico in D-Out se e' un fratello di Cerano
