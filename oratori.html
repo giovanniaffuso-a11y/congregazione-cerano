@@ -372,6 +372,9 @@
         <button onclick="aggiungiSchema2027()" style="flex:1;background:#2471a3;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2027</button>
         <button onclick="rimuoviSchema2027()" style="flex:1;background:#784212;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2027</button>
         <button onclick="esportaUsati2027()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">📋 Usati 2027</button>
+        <button onclick="aggiungiSchema2027()" style="flex:1;background:#2471a3;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2027</button>
+        <button onclick="rimuoviSchema2027()" style="flex:1;background:#784212;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2027</button>
+        <button onclick="esportaUsati2027()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">📋 Usati 2027</button>
       </div>
     </div>
     <div class="list-card" id="schemiList"></div>
@@ -1941,21 +1944,39 @@ function syncManuale(){
   });
 }
 function autoSyncAvvio(){
-  // Sync silenzioso in background - non blocca l'apertura dell'app
-  var apiKey=localStorage.getItem('cloudApiKey')||'';
-  var binId=localStorage.getItem('cloudBinId')||'';
+  var apiKey=localStorage.getItem('cloudApiKey')||'$2a$10$40sWcOQrCASIrvDUztKHg.x8vJ0PsMJnmjCvYQ/FtHf.pVWlYKIjK';
+  var binId=localStorage.getItem('cloudBinId')||'69d8e1b7aaba882197e3ca35';
   if(!apiKey||!binId) return;
-  var controller=new AbortController();
-  setTimeout(function(){controller.abort();},4000);
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
-    headers:{'X-Master-Key':apiKey},
-    signal:controller.signal
-  })
+  var ov=document.getElementById('autoSyncOverlay');
+  var msg=document.getElementById('autoSyncMsg');
+  var sub=document.getElementById('autoSyncSub');
+  var spin=document.getElementById('autoSyncSpinner');
+  var btn=document.getElementById('btnSyncManuale');
+  if(ov) ov.style.display='flex';
+  var timeout=setTimeout(function(){
+    if(msg) msg.textContent='⏱ Connessione lenta…';
+    if(sub) sub.textContent='Ancora in attesa del server';
+  }, 5000);
+  var abortCtrl=new AbortController();
+  setTimeout(function(){abortCtrl.abort();},3000);
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey},signal:abortCtrl.signal})
   .then(function(r){return r.json();})
   .then(function(res){
-    if(res&&res.record){ ripristinaDati(res.record); }
+    clearTimeout(timeout);
+    if(res&&res.record){
+      ripristinaDati(res.record);
+      if(msg) msg.textContent='✅ Dati aggiornati!';
+      if(sub) sub.textContent='Sincronizzazione completata';
+      if(spin) spin.style.display='none';
+      setTimeout(function(){if(ov) ov.style.display='none';}, 1000);
+    } else {
+      if(ov) ov.style.display='none';
+    }
   })
-  .catch(function(){});
+  .catch(function(){
+    clearTimeout(timeout);
+    if(ov) ov.style.display='none';
+  });
 }
 
 function buildAnnoSelect(){
