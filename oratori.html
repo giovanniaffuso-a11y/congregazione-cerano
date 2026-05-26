@@ -369,6 +369,8 @@
       <div style="display:flex;gap:6px;">
         <button onclick="aggiungiSchema2026()" style="flex:1;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2026</button>
         <button onclick="rimuoviSchema2026()" style="flex:1;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2026</button>
+        <button onclick="aggiungiSchema2027()" style="flex:1;background:#2471a3;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2027</button>
+        <button onclick="rimuoviSchema2027()" style="flex:1;background:#784212;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2027</button>
         <button onclick="esportaUsati2027()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">📋 Usati 2027</button>
       </div>
     </div>
@@ -1867,6 +1869,41 @@ function rimuoviSchema2026(){
   renderSchemi(document.getElementById('schemSearch').value);
   alert('Discorso '+n+' rimosso dal 2026!');
 }
+
+function aggiungiSchema2027(){
+  var input=prompt('Numero/i discorso da aggiungere al 2027 (uno o piu separati da virgola):');
+  if(!input) return;
+  var anno=2027;
+  if(!state.schemiAnno) state.schemiAnno={};
+  if(!state.schemiAnno[anno]) state.schemiAnno[anno]=[];
+  var numeri=input.split(',').map(function(x){return parseInt(x.trim());}).filter(function(n){return !isNaN(n)&&n>0;});
+  var aggiunti=[], presenti=[];
+  numeri.forEach(function(n){
+    if(state.schemiAnno[anno].indexOf(n)>=0||DISCORSI_2027.has(n)){presenti.push(n);}
+    else{state.schemiAnno[anno].push(n);aggiunti.push(n);}
+  });
+  state.schemiAnno[anno].sort(function(a,b){return a-b;});
+  salvaStorage(); salvaSuCloud();
+  renderSchemi(document.getElementById('schemSearch').value);
+  var msg='';
+  if(aggiunti.length) msg+='Aggiunti al 2027: '+aggiunti.join(', ')+'\n';
+  if(presenti.length) msg+='Già presenti: '+presenti.join(', ');
+  if(msg) alert(msg);
+}
+function rimuoviSchema2027(){
+  var n=parseInt(prompt('Numero discorso da rimuovere dal 2027:'));
+  if(!n||isNaN(n)){return;}
+  var anno=2027;
+  if(!state.schemiAnno) state.schemiAnno={};
+  if(!state.schemiAnno[anno]) state.schemiAnno[anno]=[];
+  var idx=state.schemiAnno[anno].indexOf(n);
+  if(idx<0){alert('Il numero '+n+' non è tra quelli aggiunti manualmente al 2027.');return;}
+  state.schemiAnno[anno].splice(idx,1);
+  salvaStorage(); salvaSuCloud();
+  renderSchemi(document.getElementById('schemSearch').value);
+  alert('Discorso '+n+' rimosso dal 2027!');
+}
+
 
 window.onload = () => {
   caricaStorage();
