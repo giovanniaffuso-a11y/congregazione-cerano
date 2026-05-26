@@ -1918,7 +1918,7 @@ window.onload = () => {
   var elMese=document.getElementById('selMese'); if(elMese) elMese.addEventListener('change', e=>{ state.mese=e.target.value; salvaStorage(); renderSchedule(); updateStats(); });
   document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
   initCloudUI();
-  autoSyncAvvio();
+  // autoSyncAvvio(); // disabilitato per velocizzare apertura
 };
 function syncManuale(){
   var btn=document.getElementById('btnSyncHeader');
