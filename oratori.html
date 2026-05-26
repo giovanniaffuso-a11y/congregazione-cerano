@@ -228,7 +228,7 @@
 </header>
 
 <!-- TABS -->
-<div id="autoSyncOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,39,68,0.92);flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+<div id="autoSyncOverlay" style="display:none!important;position:fixed;inset:0;z-index:9999;background:rgba(26,39,68,0.92);flex-direction:column;align-items:center;justify-content:center;gap:16px;">
   <div style="font-size:2.5rem;">☁️</div>
   <div id="autoSyncMsg" style="color:#fff;font-size:1rem;font-weight:700;text-align:center;">Sincronizzazione in corso…</div>
   <div id="autoSyncSub" style="color:rgba(255,255,255,.65);font-size:.82rem;text-align:center;">Attendere prego</div>
@@ -372,8 +372,6 @@
         <button onclick="aggiungiSchema2027()" style="flex:1;background:#2471a3;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2027</button>
         <button onclick="rimuoviSchema2027()" style="flex:1;background:#784212;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2027</button>
         <button onclick="esportaUsati2027()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">📋 Usati 2027</button>
-        <button onclick="aggiungiSchema2027()" style="flex:1;background:#2471a3;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">+ Fatti 2027</button>
-        <button onclick="rimuoviSchema2027()" style="flex:1;background:#784212;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">- Fatti 2027</button>
         <button onclick="esportaUsati2027()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px 8px;cursor:pointer;font-size:.85rem;font-weight:700;">📋 Usati 2027</button>
       </div>
     </div>
@@ -1837,7 +1835,8 @@ function scaricaDaCloud(){
   if(!apiKey||!binId){alert('Inserisci API Key e Bin ID prima di scaricare.');return;}
   localStorage.setItem('cloudApiKey',apiKey);
   setCloudStatus('Download in corso...', true);
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
+  var ac=new AbortController();setTimeout(function(){ac.abort();},3000);
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey},signal:ac.signal})
   .then(function(r){return r.json();})
   .then(function(res){
     ripristinaDati(res.record);
@@ -1845,6 +1844,55 @@ function scaricaDaCloud(){
   })
   .catch(function(){setCloudStatus('❌ Errore. Controlla API Key e Bin ID.',false);});
 }
+
+function aggiungiSchema2027(){
+  var input=prompt('Numero/i da aggiungere al 2027 (separati da virgola):');
+  if(!input) return;
+  var anno=2027;
+  if(!state.schemiAnno)state.schemiAnno={};
+  if(!state.schemiAnno[anno])state.schemiAnno[anno]=[];
+  var numeri=input.split(',').map(function(x){return parseInt(x.trim());}).filter(function(n){return !isNaN(n)&&n>0;});
+  var aggiunti=[],presenti=[];
+  numeri.forEach(function(n){
+    if(state.schemiAnno[anno].indexOf(n)>=0||DISCORSI_2027.has(n)){presenti.push(n);}
+    else{state.schemiAnno[anno].push(n);aggiunti.push(n);}
+  });
+  state.schemiAnno[anno].sort(function(a,b){return a-b;});
+  salvaStorage();salvaSuCloud();
+  renderSchemi(document.getElementById('schemSearch').value);
+  var msg='';
+  if(aggiunti.length) msg+='Aggiunti: '+aggiunti.join(', ')+'\n';
+  if(presenti.length) msg+='Già presenti: '+presenti.join(', ');
+  if(msg) alert(msg);
+}
+function rimuoviSchema2027(){
+  var n=parseInt(prompt('Numero da rimuovere dal 2027:'));
+  if(!n||isNaN(n)) return;
+  var anno=2027;
+  if(!state.schemiAnno)state.schemiAnno={};
+  if(!state.schemiAnno[anno])state.schemiAnno[anno]=[];
+  var idx=state.schemiAnno[anno].indexOf(n);
+  if(idx<0){alert('Non trovato nei manuali 2027.');return;}
+  state.schemiAnno[anno].splice(idx,1);
+  salvaStorage();salvaSuCloud();
+  renderSchemi(document.getElementById('schemSearch').value);
+  alert('Rimosso '+n+' dal 2027!');
+}
+function esportaUsati2027(){
+  var anno=2027, usatiSet={};
+  Object.keys(state.grigliaEntrata||{}).forEach(function(ck){
+    var p=ck.split('_');if(parseInt(p[1])!==anno)return;
+    var disc=parseInt((state.grigliaEntrata[ck]||{}).disc||0);
+    if(disc&&!isNaN(disc))usatiSet[disc]=true;
+  });
+  DISCORSI_2027.forEach(function(n){usatiSet[n]=true;});
+  (state.schemiAnno&&state.schemiAnno[anno]||[]).forEach(function(n){usatiSet[n]=true;});
+  var usati=[];for(var k in usatiSet){var n=parseInt(k);if(!isNaN(n)&&n>0)usati.push(n);}
+  usati.sort(function(a,b){return a-b;});
+  if(!usati.length){alert('Nessuno schema trovato per il 2027.');return;}
+  alert('Schemi usati nel 2027 ('+usati.length+' totali):\n\n'+usati.join(', '));
+}
+
 
 function aggiungiSchema2026(){
   var n=parseInt(prompt('Numero discorso da aggiungere al 2026:'));
@@ -1873,41 +1921,6 @@ function rimuoviSchema2026(){
   alert('Discorso '+n+' rimosso dal 2026!');
 }
 
-function aggiungiSchema2027(){
-  var input=prompt('Numero/i discorso da aggiungere al 2027 (uno o piu separati da virgola):');
-  if(!input) return;
-  var anno=2027;
-  if(!state.schemiAnno) state.schemiAnno={};
-  if(!state.schemiAnno[anno]) state.schemiAnno[anno]=[];
-  var numeri=input.split(',').map(function(x){return parseInt(x.trim());}).filter(function(n){return !isNaN(n)&&n>0;});
-  var aggiunti=[], presenti=[];
-  numeri.forEach(function(n){
-    if(state.schemiAnno[anno].indexOf(n)>=0||DISCORSI_2027.has(n)){presenti.push(n);}
-    else{state.schemiAnno[anno].push(n);aggiunti.push(n);}
-  });
-  state.schemiAnno[anno].sort(function(a,b){return a-b;});
-  salvaStorage(); salvaSuCloud();
-  renderSchemi(document.getElementById('schemSearch').value);
-  var msg='';
-  if(aggiunti.length) msg+='Aggiunti al 2027: '+aggiunti.join(', ')+'\n';
-  if(presenti.length) msg+='Già presenti: '+presenti.join(', ');
-  if(msg) alert(msg);
-}
-function rimuoviSchema2027(){
-  var n=parseInt(prompt('Numero discorso da rimuovere dal 2027:'));
-  if(!n||isNaN(n)){return;}
-  var anno=2027;
-  if(!state.schemiAnno) state.schemiAnno={};
-  if(!state.schemiAnno[anno]) state.schemiAnno[anno]=[];
-  var idx=state.schemiAnno[anno].indexOf(n);
-  if(idx<0){alert('Il numero '+n+' non è tra quelli aggiunti manualmente al 2027.');return;}
-  state.schemiAnno[anno].splice(idx,1);
-  salvaStorage(); salvaSuCloud();
-  renderSchemi(document.getElementById('schemSearch').value);
-  alert('Discorso '+n+' rimosso dal 2027!');
-}
-
-
 window.onload = () => {
   caricaStorage();
   buildAnnoSelect();
@@ -1921,7 +1934,7 @@ window.onload = () => {
   var elMese=document.getElementById('selMese'); if(elMese) elMese.addEventListener('change', e=>{ state.mese=e.target.value; salvaStorage(); renderSchedule(); updateStats(); });
   document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
   initCloudUI();
-  autoSyncAvvio();
+  // sync cloud disabilitato
 };
 function syncManuale(){
   var btn=document.getElementById('btnSyncHeader');
@@ -1957,9 +1970,8 @@ function autoSyncAvvio(){
     if(msg) msg.textContent='⏱ Connessione lenta…';
     if(sub) sub.textContent='Ancora in attesa del server';
   }, 5000);
-  var abortCtrl=new AbortController();
-  setTimeout(function(){abortCtrl.abort();},3000);
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey},signal:abortCtrl.signal})
+  var ac=new AbortController();setTimeout(function(){ac.abort();},3000);
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey},signal:ac.signal})
   .then(function(r){return r.json();})
   .then(function(res){
     clearTimeout(timeout);
@@ -1968,14 +1980,22 @@ function autoSyncAvvio(){
       if(msg) msg.textContent='✅ Dati aggiornati!';
       if(sub) sub.textContent='Sincronizzazione completata';
       if(spin) spin.style.display='none';
-      setTimeout(function(){if(ov) ov.style.display='none';}, 1000);
+      setTimeout(function(){if(ov) ov.style.display='none';}, 1500);
     } else {
-      if(ov) ov.style.display='none';
+      if(msg) msg.textContent='⚠️ Nessun dato nel cloud';
+      if(sub) sub.textContent='Controlla la connessione';
+      if(spin) spin.style.display='none';
+      if(btn) btn.style.display='block';
+      setTimeout(function(){if(ov) ov.style.display='none';}, 4000);
     }
   })
   .catch(function(){
     clearTimeout(timeout);
-    if(ov) ov.style.display='none';
+    if(msg) msg.textContent='📴 Offline';
+    if(sub) sub.textContent='Dati locali in uso';
+    if(spin) spin.style.display='none';
+    if(btn) btn.style.display='block';
+    setTimeout(function(){if(ov) ov.style.display='none';}, 3000);
   });
 }
 
@@ -2205,11 +2225,7 @@ function esportaUsati2027(){
   if(state.schemiAnno&&state.schemiAnno[anno]){
     state.schemiAnno[anno].forEach(function(n){ usatiSet[n]=true; });
   }
-  // Aggiungi sempre i predefiniti 2027 come fallback
-  [1,15,55,65,76,98,160].forEach(function(n){ usatiSet[n]=true; });
-  var usati=[];
-  for(var k in usatiSet){ var n=parseInt(k); if(!isNaN(n)&&n>0) usati.push(n); }
-  usati.sort(function(a,b){return a-b;});
+  var usati=Object.keys(usatiSet).map(Number).sort(function(a,b){return a-b;});
   if(!usati.length){
     alert('Nessuno schema trovato per il '+anno+'.');
     return;
