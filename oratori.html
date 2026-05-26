@@ -1538,26 +1538,9 @@ function buildGrigliaEntrata(){
 function geSelOratore(ck,val){
   if(!state.grigliaEntrata)state.grigliaEntrata={}; var sv=state.grigliaEntrata;
   if(!sv[ck])sv[ck]={};
-  // Se l'oratore viene rimosso (val=''), cancella la cella D-Out se era un ceranista
-  var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
-  if(val==='' || val===undefined){
-    var prevIdx=sv[ck].orIdx;
-    if(prevIdx!==undefined && prevIdx!=='' && speciali.indexOf(prevIdx)<0){
-      var prevO=state.oratoriDb[parseInt(prevIdx)];
-      if(prevO&&(prevO.congregazione||'').trim().toLowerCase()==='cerano'){
-        var FC=getFratelliCerano();
-        var fi=FC.findIndex(function(f){
-          return f.cognome.trim().toLowerCase()===(prevO.cognome||'').trim().toLowerCase()
-              && f.nome.trim().toLowerCase()===(prevO.nome||'').trim().toLowerCase();
-        });
-        if(fi>=0 && state.grigliaCerano){
-          var doutCkDel=entrataKeyToDoutKey(ck)+'_'+fi;
-          delete state.grigliaCerano[doutCkDel];
-        }
-      }
-    }
-  }
   sv[ck].orIdx=val; sv[ck].disc=''; sv[ck].tema=''; sv[ck].cong='';
+  // Speciali: nessuna congregazione, nessun discorso
+  var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
   if(speciali.indexOf(val)<0 && val!==''){
     var o=state.oratoriDb[parseInt(val)];if(o)sv[ck].cong=o.congregazione||'';
     // Sync automatico in D-Out se e' un fratello di Cerano
@@ -1913,35 +1896,28 @@ function autoSyncAvvio(){
   var spin=document.getElementById('autoSyncSpinner');
   var btn=document.getElementById('btnSyncManuale');
   if(ov) ov.style.display='flex';
-  var timeout=setTimeout(function(){
-    if(msg) msg.textContent='⏱ Connessione lenta…';
-    if(sub) sub.textContent='Ancora in attesa del server';
-  }, 5000);
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
+  // Timeout 3 secondi — se non risponde chiude subito
+  var controller=new AbortController();
+  var killTimer=setTimeout(function(){
+    controller.abort();
+  }, 3000);
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey},signal:controller.signal})
   .then(function(r){return r.json();})
   .then(function(res){
-    clearTimeout(timeout);
+    clearTimeout(killTimer);
     if(res&&res.record){
       ripristinaDati(res.record);
       if(msg) msg.textContent='✅ Dati aggiornati!';
       if(sub) sub.textContent='Sincronizzazione completata';
       if(spin) spin.style.display='none';
-      setTimeout(function(){if(ov) ov.style.display='none';}, 1500);
+      setTimeout(function(){if(ov) ov.style.display='none';}, 1000);
     } else {
-      if(msg) msg.textContent='⚠️ Nessun dato nel cloud';
-      if(sub) sub.textContent='Controlla la connessione';
-      if(spin) spin.style.display='none';
-      if(btn) btn.style.display='block';
-      setTimeout(function(){if(ov) ov.style.display='none';}, 4000);
+      if(ov) ov.style.display='none';
     }
   })
   .catch(function(){
-    clearTimeout(timeout);
-    if(msg) msg.textContent='📴 Offline';
-    if(sub) sub.textContent='Dati locali in uso';
-    if(spin) spin.style.display='none';
-    if(btn) btn.style.display='block';
-    setTimeout(function(){if(ov) ov.style.display='none';}, 3000);
+    clearTimeout(killTimer);
+    if(ov) ov.style.display='none';
   });
 }
 
@@ -2155,27 +2131,28 @@ function renderCongList(){
 // ── ESPORTA SCHEMI USATI NEL 2027 ───────────────────────────────────
 function esportaUsati2027(){
   var anno=2027;
-  var usatiSet={};
-  // 1. Dalla griglia Entrata (stessa logica di renderSchemi)
-  var sv=state.grigliaEntrata||{};
-  Object.keys(sv).forEach(function(ck){
-    var p=ck.split('_'); if(p.length<3) return;
-    var ckAnno=parseInt(p[1]);
-    if(ckAnno!==anno) return;
-    var disc=parseInt(sv[ck].disc||0);
-    if(disc&&!isNaN(disc)) usatiSet[disc]=true;
+  // Legge dall'app Oratori Pubblici (circoscrizione) che usa chiave oratoriAppV12
+  var raw=localStorage.getItem('oratoriAppV12');
+  var stateOratori=raw?JSON.parse(raw):{};
+  var schemiOratori=stateOratori.schemi||{};
+  var usati=[];
+  SCHEMI.forEach(function(sc){
+    var s=schemiOratori[sc.n]||schemiOratori[String(sc.n)]||{};
+    if(s[anno]||s[String(anno)]) usati.push(sc.n);
   });
-  // 2. Schemi predefiniti 2027
-  DISCORSI_2027.forEach(function(n){ usatiSet[n]=true; });
-  // 3. Schemi aggiunti manualmente
-  if(state.schemiAnno&&state.schemiAnno[anno]){
-    state.schemiAnno[anno].forEach(function(n){ usatiSet[n]=true; });
-  }
-  var usati=Object.keys(usatiSet).map(Number).sort(function(a,b){return a-b;});
   if(!usati.length){
-    alert('Nessuno schema trovato per il '+anno+'.');
+    // Prova anche con state locale
+    if(!state.schemi)state.schemi={};
+    SCHEMI.forEach(function(sc){
+      var s=state.schemi[sc.n]||{};
+      if(s[anno]||s[String(anno)]) usati.push(sc.n);
+    });
+  }
+  if(!usati.length){
+    alert('Nessuno schema segnato per il '+anno+'.\nAssicurati di avere i dati dell\'app Oratori Pubblici sincronizzati su questo browser.');
     return;
   }
+  usati.sort(function(a,b){return a-b;});
   alert('Schemi usati nel '+anno+' ('+usati.length+' totali):\n\n'+usati.join(', '));
 }
 
