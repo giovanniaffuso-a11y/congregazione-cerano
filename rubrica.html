@@ -5,7 +5,1709 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rubrica Congregazione Cerano</title>
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capabl<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rubrica Congregazione Cerano</title>
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rubrica Cerano">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Rubrica%20Cerano%22%2C%22short_name%22%3A%22Rubrica%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a1a2e%22%2C%22theme_color%22%3A%22%231a1a2e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%2527http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%3D%25270%25200%2520100%2520100%2527%253E%253Ctext%2520y%3D%2527.9em%2527%2520font-size%3D%252790%2527%253E%25F0%259F%2593%2596%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e; --ink2: #2d2d4e; --muted: #64748b;
+  --sky: #2563eb; --sky-light: #dbeafe; --sky-mid: #93c5fd;
+  --gold: #c9943a; --gold-light: #fef3c7;
+  --green: #16a34a; --green-light: #dcfce7;
+  --teal: #0d9488; --teal-light: #ccfbf1;
+  --red: #dc2626; --red-light: #fee2e2;
+  --orange: #ea580c; --orange-light: #ffedd5;
+  --bg: #f0f4ff; --card: #ffffff; --border: #e2e8f0;
+  --input-bg: #f8fafc;
+  --header-from: #1a1a2e; --header-to: #1e3a8a;
+  --shadow: 0 4px 24px rgba(37,99,235,.10);
+  --radius: 20px;
+}
+[data-theme="dark"] {
+  --ink: #f1f5f9; --ink2: #cbd5e1; --muted: #94a3b8;
+  --bg: #0f172a; --card: #1e293b; --border: #334155;
+  --input-bg: #0f172a;
+  --sky-light: #1e3a6e; --gold-light: #422006;
+  --green-light: #052e16; --teal-light: #042f2e;
+  --red-light: #450a0a; --orange-light: #431407;
+  --header-from: #0f172a; --header-to: #1e3a8a;
+  --shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; transition:background .3s,color .3s; }
+body::before { content:''; position:fixed; top:0; left:0; right:0; height:320px; background:linear-gradient(135deg,var(--header-from) 0%,var(--sky) 60%,var(--header-to) 100%); z-index:0; }
+
+/* LAYOUT */
+.container { max-width:900px; margin:0 auto; padding:0 18px 90px; position:relative; z-index:1; }
+
+/* HEADER */
+.header { padding:40px 0 28px; text-align:center; color:#fff; }
+.header-icon { font-size:40px; display:block; margin-bottom:8px; filter:drop-shadow(0 2px 8px rgba(201,148,58,.5)); }
+.header h1 { font-family:'Playfair Display',serif; font-size:34px; font-weight:700; margin-bottom:4px; }
+.header p  { font-size:14px; opacity:.7; font-weight:300; letter-spacing:.3px; }
+.toolbar { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.tool-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:10px; border:none; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .18s; white-space:nowrap; background:rgba(255,255,255,.15); color:#fff; backdrop-filter:blur(6px); }
+.tool-btn:hover { background:rgba(255,255,255,.28); }
+
+/* PANELS */
+.panel { background:var(--card); border-radius:26px; box-shadow:var(--shadow); padding:24px; margin-bottom:16px; transition:background .3s; }
+
+/* SEARCH */
+.search-wrap { position:relative; }
+.search-wrap svg { position:absolute; left:16px; top:50%; transform:translateY(-50%); width:17px; height:17px; color:var(--muted); pointer-events:none; }
+.search-wrap input { width:100%; padding:13px 44px; font-family:'DM Sans',sans-serif; font-size:15px; border:1.5px solid var(--border); border-radius:13px; background:var(--input-bg); color:var(--ink); outline:none; transition:border-color .2s,box-shadow .2s; }
+.search-wrap input:focus { border-color:var(--sky); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+.search-wrap input::placeholder { color:#a0aec0; }
+.search-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); font-size:19px; line-height:1; padding:4px; display:none; }
+
+/* TABS */
+.tabs { display:flex; gap:6px; margin-top:16px; }
+.tab { flex:1; padding:9px 0; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; background:var(--input-bg); color:var(--muted); }
+.tab.active { background:var(--sky); color:#fff; box-shadow:0 3px 10px rgba(37,99,235,.3); }
+
+/* STATS */
+.stats { display:flex; gap:10px; margin-top:14px; }
+.stat { flex:1; text-align:center; background:var(--input-bg); border-radius:12px; padding:10px 4px; }
+.stat-num { font-size:21px; font-weight:700; color:var(--sky); font-family:'Playfair Display',serif; }
+.stat-label { font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+
+/* ALPHA NAV */
+.alpha-nav { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:14px; }
+.alpha-btn { min-width:30px; height:30px; padding:0 4px; border:none; border-radius:8px; background:var(--input-bg); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:2px; }
+.alpha-btn:hover,.alpha-btn.active { background:var(--sky); color:#fff; }
+.alpha-btn.inactive { opacity:.28; pointer-events:none; }
+.alpha-count { font-size:9px; opacity:.8; }
+
+/* LIST HEADER */
+.list-header { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px; display:flex; justify-content:space-between; }
+
+/* CONTACT CARDS */
+.contact-list { display:flex; flex-direction:column; gap:7px; }
+.letter-group-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:var(--sky); padding:8px 0 2px; border-bottom:2px solid var(--sky-light); margin-top:8px; }
+.contact-card { display:flex; align-items:center; gap:12px; padding:13px 14px; border-radius:16px; background:var(--input-bg); border:1.5px solid transparent; transition:all .2s; animation:fadeIn .25s both; cursor:pointer; }
+.contact-card:hover { border-color:var(--sky-mid); background:var(--card); box-shadow:0 2px 12px rgba(37,99,235,.10); transform:translateY(-1px); }
+.contact-card.favorited { border-color:var(--gold) !important; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+.avatar { width:48px; height:48px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:#fff; letter-spacing:-.5px; }
+.av0 { background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+.av1 { background:linear-gradient(135deg,#c9943a,#a0722a); }
+.av2 { background:linear-gradient(135deg,#0d9488,#0f766e); }
+.av3 { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+.av4 { background:linear-gradient(135deg,#e11d48,#be123c); }
+.av5 { background:linear-gradient(135deg,#ea580c,#c2410c); }
+
+.contact-info { flex:1; min-width:0; }
+.contact-name { font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.contact-sub { font-size:12px; color:var(--muted); margin-top:3px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.contact-sub span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+
+/* ROLE BADGE */
+.role-badge { display:inline-flex; align-items:center; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+.role-Anziano      { background:var(--sky-light); color:var(--sky); }
+.role-Servitore    { background:var(--teal-light); color:var(--teal); }
+.role-PioReg       { background:var(--gold-light); color:var(--gold); }
+.role-PioAux       { background:var(--orange-light); color:var(--orange); }
+.role-Proclamatore { background:var(--input-bg); color:var(--muted); border:1px solid var(--border); }
+.role-Proclamatrice{ background:var(--input-bg); color:var(--muted); border:1px solid var(--border); }
+
+.card-actions { display:flex; gap:4px; flex-shrink:0; }
+.btn-icon { width:32px; height:32px; border-radius:9px; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .15s; font-size:14px; }
+.btn-wa   { background:#dcfce7; color:#16a34a; }
+.btn-wa:hover   { background:#16a34a; color:#fff; }
+.btn-call { background:var(--sky-light); color:var(--sky); }
+.btn-call:hover { background:var(--sky); color:#fff; }
+.btn-fav  { background:var(--gold-light); color:var(--gold); }
+.btn-fav:hover,.btn-fav.on { background:var(--gold); color:#fff; }
+.btn-view { background:var(--teal-light); color:var(--teal); }
+.btn-view:hover { background:var(--teal); color:#fff; }
+.btn-edit { background:var(--gold-light); color:#d97706; }
+.btn-edit:hover { background:#d97706; color:#fff; }
+.btn-del  { background:var(--red-light); color:var(--red); }
+.btn-del:hover  { background:var(--red); color:#fff; }
+
+/* EMPTY */
+.empty { text-align:center; padding:44px 24px; color:var(--muted); }
+.empty-icon { font-size:44px; margin-bottom:10px; display:block; }
+
+/* ── OVERLAY COMUNE ── */
+.overlay { position:fixed; inset:0; background:rgba(10,10,30,.6); backdrop-filter:blur(7px); z-index:100; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s; }
+.overlay.open { opacity:1; pointer-events:all; }
+
+/* ── MODAL EDIT (form completo) ── */
+.modal-edit {
+  background:var(--card); border-radius:26px; padding:28px 28px 24px;
+  width:94%; max-width:560px;
+  max-height:92vh; overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,.25);
+  transform:translateY(18px); transition:transform .25s;
+}
+.overlay.open .modal-edit { transform:translateY(0); }
+.modal-edit h2 { font-family:'Playfair Display',serif; font-size:21px; margin-bottom:20px; color:var(--ink); }
+
+/* ── MODAL DETAIL (vista scheda) ── */
+.modal-detail {
+  background:var(--card); border-radius:26px; padding:0;
+  width:94%; max-width:520px;
+  max-height:92vh; overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,.3);
+  transform:translateY(18px); transition:transform .25s;
+}
+.overlay.open .modal-detail { transform:translateY(0); }
+.detail-header { padding:28px 28px 20px; display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--border); }
+.detail-avatar { width:64px; height:64px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:#fff; flex-shrink:0; }
+.detail-title { flex:1; min-width:0; }
+.detail-title h3 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--ink); line-height:1.2; }
+.detail-title p { font-size:13px; color:var(--muted); margin-top:4px; }
+.detail-body { padding:20px 28px 24px; }
+.detail-section { margin-bottom:18px; }
+.detail-section-title { font-size:10px; font-weight:700; color:var(--sky); text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.detail-section-title::after { content:''; flex:1; height:1px; background:var(--sky-light); }
+.detail-row { display:flex; align-items:flex-start; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); }
+.detail-row:last-child { border-bottom:none; }
+.detail-icon { font-size:16px; width:24px; text-align:center; flex-shrink:0; margin-top:1px; }
+.detail-label { font-size:11px; color:var(--muted); font-weight:600; min-width:100px; }
+.detail-value { font-size:14px; color:var(--ink); font-weight:500; flex:1; word-break:break-word; }
+.detail-value a { color:var(--sky); text-decoration:none; }
+.detail-value a:hover { text-decoration:underline; }
+.detail-actions { display:flex; gap:8px; padding:0 28px 24px; flex-wrap:wrap; }
+.btn-detail-action { flex:1; min-width:120px; padding:11px; border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-wa-big   { background:var(--green-light); color:var(--green); }
+.btn-wa-big:hover   { background:var(--green); color:#fff; }
+.btn-call-big { background:var(--sky-light); color:var(--sky); }
+.btn-call-big:hover { background:var(--sky); color:#fff; }
+.btn-edit-big { background:var(--gold-light); color:#d97706; }
+.btn-edit-big:hover { background:#d97706; color:#fff; }
+.btn-close-detail { background:var(--red-light); color:var(--red); }
+.btn-close-detail:hover { background:var(--red); color:#fff; }
+
+/* ── FORM SECTIONS ── */
+.form-section { margin-bottom:16px; }
+.form-section-title { font-size:10px; font-weight:700; color:var(--sky); text-transform:uppercase; letter-spacing:.8px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--sky-light); display:flex; align-items:center; gap:6px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.form-group { margin-bottom:10px; }
+.form-group label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:5px; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width:100%; padding:11px 14px;
+  font-family:'DM Sans',sans-serif; font-size:14px;
+  border:1.5px solid var(--border); border-radius:11px;
+  background:var(--input-bg); color:var(--ink); outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-group textarea { resize:vertical; min-height:70px; }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color:var(--sky); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+.modal-actions { display:flex; gap:10px; margin-top:18px; }
+.btn-primary { flex:1; padding:12px; border:none; border-radius:12px; background:linear-gradient(135deg,var(--sky),#1d4ed8); color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s,transform .15s; box-shadow:0 4px 14px rgba(37,99,235,.3); }
+.btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+.btn-secondary { flex:1; padding:12px; border:1.5px solid var(--border); border-radius:12px; background:transparent; color:var(--ink); font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background .15s; }
+.btn-secondary:hover { background:var(--input-bg); }
+
+/* FAB */
+.fab { position:fixed; bottom:28px; right:28px; width:56px; height:56px; border-radius:17px; background:linear-gradient(135deg,var(--sky),#1d4ed8); border:none; color:#fff; font-size:28px; cursor:pointer; z-index:50; box-shadow:0 8px 24px rgba(37,99,235,.45); display:flex; align-items:center; justify-content:center; transition:transform .15s,box-shadow .15s; }
+.fab:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(37,99,235,.5); }
+
+/* TOAST */
+.toast { position:fixed; bottom:94px; left:50%; transform:translateX(-50%) translateY(14px); background:var(--ink2); color:#fff; padding:10px 20px; border-radius:12px; font-size:13px; font-weight:500; opacity:0; transition:all .28s; z-index:200; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* PRINT */
+@media print {
+  body::before { display:none; }
+  .toolbar,.search-wrap,.tabs,.stats,.alpha-nav,.card-actions,.fab,.toast,.overlay { display:none !important; }
+  .panel { box-shadow:none; border:1px solid #ddd; }
+  .contact-card { break-inside:avoid; border:1px solid #eee !important; background:#fff !important; }
+  .letter-group-title { color:#1a1a2e !important; }
+  h1 { color:#1a1a2e !important; }
+  .header { color:#1a1a2e; }
+  .print-header { display:block !important; }
+}
+.print-header { display:none; text-align:center; margin-bottom:16px; }
+.print-header h2 { font-family:'Playfair Display',serif; font-size:22px; }
+.print-header p  { font-size:12px; color:#666; }
+#fileInput { display:none; }
+
+@media(max-width:520px) {
+  .btn-edit,.btn-del,.btn-call { display:none; }
+  .header h1 { font-size:26px; }
+  .toolbar { flex-wrap:wrap; justify-content:center; }
+  .modal-edit,.modal-detail { width:100%; border-radius:20px 20px 0 0; margin-top:auto; align-self:flex-end; max-height:95vh; }
+  .overlay { align-items:flex-end; }
+  .form-row { grid-template-columns:1fr; }
+  .detail-label { min-width:80px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="print-header">
+    <h2>📖 <span id="printTitle">Rubrica Congregazione Cerano</span></h2>
+    <p><span id="printSub">Circoscrizione Lombardia 4</span> &mdash; stampato il <span id="printDate"></span></p>
+  </div>
+
+  <div class="header">
+    <span class="header-icon" id="headerIcon" title="Clicca per cambiare emoji" onclick="editHeader()" style="cursor:pointer">📖</span>
+    <h1 id="headerTitle" onclick="editHeader()" title="Clicca per modificare" style="cursor:pointer">Rubrica Congregazione</h1>
+    <p id="headerSub" onclick="editHeader()" title="Clicca per modificare" style="cursor:pointer;opacity:.85">Congregazione di Cerano &mdash; Circoscrizione Lombardia 4</p>
+    <p id="lastUpdateLabel" style="font-size:12px;opacity:.75;margin-top:4px;font-weight:400;">🕐 Ultimo aggiornamento: —</p>
+    <div class="toolbar">
+      <button class="tool-btn" onclick="toggleDark()"><span id="darkIcon">🌙</span> <span id="darkLabel">Scuro</span></button>
+      <button class="tool-btn" onclick="window.print()">🖨️ Stampa</button>
+      <button class="tool-btn" onclick="exportJSON()">💾 Backup</button>
+      <button class="tool-btn" onclick="document.getElementById('fileInput').click()">📂 Ripristina</button>
+      <button class="tool-btn" onclick="resetDati()">🔄 Ricarica</button>
+      <button class="tool-btn" onclick="openGestione()">⚙️ Gestione</button>
+      <button class="tool-btn" onclick="aggiornaOra()">⬇️ Aggiorna</button>
+      <button class="tool-btn" onclick="ripristinaBackup()">↩️ Backup</button>
+      <button class="tool-btn" onclick="openCloud()">☁️ Cloud</button>
+      <button class="tool-btn" id="btnInstall" style="display:none" onclick="installPWA()">📲 Installa App</button>
+      <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)">
+    </div>
+  </div>
+
+  <!-- SEARCH + TABS + STATS -->
+  <div class="panel">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Cerca per nome, numero, email, indirizzo…" oninput="onSearch()">
+      <button class="search-clear" id="clearBtn" onclick="clearSearch()">×</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="tabAll" onclick="setTab('all')">📋 Tutti</button>
+      <button class="tab" id="tabFav" onclick="setTab('fav')">⭐ Preferiti</button>
+      <button class="tab" id="tabAnz" onclick="setTab('anz')">👔 Anziani</button>
+      <button class="tab" id="tabServ" onclick="setTab('serv')">🤝 Servitori</button>
+      <button class="tab" id="tabPio" onclick="setTab('pio')">🚶 Pionieri</button>
+      <button class="tab" id="tabGrp" onclick="setTab('grp')">👥 Gruppi</button>
+    </div>
+    <!-- TAB CITTÀ -->
+    <div class="tabs" style="margin-top:6px;flex-wrap:wrap;" id="cityTabs">
+      <button class="tab active" id="cityAll" onclick="setCity(null)" style="font-size:11px;padding:6px 10px">🌍 Tutte</button>
+      <button class="tab" id="cityCAR" onclick="setCity('CERANO')" style="font-size:11px;padding:6px 10px">CERANO</button>
+      <button class="tab" id="cityTRE" onclick="setCity('TRECATE')" style="font-size:11px;padding:6px 10px">TRECATE</button>
+      <button class="tab" id="cityVES" onclick="setCity('VESPOLATE')" style="font-size:11px;padding:6px 10px">VESPOLATE</button>
+      <button class="tab" id="cityGAL" onclick="setCity('GALLIATE')" style="font-size:11px;padding:6px 10px">GALLIATE</button>
+      <button class="tab" id="cityMIE" onclick="setCity('CASCINA MIETTA')" style="font-size:11px;padding:6px 10px">C. MIETTA</button>
+      <button class="tab" id="cityAddBtn" onclick="openPaesi()" style="font-size:11px;padding:6px 10px;border-style:dashed;opacity:.85">➕ Paese</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Totale</div></div>
+      <div class="stat"><div class="stat-num" id="statFav">0</div><div class="stat-label">Preferiti</div></div>
+      <div class="stat"><div class="stat-num" id="statAnz">0</div><div class="stat-label">Anziani</div></div>
+      <div class="stat"><div class="stat-num" id="statServ">0</div><div class="stat-label">Servitori</div></div>
+      <div class="stat"><div class="stat-num" id="statVisible">0</div><div class="stat-label">Visibili</div></div>
+    </div>
+  </div>
+
+  <!-- PANNELLO VELOCE ANZIANI + SERVITORI -->
+  <div class="panel" id="pannelloVeloce" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <span style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--ink)">⚡ Pannello Veloce</span>
+      <div style="display:flex;gap:8px">
+        <button onclick="renderPannello();toast('✅ Aggiornato!')" style="background:var(--sky-light);color:var(--sky);border:none;border-radius:10px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer">🔄 Aggiorna</button>
+        <button onclick="togglePannello()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px">✕</button>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:700;color:var(--sky);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--sky-light)">👔 Anziani</div>
+      <div id="pvAnziani" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px"></div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--teal-light)">🤝 Servitori di Ministero</div>
+      <div id="pvServitori" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="alpha-nav" id="alphNav" style="flex:1"></div>
+      <button onclick="togglePannello()" title="Pannello Veloce" style="flex-shrink:0;margin-left:8px;background:var(--sky-light);color:var(--sky);border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">⚡ Pannello</button>
+    </div>
+    <div class="list-header"><span>Nome</span><span>Azioni</span></div>
+    <div class="contact-list" id="contactList"></div>
+  </div>
+</div>
+
+<button class="fab" onclick="openModal()" title="Aggiungi contatto">+</button>
+
+<!-- OVERLAY MODIFICA -->
+<div class="overlay" id="overlayEdit" onclick="overlayEditClick(event)">
+  <div class="modal-edit">
+    <h2 id="modalTitle">✏️ Nuovo Contatto</h2>
+
+    <div class="form-section">
+      <div class="form-section-title">👤 Informazioni Personali</div>
+      <div class="form-group"><label>Nome e Cognome *</label><input id="editName" type="text" placeholder="es. Rossi Mario"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Data di nascita</label><input id="editBirth" type="date"></div>
+        <div class="form-group"><label>Gruppo di servizio</label><input id="editGroup" type="text" placeholder="es. Gruppo 1"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📞 Contatti</div>
+      <div class="form-row">
+        <div class="form-group"><label>Cellulare *</label><input id="editPhone" type="tel" placeholder="es. 3401234567"></div>
+        <div class="form-group"><label>Altro numero</label><input id="editPhone2" type="tel" placeholder="es. 0321123456"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input id="editEmail" type="email" placeholder="es. mario.rossi@email.it"></div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">🏠 Indirizzo</div>
+      <div class="form-group"><label>Via / Indirizzo</label><input id="editAddress" type="text" placeholder="es. Via Roma 12"></div>
+      <div class="form-row">
+        <div class="form-group"><label>CAP</label><input id="editCap" type="text" placeholder="es. 28065"></div>
+        <div class="form-group"><label>Città</label><input id="editCity" type="text" placeholder="es. Cerano"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">⛪ Congregazione</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Privilegio / Ruolo</label>
+          <select id="editRole">
+            <option value="">— seleziona —</option>
+            <option value="Anziano">👔 Anziano</option>
+            <option value="Servitore">🤝 Servitore di Ministero</option>
+            <option value="PioReg">🚶 Pioniere Regolare</option>
+            <option value="PioAux">🏃 Pioniere Ausiliare</option>
+            <option value="Proclamatore">📖 Proclamatore</option>
+            <option value="Proclamatrice">📖 Proclamatrice</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Battezzato/a</label>
+          <select id="editBaptized">
+            <option value="">— seleziona —</option>
+            <option value="Sì">✅ Sì</option>
+            <option value="No">❌ No</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">📝 Note</div>
+      <div class="form-group"><label>Note personali</label><textarea id="editNotes" placeholder="Aggiungi note…"></textarea></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Annulla</button>
+      <button class="btn-primary" onclick="saveContact()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY DETTAGLIO -->
+<div class="overlay" id="overlayDetail" onclick="overlayDetailClick(event)">
+  <div class="modal-detail" id="modalDetailContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- OVERLAY GESTIONE RAPIDA -->
+<div class="overlay" id="overlayGestione" onclick="if(event.target===this)closeGestione()">
+  <div class="modal-edit" style="max-width:520px">
+    <h2>⚙️ Gestione Rapida</h2>
+
+    <!-- AGGIUNGI / TOGLI CONTATTO -->
+    <div style="background:var(--sky-light);border-radius:16px;padding:18px;margin-bottom:14px">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--sky);margin-bottom:12px">➕ Aggiungi / 🗑️ Togli Contatto</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="closeGestione();openModal()" style="flex:1;min-width:140px;padding:12px;background:var(--sky);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">➕ Nuovo Contatto</button>
+        <div style="flex:1;min-width:140px">
+          <select id="gestDeleteSel" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:6px">
+            <option value="">— seleziona da rimuovere —</option>
+          </select>
+          <button onclick="gestElimina()" style="width:100%;padding:10px;background:var(--red-light);color:var(--red);border:1.5px solid var(--red);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer">🗑️ Elimina selezionato</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMBIA RUOLO -->
+    <div style="background:var(--teal-light);border-radius:16px;padding:18px;margin-bottom:14px">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--teal);margin-bottom:12px">🎖️ Cambia Ruolo</div>
+      <select id="gestRuoloNome" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+        <option value="">— seleziona contatto —</option>
+      </select>
+      <select id="gestRuoloNuovo" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+        <option value="">— nuovo ruolo —</option>
+        <option value="Anziano">👔 Anziano</option>
+        <option value="Servitore">🤝 Servitore di Ministero</option>
+        <option value="PioReg">🚶 Pioniere Regolare</option>
+        <option value="PioAux">🏃 Pioniere Ausiliare</option>
+        <option value="Proclamatore">📖 Proclamatore</option>
+        <option value="Proclamatrice">📖 Proclamatrice</option>
+      </select>
+      <button onclick="gestCambiaRuolo()" style="width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">✅ Applica Ruolo</button>
+    </div>
+
+    <!-- CAMBIA GRUPPO -->
+    <div style="background:var(--gold-light);border-radius:16px;padding:18px;margin-bottom:18px">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:12px">👥 Cambia Gruppo</div>
+      <select id="gestGruppoNome" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+        <option value="">— seleziona contatto —</option>
+      </select>
+      <select id="gestGruppoNuovo" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+        <option value="">— nuovo gruppo —</option>
+        <option value="Gruppo Innocenti">👥 Gruppo Innocenti</option>
+        <option value="Gruppo Orrico">👥 Gruppo Orrico</option>
+        <option value="Gruppo Marinoni">👥 Gruppo Marinoni</option>
+        <option value="Gruppo Bellan">👥 Gruppo Bellan</option>
+        <option value="Gruppo Cazzolla">👥 Gruppo Cazzolla</option>
+      </select>
+      <button onclick="gestCambiaGruppo()" style="width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">✅ Applica Gruppo</button>
+    </div>
+
+    <!-- RINOMINA GRUPPO -->
+    <div style="background:var(--sky-light);border-radius:16px;padding:18px;margin-bottom:14px">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--sky);margin-bottom:12px">✏️ Rinomina Gruppo</div>
+      <select id="gestGruppoRinomina" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+        <option value="">— seleziona gruppo da rinominare —</option>
+        <option value="Gruppo Innocenti">👥 Gruppo Innocenti</option>
+        <option value="Gruppo Orrico">👥 Gruppo Orrico</option>
+        <option value="Gruppo Marinoni">👥 Gruppo Marinoni</option>
+        <option value="Gruppo Bellan">👥 Gruppo Bellan</option>
+        <option value="Gruppo Cazzolla">👥 Gruppo Cazzolla</option>
+        <option value="Gruppo Bellan">👥 Gruppo Bellan</option>
+      </select>
+      <input type="text" id="gestGruppoNuovoNome" placeholder="Nuovo nome (es. Gruppo Bellan)" style="width:100%;padding:11px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;margin-bottom:8px">
+      <button onclick="gestRinominaGruppo()" style="width:100%;padding:11px;background:var(--sky);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">✅ Rinomina</button>
+    </div>
+    <button class="btn-secondary" onclick="closeGestione()">Chiudi</button>
+  </div>
+</div>
+<div class="overlay" id="overlayGruppo" onclick="if(event.target===this)closeGruppo()">
+  <div class="modal-edit" style="max-width:500px">
+    <h2 id="grpModalTitle">✏️ Modifica Gruppo</h2>
+    <div style="background:var(--gold-light);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e">
+      ⚠️ Qui puoi cambiare solo Sorvegliante e Assistente. Per spostare un fratello di gruppo usa ⚙️ Gestione.
+    </div>
+    <div class="form-group">
+      <label>Sorvegliante (Anziano)</label>
+      <select id="grpSorv"></select>
+    </div>
+    <div class="form-group">
+      <label>Assistente (Servitore di Ministero)</label>
+      <select id="grpAss"></select>
+    </div>
+    <div style="background:var(--input-bg);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Membri del gruppo</div>
+      <div id="grpMembri" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeGruppo()">Annulla</button>
+      <button class="btn-primary" onclick="saveGruppo()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY INTESTAZIONE -->
+<div class="overlay" id="overlayHeader" onclick="if(event.target===this)closeHeader()">
+  <div class="modal-edit" style="max-width:460px">
+    <h2>✏️ Modifica Intestazione</h2>
+    <div class="form-group">
+      <label>Emoji / Icona</label>
+      <input type="text" id="hdrIcon" placeholder="📖" maxlength="4" style="font-size:26px;text-align:center;width:70px">
+    </div>
+    <div class="form-group">
+      <label>Titolo principale</label>
+      <input type="text" id="hdrTitle" placeholder="Rubrica Congregazione">
+    </div>
+    <div class="form-group">
+      <label>Sottotitolo (congregazione e circoscrizione)</label>
+      <input type="text" id="hdrSub" placeholder="Congregazione di Cerano — Circoscrizione Lombardia 4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeHeader()">Annulla</button>
+      <button class="btn-primary" onclick="saveHeader()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY CLOUD SYNC -->
+<div class="overlay" id="overlayCloud" onclick="if(event.target===this)closeCloud()">
+  <div class="modal-edit" style="max-width:480px">
+    <h2>☁️ Sincronizzazione Cloud</h2>
+    <div id="cloudStatusBox" style="padding:10px 14px;border-radius:12px;background:var(--input-bg);border:1.5px solid var(--border);font-size:13px;color:var(--muted);margin-bottom:16px;">
+      ⚪ Non configurata
+    </div>
+    <div class="form-group">
+      <label>API Key JSONBin.io <span style="font-weight:400;font-size:10px">(la stessa delle altre app)</span></label>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="cloudApiKey" placeholder="$2a$10$…" autocomplete="off" style="flex:1">
+        <button onclick="toggleApiKey()" id="btnShowKey" title="Mostra/Nascondi" style="background:var(--input-bg);border:1.5px solid var(--border);border-radius:11px;padding:0 12px;cursor:pointer;font-size:16px;flex-shrink:0">👁️</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Bin ID <span style="font-weight:400;font-size:10px">(si genera automaticamente — copialo sull'altro dispositivo)</span></label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="cloudBinId" placeholder="Verrà generato al primo caricamento">
+        <button class="btn-icon btn-view" title="Copia" onclick="navigator.clipboard.writeText(document.getElementById('cloudBinId').value);toast('📋 Bin ID copiato!')">📋</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      <button class="btn-primary" style="flex:none;padding:11px 18px" onclick="cloudUpload()">☁️ Carica su Cloud</button>
+      <button class="btn-primary" style="flex:none;padding:11px 18px;background:linear-gradient(135deg,#16a34a,#15803d)" onclick="cloudDownload()">⬇️ Scarica da Cloud</button>
+      <button class="btn-secondary" style="flex:none;padding:11px 14px" onclick="closeCloud()">Chiudi</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.5">
+      📌 <strong>Come usarlo:</strong> registrati gratis su <strong>jsonbin.io</strong> → copia la tua API Key → incollala qui → clicca <em>Carica su Cloud</em>. Sul cellulare incolla la stessa API Key + il Bin ID e clicca <em>Scarica da Cloud</em>.<br><br>
+      🔄 <strong>Aggiornamento automatico:</strong> una volta configurato, la rubrica si aggiorna da sola all'apertura e ogni 5 minuti.
+    </p>
+  </div>
+</div>
+
+<!-- OVERLAY GESTIONE PAESI -->
+<div class="overlay" id="overlayPaesi" onclick="if(event.target===this)closePaesi()">
+  <div class="modal-edit" style="max-width:460px">
+    <h2>📍 Gestione Paesi</h2>
+    <p style="opacity:.7;font-size:13px;margin:-4px 0 16px;line-height:1.5">Aggiungi o rimuovi i bottoni-filtro dei paesi. I paesi fissi restano sempre presenti.</p>
+    <div class="form-group">
+      <label>Nuovo paese</label>
+      <div style="display:flex;gap:8px">
+        <input id="paeseInput" type="text" placeholder="es. BORGOLAVEZZARO" style="flex:1" onkeydown="if(event.key==='Enter')addPaese()">
+        <button class="btn-primary" style="flex:0 0 auto;padding:12px 16px" onclick="addPaese()">➕ Aggiungi</button>
+      </div>
+    </div>
+    <div id="paesiList" style="margin-top:14px"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closePaesi()">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATI INIZIALI COMPLETI ──────────────────────────────────────────────────
+const INITIAL_FULL = [
+  {name:'Affuso Giovanni', phone:'3427694027', phone2:'', email:'', address:'Via Novara 50', cap:'28069', city:'TRECATE', birthdate:'', role:'Servitore', baptized:'Sì', group:'Gruppo Cazzolla', notes:'CDP – Coordinatore Discorsi Pubblici | Responsabile Uscieri e Microfonisti'},
+  {name:'Affuso Teresa', phone:'3490943419', phone2:'', email:'', address:'Via Novara 50', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Aula Gabriel', phone:'3889968613', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Innocenti', notes:'Uscieri/Microfonisti – Letteratura – Territori'},
+  {name:'Aula Leonard', phone:'3801405996', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Bellan', notes:'Responsabile Letteratura'},
+  {name:'Aula Salvina', phone:'3477810839', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Aula Vanessa', phone:'3518720555', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:'Uscieri/Microfonisti – assistente'},
+  {name:'Aula Vincenzo', phone:'3484775942', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Servitore', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Barberi Alessandro', phone:'3927413670', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Marinoni', notes:'Audio/Video – assistente'},
+  {name:'Barberi Rossana', phone:'3288539419', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Barberi Samuel', phone:'3464993783', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Marinoni', notes:'Territori – assistente'},
+  {name:'Bellan Celine', phone:'3494072241', phone2:'', email:'', address:'Via Strettura 4', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Bellan Daniele', phone:'3478169498', phone2:'', email:'danielebellan@gmail.com', address:'Via Strettura 4', cap:'28069', city:'TRECATE', birthdate:'', role:'Anziano', baptized:'Sì', group:'Gruppo Bellan', notes:'CCA – Coordinatore Corpo degli Anziani | Coordinatore Comitato di Gestione'},
+  {name:'Bellan Gisella', phone:'3408061825', phone2:'', email:'', address:'Via Strettura 4', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Belvisi Anna', phone:'3911111092', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Blanco Anna', phone:'3334025972', phone2:'', email:'', address:'Via F.lli Bricco 7', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Bocchino Dario', phone:'3341350377', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:'Contabilità – assistente'},
+  {name:'Bocchino Lidia', phone:'3347714112', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Bonanno Concetta', phone:'3923833450', phone2:'', email:'', address:'Via Boccaccio 14', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Boscaino Claudia', phone:'3405561055', phone2:'', email:'', address:'Via Seneca 14', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Bruni Daniela', phone:'3201147125', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'PioReg', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Bruno Gerardina', phone:'3939291467', phone2:'', email:'', address:'Via XXV Aprile 11', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Bruno Giuseppe', phone:'3933306273', phone2:'', email:'', address:'Via XXV Aprile 11', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Buglione Giuseppe', phone:'3479768213', phone2:'', email:'', address:'Via Ramati 16', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Calienni Pasquale', phone:'3409031358', phone2:'0321726459', email:'', address:'Via Garibaldi 25', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Catalano Rita', phone:'3395626172', phone2:'', email:'', address:'Via Vallazza 12', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Catalano Rosario', phone:'3386678991', phone2:'', email:'', address:'Via Vallazza 12', cap:'28065', city:'CERANO', birthdate:'', role:'Servitore', baptized:'Sì', group:'Gruppo Innocenti', notes:'Servitore di Ministero'},
+  {name:'Cattaneo Liliana', phone:'3406414283', phone2:'', email:'', address:'Via Lobrino 96', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Cavallo Immacolata', phone:'3458536648', phone2:'', email:'', address:'Via Camerona 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Cavallo Saverio', phone:'3405671468', phone2:'', email:'', address:'Via Camerona 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Cazzaro Francesco', phone:'3496430916', phone2:'', email:'', address:'Via Mascagni 9', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Orrico', notes:''},
+  {name:'Cazzolla Giovanni', phone:'3664895414', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Orrico', notes:'Territori – assistente'},
+  {name:'Cazzolla Ilenia', phone:'3205570758', phone2:'', email:'', address:'Via Cicogna 3', cap:'28069', city:'TRECATE', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Cazzolla Pablo', phone:'3469790015', phone2:'', email:'paxtime83@hotmail.com', address:'Via Cicogna 3', cap:'28069', city:'TRECATE', birthdate:'', role:'Anziano', baptized:'Sì', group:'Gruppo Cazzolla', notes:'Anziano | Sorvegliante Audio/Video e Microfonisti'},
+  {name:'Cazzolla Sheila', phone:'3333873987', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Celin Elisabetta', phone:'3472991742', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Circosta Rocchina', phone:'3337277902', phone2:'', email:'', address:'Via Boccaccio 17', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Circosta Vincenzo', phone:'3756428027', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Orrico', notes:'Audio/Video – Letteratura'},
+  {name:'Colombo Cristina', phone:'3337925207', phone2:'', email:'', address:'Via Cantù 37', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Colombo Marco', phone:'3392745870', phone2:'', email:'', address:'Via Cantù 37', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Marinoni', notes:'Audio/Video (Mixer)'},
+  {name:'Concas Antonella', phone:'3478444199', phone2:'', email:'', address:'Via S.Giorgio 8', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Concas Antonio', phone:'3470108662', phone2:'', email:'', address:'Via S.Giorgio 8', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Condello Franco', phone:'3389340859', phone2:'', email:'', address:'Via P.Micca 3', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Conte Bernardino', phone:'3476182535', phone2:'', email:'bernardino.conte@gmail.com', address:'Via Codino 22', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Conte Emanuela', phone:'3494749642', phone2:'', email:'', address:'Via Codino 22', cap:'28079', city:'VESPOLATE', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Cazzolla', notes:'Audio/Video'},
+  {name:'Coppola Anca', phone:'3886961632', phone2:'', email:'', address:'Cascina Mietta', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Coppola Filippo', phone:'3738852199', phone2:'', email:'', address:'Via Sozzago 12', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Coppola Luisa', phone:'3475439341', phone2:'', email:'', address:'Via Sozzago 12', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Coppola Stefano', phone:'3896410426', phone2:'', email:'', address:'Cascina Mietta', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'D\'Amore Antonietta', phone:'3880916503', phone2:'', email:'', address:'Via Cavour 34', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'D\'Amore Mario', phone:'3426808573', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Danieli Egidio', phone:'3484755895', phone2:'', email:'', address:'Via Ramati 8', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Danieli Filomena', phone:'3921149853', phone2:'', email:'', address:'Via Ramati 8', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'De Chiara Davide', phone:'3382475277', phone2:'', email:'', address:'Cascina Mietta 4', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'De Chiara Ripalta', phone:'3462102378', phone2:'', email:'', address:'Cascina Mietta 4', cap:'28065', city:'CASCINA MIETTA', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Del Grosso Alessandro', phone:'3518359336', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'De Luca Daniela', phone:'3201643957', phone2:'', email:'', address:'Via S.Giorgio 8', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'De Luca Valentina', phone:'3491264111', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Ferraresi Cristina', phone:'3711780379', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Giacalone Lidia', phone:'3338269814', phone2:'', email:'', address:'Via Codini 28', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Giacalone Salvatore', phone:'3338024790', phone2:'', email:'', address:'Via Codini 28', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Gozzi Aurora', phone:'3470765316', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Guarnieri Franco', phone:'3392363893', phone2:'', email:'', address:'Via Matteotti 19', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Innocenti', notes:'Pulizie – assistente'},
+  {name:'Innocenti Mario', phone:'3389011086', phone2:'', email:'marioin56@gmail.com', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Anziano', baptized:'Sì', group:'Gruppo Innocenti', notes:'Anziano | Sorvegliante Vita e Ministero Cristiano | Responsabile Pulizie | GVP'},
+  {name:'Innocenti Rossana', phone:'3381307050', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Lombardo Giuse', phone:'3454292223', phone2:'', email:'', address:'Via Matteotti 11', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Lucente Carmela', phone:'3396142281', phone2:'', email:'', address:'Via Cantù 37', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Orrico', notes:''},
+  {name:'Luisi Domenico', phone:'3282827185', phone2:'', email:'', address:'Via Camerona 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Luisi Filippo', phone:'3347946271', phone2:'', email:'', address:'', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:'Letteratura – assistente'},
+  {name:'Luisi Giuseppina', phone:'3478769729', phone2:'', email:'', address:'Via Camerona 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Luisi Marika', phone:'3277070769', phone2:'', email:'', address:'Via Camerona 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Cazzolla', notes:''},
+  {name:'Maffini Anna', phone:'3333838922', phone2:'', email:'', address:'Via Roma 63', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Managò Michela', phone:'3884860076', phone2:'', email:'', address:'', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Innocenti', notes:''},
+  {name:'Mandica Giovanni', phone:'3336527671', phone2:'', email:'', address:'Via Cantelli 11', cap:'28065', city:'CERANO', birthdate:'', role:'Servitore', baptized:'Sì', group:'Gruppo Innocenti', notes:'Servitore di Ministero'},
+  {name:'Mandica Susanna', phone:'3318327767', phone2:'', email:'', address:'Via Cantelli 11', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Innocenti', notes:''},
+  {name:'Marinini Valentina', phone:'3209290687', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Marinoni Daniele', phone:'3381999668', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Anziano', baptized:'Sì', group:'Gruppo Marinoni', notes:'Anziano | Sorvegliante del Servizio | Responsabile Letteratura e Territori'},
+  {name:'Mazzotta Michele', phone:'3453768298', phone2:'', email:'', address:'Vicolo Bricco 36', cap:'28065', city:'CERANO', birthdate:'', role:'Servitore', baptized:'Sì', group:'Gruppo Orrico', notes:'Servitore di Ministero | Assistente Pulizie'},
+  {name:'Mazzotta Pina', phone:'3497101045', phone2:'', email:'', address:'Vicolo Bricco 36', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Meduri Antonio', phone:'3357900651', phone2:'', email:'', address:'Via Cantelli 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Meduri Cecilia', phone:'3475072413', phone2:'', email:'', address:'Via Cantelli 22', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Cazzolla', notes:''},
+  {name:'Miraglia Emilio', phone:'3474518307', phone2:'', email:'', address:'Piazza S.Rocco 9', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Murgia Silvia', phone:'3202329477', phone2:'', email:'', address:'Via Fratelli Bricco 9', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Orrico Giuseppe', phone:'3391099256', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'Anziano', baptized:'Sì', group:'Gruppo Orrico', notes:'Anziano | Segretario | Responsabile Contabilità'},
+  {name:'Orrico Nadia', phone:'3319356009', phone2:'', email:'', address:'', cap:'28066', city:'GALLIATE', birthdate:'', role:'PioReg', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Palano Gianfranco', phone:'3402300973', phone2:'', email:'', address:'Via Cantù 37', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Servitore', baptized:'', group:'Gruppo Orrico', notes:'Servitore di Ministero'},
+  {name:'Peluso Anna', phone:'0321721692', phone2:'', email:'', address:'Via Cantelli 11', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Perez Fiorenza', phone:'3383224163', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Orrico', notes:''},
+  {name:'Perla Alan', phone:'3402729237', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Perla Anna', phone:'3515423573', phone2:'', email:'', address:'', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Marinoni', notes:''},
+  {name:'Petrillo Cristina', phone:'3483218801', phone2:'', email:'', address:'Via Cantelli 9', cap:'28065', city:'CERANO', birthdate:'', role:'PioReg', baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Petrillo Tommaso', phone:'3204162490', phone2:'', email:'', address:'Via Cantelli 9', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatore', baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Presta Luigina', phone:'3493323846', phone2:'', email:'', address:'Via De Gasperi 6', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'Sì', group:'Gruppo Bellan', notes:''},
+  {name:'Recchia Carmela', phone:'3402378624', phone2:'', email:'', address:'Via De Gasperi 3', cap:'28065', city:'CERANO', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Recchia Franco', phone:'3476466446', phone2:'', email:'', address:'Via De Gasperi 3', cap:'28065', city:'CERANO', birthdate:'', role:'Anziano', baptized:'', group:'Gruppo Marinoni', notes:'Anziano'},
+  {name:'Ubezio Giovanna', phone:'3451375740', phone2:'', email:'', address:'Via Carlo Marx 11', cap:'28079', city:'VESPOLATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Vetri Adima', phone:'3466541070', phone2:'', email:'', address:'Via Besozzi 18', cap:'28069', city:'TRECATE', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Marinoni', notes:''},
+  {name:'Braghin Christian', phone:'', phone2:'', email:'', address:'', cap:'', city:'', birthdate:'', role:'Proclamatore',  baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Braghin Elisa',    phone:'', phone2:'', email:'', address:'', cap:'', city:'', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Braghin Paolo',    phone:'', phone2:'', email:'', address:'', cap:'', city:'', birthdate:'', role:'Proclamatore',  baptized:'', group:'Gruppo Bellan', notes:''},
+  {name:'Mutascio Carmela', phone:'', phone2:'', email:'', address:'', cap:'', city:'', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Orrico',   notes:''},
+  {name:'Petrillo Emma',    phone:'', phone2:'', email:'', address:'', cap:'', city:'', birthdate:'', role:'Proclamatrice', baptized:'', group:'Gruppo Bellan', notes:''},
+];
+
+// ─── VARIABILI DI STATO ──────────────────────────────────────────────────────
+const AV_COLORS = 6;
+let data = [], editIndex = null, filterLetter = null, searchQ = '', activeTab = 'all', filterCity = null;
+
+// ─── LOAD / SAVE ─────────────────────────────────────────────────────────────
+function loadData() {
+  const version = localStorage.getItem('rubrica_data_version');
+  const s = localStorage.getItem('rubrica_pro_v2');
+  // Se la versione è precedente, forza il reload con i dati arricchiti
+  if (s && version === 'v11') {
+    try { data = JSON.parse(s); } catch { data = mkInitial(); }
+  } else {
+    // Prima apertura o aggiornamento: usa i dati arricchiti
+    data = mkInitial();
+    localStorage.setItem('rubrica_data_version', 'v11');
+  }
+  const dark = localStorage.getItem('rubrica_dark') === '1';
+  if (dark) applyDark(true);
+  document.getElementById('printDate').textContent = new Date().toLocaleDateString('it-IT');
+}
+
+function mkInitial() {
+  return INITIAL_FULL.map(c => Object.assign({fav:false}, c));
+}
+
+function migrate(c) {
+  return {
+    name:      c.name      || '',
+    phone:     c.phone     || '',
+    fav:       c.fav       || false,
+    phone2:    c.phone2    || '',
+    email:     c.email     || '',
+    address:   c.address   || '',
+    cap:       c.cap       || '',
+    city:      c.city      || '',
+    birthdate: c.birthdate || '',
+    role:      c.role      || '',
+    baptized:  c.baptized  || '',
+    group:     c.group     || '',
+    notes:     c.notes     || ''
+  };
+}
+
+function saveAll() {
+  data.sort((a,b) => a.name.localeCompare(b.name,'it'));
+  localStorage.setItem('rubrica_pro_v2', JSON.stringify(data));
+  localStorage.setItem('rubrica_data_version', 'v11');
+}
+
+// ─── AVATAR ──────────────────────────────────────────────────────────────────
+function initials(name) {
+  const p = name.trim().split(/\s+/);
+  return p.length>=2 ? (p[0][0]+(p[1][0]||'')).toUpperCase() : name.slice(0,2).toUpperCase();
+}
+function avClass(name) {
+  let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))%AV_COLORS;
+  return 'av'+h;
+}
+
+// ─── FILTRO ──────────────────────────────────────────────────────────────────
+function filteredData() {
+  let d = data;
+  if (activeTab === 'fav')  d = d.filter(c => c.fav);
+  if (activeTab === 'anz')  d = d.filter(c => c.role === 'Anziano');
+  if (activeTab === 'serv') d = d.filter(c => c.role === 'Servitore');
+  if (activeTab === 'pio')  d = d.filter(c => c.role === 'PioReg' || c.role === 'PioAux');
+  if (activeTab === 'grp')  d = d; // tutti, raggruppati dopo
+  if (filterCity) d = d.filter(c => c.city === filterCity);
+  if (filterLetter) d = d.filter(c => c.name[0].toUpperCase() === filterLetter);
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    d = d.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      (c.phone  && c.phone.includes(q)) ||
+      (c.phone2 && c.phone2.includes(q)) ||
+      (c.email  && c.email.toLowerCase().includes(q)) ||
+      (c.address && c.address.toLowerCase().includes(q)) ||
+      (c.city   && c.city.toLowerCase().includes(q)) ||
+      (c.notes  && c.notes.toLowerCase().includes(q))
+    );
+  }
+  return d;
+}
+
+function getLetterCounts() {
+  let source = activeTab === 'all' ? data :
+               activeTab === 'fav' ? data.filter(c=>c.fav) :
+               activeTab === 'anz' ? data.filter(c=>c.role==='Anziano') :
+               activeTab === 'serv'? data.filter(c=>c.role==='Servitore') :
+               data.filter(c=>c.role==='PioReg'||c.role==='PioAux');
+  const map = {};
+  source.forEach(c => { const l=c.name[0].toUpperCase(); map[l]=(map[l]||0)+1; });
+  return map;
+}
+
+// ─── ROLE BADGE ──────────────────────────────────────────────────────────────
+const ROLE_LABELS = {
+  'Anziano':       '👔 Anziano',
+  'Servitore':     '🤝 Servitore',
+  'PioReg':        '🚶 Pio. Regolare',
+  'PioAux':        '🏃 Pio. Ausiliare',
+  'Proclamatore':  '📖 Proclamatore',
+  'Proclamatrice': '📖 Proclamatrice'
+};
+function roleBadge(role) {
+  if (!role) return '';
+  return `<span class="role-badge role-${role}">${ROLE_LABELS[role]||role}</span>`;
+}
+
+// ─── PHONE FORMAT ─────────────────────────────────────────────────────────────
+function formatPhone(p) {
+  if (!p) return '';
+  p = p.replace(/\D/g,'');
+  if (p.length===10) return p.replace(/(\d{3})(\d{3})(\d{4})/,'$1 $2 $3');
+  return p;
+}
+
+// ─── BUILD ALPHA NAV ─────────────────────────────────────────────────────────
+function buildAlpha() {
+  const counts = getLetterCounts();
+  const el = document.getElementById('alphNav');
+  el.innerHTML = '';
+  const all = document.createElement('button');
+  all.className = 'alpha-btn'+(!filterLetter?' active':'');
+  all.style.cssText = 'width:auto;padding:0 10px;font-size:12px;';
+  all.textContent = 'Tutti';
+  all.onclick = () => { filterLetter=null; render(); };
+  el.appendChild(all);
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => {
+    const btn = document.createElement('button');
+    const cnt = counts[l]||0;
+    btn.className = 'alpha-btn'+(filterLetter===l?' active':'')+(cnt===0?' inactive':'');
+    btn.innerHTML = l+'<span class="alpha-count">'+(cnt||'')+'</span>';
+    btn.onclick = () => { filterLetter=l; searchQ=''; document.getElementById('searchInput').value=''; render(); };
+    el.appendChild(btn);
+  });
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
+  buildAlpha();
+  const fd = filteredData();
+  const list = document.getElementById('contactList');
+  list.innerHTML = '';
+
+  const favCount  = data.filter(c=>c.fav).length;
+  const anzCount  = data.filter(c=>c.role==='Anziano').length;
+  const servCount = data.filter(c=>c.role==='Servitore').length;
+  document.getElementById('statTotal').textContent   = data.length;
+  document.getElementById('statFav').textContent     = favCount;
+  document.getElementById('statAnz').textContent     = anzCount;
+  document.getElementById('statServ').textContent    = servCount;
+  document.getElementById('statVisible').textContent = fd.length;
+  document.getElementById('clearBtn').style.display  = searchQ ? 'block' : 'none';
+
+  // Tab classes
+  ['tabAll','tabFav','tabAnz','tabServ','tabPio','tabGrp'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const tabMap = {all:'tabAll',fav:'tabFav',anz:'tabAnz',serv:'tabServ',pio:'tabPio',grp:'tabGrp'};
+  document.getElementById(tabMap[activeTab]).classList.add('active');
+
+  if (!fd.length) {
+    list.innerHTML = `<div class="empty"><span class="empty-icon">${activeTab==='fav'?'⭐':'🔍'}</span><p>Nessun contatto trovato.</p></div>`;
+    return;
+  }
+
+  // Vista GRUPPI — raggruppa per gruppo di servizio
+  if (activeTab === 'grp') {
+    const grpOrder  = ['Gruppo Innocenti','Gruppo Orrico','Gruppo Marinoni','Gruppo Bellan','Gruppo Cazzolla'];
+    const grpColors = {'Gruppo Innocenti':'#2563eb','Gruppo Orrico':'#0d9488','Gruppo Marinoni':'#c9943a','Gruppo Bellan':'#7c3aed','Gruppo Cazzolla':'#e11d48'};
+    const byGrp = {};
+    fd.forEach(c => { const k = c.group || 'Non assegnato'; if(!byGrp[k])byGrp[k]=[]; byGrp[k].push(c); });
+    [...grpOrder, 'Non assegnato'].forEach(grp => {
+      if (!byGrp[grp]) return;
+      const col  = grpColors[grp] || '#64748b';
+      const sorv = data.find(c => c.group===grp && c.role==='Anziano');
+      const ass  = data.find(c => c.group===grp && c.role==='Servitore');
+      const header = document.createElement('div');
+      header.style.cssText = `margin:14px 0 8px;padding:14px 16px;border-radius:16px;background:${col}18;border-left:5px solid ${col}`;
+      header.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:${col}">👥 ${grp}</div>
+            <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:10px">
+              ${sorv?`<span style="font-size:13px;font-weight:600;color:var(--ink)">👔 Sorv. <strong>${sorv.name}</strong></span>`:''}
+              ${ass ?`<span style="font-size:13px;font-weight:600;color:var(--ink)">🤝 Ass. <strong>${ass.name}</strong></span>`:''}
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">👤 ${byGrp[grp].length} membri</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button onclick="stampaGruppo('${grp}')" style="background:rgba(255,255,255,.2);color:${col};border:1.5px solid ${col};border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">🖨️ Stampa gruppo</button>
+          </div>
+        </div>`;
+      list.appendChild(header);
+      byGrp[grp].forEach(c => appendCard(c, list));
+    });
+    return;
+  }
+
+  const groups = {};
+  fd.forEach(c => { const l=c.name[0].toUpperCase(); if(!groups[l])groups[l]=[]; groups[l].push(c); });
+  Object.keys(groups).sort().forEach(l => {
+    if (Object.keys(groups).length > 1) {
+      const title = document.createElement('div');
+      title.className = 'letter-group-title';
+      title.textContent = l;
+      list.appendChild(title);
+    }
+    groups[l].forEach(c => appendCard(c, list));
+  });
+}
+
+function appendCard(c, list) {
+  const idx = data.indexOf(c);
+  const card = document.createElement('div');
+  card.className = 'contact-card'+(c.fav?' favorited':'');
+  const waNum  = (c.phone||'').replace(/\D/g,'');
+  const waLink = `https://wa.me/39${waNum}`;
+  const telLink= `tel:+39${waNum}`;
+  const subLine = [];
+  if (c.phone) subLine.push('📱 '+formatPhone(c.phone));
+  if (c.email) subLine.push('✉️ '+c.email);
+  if (c.city)  subLine.push('📍 '+c.city);
+  if (c.group) subLine.push('👥 '+c.group);
+  card.innerHTML = `
+    <div class="avatar ${avClass(c.name)}">${initials(c.name)}</div>
+    <div class="contact-info" onclick="openDetail(${idx})">
+      <div class="contact-name">${c.name} ${roleBadge(c.role)}</div>
+      <div class="contact-sub">${subLine.map(s=>`<span>${s}</span>`).join('')}</div>
+    </div>
+    <div class="card-actions" onclick="event.stopPropagation()">
+      <button class="btn-icon btn-wa"   title="WhatsApp" onclick="window.open('${waLink}','_blank')">💬</button>
+      <button class="btn-icon btn-call" title="Chiama"   onclick="window.open('${telLink}')">📞</button>
+      <button class="btn-icon btn-fav ${c.fav?'on':''}" title="Preferito" onclick="toggleFav(${idx})">⭐</button>
+      <button class="btn-icon btn-view" title="Scheda"   onclick="openDetail(${idx})">👁️</button>
+      <button class="btn-icon btn-edit" title="Modifica"  onclick="openModal(${idx})">✏️</button>
+      <button class="btn-icon btn-del"  title="Elimina"   onclick="deleteContact(${idx})">🗑️</button>
+    </div>`;
+  list.appendChild(card);
+}
+
+// ─── DETAIL VIEW ─────────────────────────────────────────────────────────────
+function openDetail(idx) {
+  const c = data[idx];
+  const waNum  = (c.phone||'').replace(/\D/g,'');
+  const waLink = `https://wa.me/39${waNum}`;
+  const telLink= `tel:+39${waNum}`;
+  const waNum2 = (c.phone2||'').replace(/\D/g,'');
+  const telLink2 = c.phone2 ? `tel:+39${waNum2}` : '';
+
+  function row(icon, label, value, isLink='') {
+    if (!value) return '';
+    const v = isLink ? `<a href="${isLink}" target="_blank">${value}</a>` : value;
+    return `<div class="detail-row">
+      <span class="detail-icon">${icon}</span>
+      <span class="detail-label">${label}</span>
+      <span class="detail-value">${v}</span>
+    </div>`;
+  }
+
+  let addr = [c.address, c.cap&&c.city ? c.cap+' '+c.city : (c.cap||c.city)].filter(Boolean).join(', ');
+
+  const birthStr = c.birthdate ? formatBirthdate(c.birthdate) : '';
+
+  // Costruisci link Google Maps
+  const mapsAddr = [c.address, c.city].filter(Boolean).join(', ');
+  const mapsLink = mapsAddr ? `https://maps.google.com/?q=${encodeURIComponent(mapsAddr)}` : '';
+
+  document.getElementById('modalDetailContent').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-avatar ${avClass(c.name)}">${initials(c.name)}</div>
+      <div class="detail-title">
+        <h3>${c.name}</h3>
+        <p>${ROLE_LABELS[c.role]||'Proclamatore'} ${c.group?'· '+c.group:''}</p>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="detail-section-title">📞 Contatti</div>
+        ${row('📱','Cellulare', formatPhone(c.phone), telLink)}
+        ${row('📞','Altro num.', formatPhone(c.phone2), telLink2)}
+        ${row('✉️','Email', c.email, c.email?'mailto:'+c.email:'')}
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">🏠 Indirizzo</div>
+        ${row('📍','Indirizzo', addr)}
+        ${mapsLink ? `<div class="detail-row">
+          <span class="detail-icon">🗺️</span>
+          <span class="detail-label">Maps</span>
+          <span class="detail-value"><a href="${mapsLink}" target="_blank" style="color:var(--sky);font-weight:600">📍 Apri in Google Maps</a></span>
+        </div>` : ''}
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">👤 Personale</div>
+        ${row('✅','Battezzato/a', c.baptized)}
+      </div>
+      ${c.notes ? `<div class="detail-section">
+        <div class="detail-section-title">📝 Note</div>
+        <div class="detail-row"><span class="detail-icon">📝</span><span class="detail-value">${c.notes}</span></div>
+      </div>` : ''}
+    </div>
+    <div class="detail-actions">
+      <button class="btn-detail-action btn-wa-big"   onclick="window.open('${waLink}','_blank')">💬 WhatsApp</button>
+      <button class="btn-detail-action btn-call-big" onclick="window.open('${telLink}')">📞 Chiama</button>
+      ${mapsLink ? `<button class="btn-detail-action" style="background:var(--green-light);color:var(--green)" onclick="window.open('${mapsLink}','_blank')">🗺️ Maps</button>` : ''}
+      <button class="btn-detail-action btn-edit-big" onclick="closeDetail();openModal(${idx})">✏️ Modifica</button>
+      <button class="btn-detail-action btn-close-detail" onclick="closeDetail()">✖ Chiudi</button>
+    </div>`;
+
+  document.getElementById('overlayDetail').classList.add('open');
+}
+
+function formatBirthdate(d) {
+  if (!d) return '';
+  const [y,m,g] = d.split('-');
+  if (!y||!m||!g) return d;
+  const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  return `${parseInt(g)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+function closeDetail() {
+  document.getElementById('overlayDetail').classList.remove('open');
+}
+function overlayDetailClick(e) {
+  if (e.target === document.getElementById('overlayDetail')) closeDetail();
+}
+
+// ─── MODAL EDIT ──────────────────────────────────────────────────────────────
+function openModal(idx=null) {
+  editIndex = idx;
+  const c = idx !== null ? data[idx] : {};
+  document.getElementById('modalTitle').textContent = idx===null ? '✏️ Nuovo Contatto' : '✏️ Modifica Contatto';
+  document.getElementById('editName').value     = c.name      || '';
+  document.getElementById('editPhone').value    = c.phone     || '';
+  document.getElementById('editPhone2').value   = c.phone2    || '';
+  document.getElementById('editEmail').value    = c.email     || '';
+  document.getElementById('editAddress').value  = c.address   || '';
+  document.getElementById('editCap').value      = c.cap       || '';
+  document.getElementById('editCity').value     = c.city      || '';
+  document.getElementById('editBirth').value    = c.birthdate || '';
+  document.getElementById('editRole').value     = c.role      || '';
+  document.getElementById('editBaptized').value = c.baptized  || '';
+  document.getElementById('editGroup').value    = c.group     || '';
+  document.getElementById('editNotes').value    = c.notes     || '';
+  document.getElementById('overlayEdit').classList.add('open');
+  setTimeout(()=>document.getElementById('editName').focus(), 200);
+}
+function closeModal() { document.getElementById('overlayEdit').classList.remove('open'); }
+function overlayEditClick(e) { if (e.target===document.getElementById('overlayEdit')) closeModal(); }
+
+function saveContact() {
+  const name  = document.getElementById('editName').value.trim();
+  const phone = document.getElementById('editPhone').value.trim();
+  if (!name || !phone) { toast('⚠️ Compila almeno nome e cellulare'); return; }
+  const obj = {
+    name,
+    phone,
+    fav:       editIndex!==null ? data[editIndex].fav : false,
+    phone2:    document.getElementById('editPhone2').value.trim(),
+    email:     document.getElementById('editEmail').value.trim(),
+    address:   document.getElementById('editAddress').value.trim(),
+    cap:       document.getElementById('editCap').value.trim(),
+    city:      document.getElementById('editCity').value.trim(),
+    birthdate: document.getElementById('editBirth').value,
+    role:      document.getElementById('editRole').value,
+    baptized:  document.getElementById('editBaptized').value,
+    group:     document.getElementById('editGroup').value.trim(),
+    notes:     document.getElementById('editNotes').value.trim()
+  };
+  if (editIndex===null) data.push(obj);
+  else data[editIndex] = obj;
+  saveAll(); closeModal(); render();
+  if (pannelloOpen) renderPannello();
+  toast(editIndex===null ? '✅ Contatto aggiunto' : '✅ Contatto aggiornato');
+}
+
+function deleteContact(idx) {
+  if (!confirm(`Eliminare "${data[idx].name}"?`)) return;
+  data.splice(idx,1); saveAll(); render(); toast('🗑️ Contatto eliminato');
+}
+
+// ─── CITTÀ ───────────────────────────────────────────────────────────────────
+function setCity(city) {
+  filterCity = city; filterLetter = null;
+  // Aggiorna tab città attivo (gestisce sia i fissi che i paesi aggiunti)
+  document.querySelectorAll('#cityTabs .tab').forEach(b => b.classList.remove('active'));
+  let btn = null;
+  if (city === null) {
+    btn = document.getElementById('cityAll');
+  } else {
+    const fixed = {'CERANO':'cityCAR','TRECATE':'cityTRE','VESPOLATE':'cityVES','GALLIATE':'cityGAL','CASCINA MIETTA':'cityMIE'};
+    if (fixed[city]) {
+      btn = document.getElementById(fixed[city]);
+    } else {
+      btn = document.querySelector('#cityTabs .custom-city[data-city="' + city + '"]');
+    }
+  }
+  if (btn) btn.classList.add('active');
+  render();
+}
+
+// ─── PAESI PERSONALIZZATI ────────────────────────────────────────────────────
+function loadCustomCities() {
+  try { return JSON.parse(localStorage.getItem('rubrica_custom_cities') || '[]'); }
+  catch { return []; }
+}
+function saveCustomCities(arr) {
+  localStorage.setItem('rubrica_custom_cities', JSON.stringify(arr));
+}
+function renderCustomCities() {
+  const tabs = document.getElementById('cityTabs');
+  const addBtn = document.getElementById('cityAddBtn');
+  if (!tabs || !addBtn) return;
+  tabs.querySelectorAll('.custom-city').forEach(b => b.remove());
+  loadCustomCities().forEach(name => {
+    const b = document.createElement('button');
+    b.className = 'tab custom-city';
+    b.setAttribute('data-city', name);
+    b.style.fontSize = '11px';
+    b.style.padding = '6px 10px';
+    b.textContent = name;
+    b.onclick = () => setCity(name);
+    tabs.insertBefore(b, addBtn);
+  });
+}
+function openPaesi() {
+  renderPaesiList();
+  document.getElementById('overlayPaesi').classList.add('open');
+}
+function closePaesi() {
+  document.getElementById('overlayPaesi').classList.remove('open');
+}
+function renderPaesiList() {
+  const box = document.getElementById('paesiList');
+  const cities = loadCustomCities();
+  if (cities.length === 0) {
+    box.innerHTML = '<p style="opacity:.6;font-size:13px;text-align:center;padding:12px 0;line-height:1.5">Nessun paese aggiunto.<br>I paesi fissi (Cerano, Trecate, Vespolate, Galliate, C. Mietta) restano sempre presenti.</p>';
+    return;
+  }
+  box.innerHTML = '';
+  cities.forEach(name => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--input-bg);border-radius:10px;padding:8px 12px;margin-bottom:6px';
+    const span = document.createElement('span');
+    span.textContent = '📍 ' + name;
+    span.style.fontWeight = '600';
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.title = 'Rimuovi';
+    del.style.cssText = 'background:var(--red-light);color:var(--red);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;flex-shrink:0';
+    del.onclick = () => removePaese(name);
+    row.appendChild(span);
+    row.appendChild(del);
+    box.appendChild(row);
+  });
+}
+function addPaese() {
+  const inp = document.getElementById('paeseInput');
+  const name = (inp.value || '').trim().replace(/["']/g,'').toUpperCase();
+  if (!name) { toast('⚠️ Scrivi il nome del paese'); return; }
+  const cities = loadCustomCities();
+  const fixedNames = ['CERANO','TRECATE','VESPOLATE','GALLIATE','CASCINA MIETTA'];
+  if (fixedNames.indexOf(name) !== -1 || cities.indexOf(name) !== -1) {
+    toast('⚠️ Paese già presente'); return;
+  }
+  cities.push(name);
+  cities.sort((a,b) => a.localeCompare(b,'it'));
+  saveCustomCities(cities);
+  inp.value = '';
+  renderCustomCities();
+  renderPaesiList();
+  toast('✅ Paese aggiunto: ' + name);
+}
+function removePaese(name) {
+  if (!confirm('Rimuovere il paese "' + name + '" dai filtri?\n\nI contatti NON verranno toccati: sparisce solo il bottone-filtro in alto.')) return;
+  const cities = loadCustomCities().filter(c => c !== name);
+  saveCustomCities(cities);
+  if (filterCity === name) setCity(null);
+  renderCustomCities();
+  renderPaesiList();
+  toast('🗑️ Paese rimosso: ' + name);
+}
+
+// ─── PANNELLO VELOCE ─────────────────────────────────────────────────────────
+let pannelloOpen = false;
+function togglePannello() {
+  pannelloOpen = !pannelloOpen;
+  document.getElementById('pannelloVeloce').style.display = pannelloOpen ? 'block' : 'none';
+  if (pannelloOpen) renderPannello();
+}
+function renderPannello() {
+  const anziani   = data.filter(c => c.role === 'Anziano');
+  const servitori = data.filter(c => c.role === 'Servitore');
+  const mkCard = (c) => {
+    const idx = data.indexOf(c);
+    const wa  = (c.phone||'').replace(/\D/g,'');
+    const genere = c.name.match(/[aeiou]$/i) ? 'Proclamatrice' : 'Proclamatore';
+    return `<div style="background:var(--input-bg);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+      <div class="avatar ${avClass(c.name)}" style="width:36px;height:36px;border-radius:10px;font-size:12px;flex-shrink:0">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${formatPhone(c.phone)}</div>
+      </div>
+      <a href="https://wa.me/39${wa}" target="_blank" style="background:var(--green-light);color:var(--green);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:13px;flex-shrink:0">💬</a>
+      <button onclick="openModal(${idx});togglePannello()" title="Modifica" style="background:var(--gold-light);color:#d97706;border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;flex-shrink:0">✏️</button>
+      <button onclick="if(confirm('Rimuovere ${c.name} da questo ruolo?')){data[${idx}].role='${genere}';saveAll();renderPannello();render();toast('✅ Ruolo aggiornato!')}" title="Rimuovi dal ruolo" style="background:var(--red-light);color:var(--red);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;flex-shrink:0">✕</button>
+    </div>`;
+  };
+  document.getElementById('pvAnziani').innerHTML   = anziani.length   ? anziani.map(mkCard).join('')   : '<p style="color:var(--muted);font-size:13px">Nessuno</p>';
+  document.getElementById('pvServitori').innerHTML = servitori.length ? servitori.map(mkCard).join('') : '<p style="color:var(--muted);font-size:13px">Nessuno</p>';
+}
+
+// ─── TAB / SEARCH ────────────────────────────────────────────────────────────
+function setTab(t) {
+  activeTab = t; filterLetter = null; searchQ = '';
+  document.getElementById('searchInput').value = '';
+  render();
+}
+function onSearch() { searchQ = document.getElementById('searchInput').value.trim(); filterLetter = null; render(); }
+function clearSearch() { searchQ=''; document.getElementById('searchInput').value=''; render(); }
+
+// ─── FAV ─────────────────────────────────────────────────────────────────────
+function toggleFav(idx) {
+  data[idx].fav = !data[idx].fav;
+  saveAll(); render();
+  toast(data[idx].fav ? '⭐ Aggiunto ai preferiti' : 'Rimosso dai preferiti');
+}
+
+// ─── DARK MODE ───────────────────────────────────────────────────────────────
+function applyDark(on) {
+  document.documentElement.setAttribute('data-theme', on?'dark':'light');
+  document.getElementById('darkIcon').textContent  = on?'☀️':'🌙';
+  document.getElementById('darkLabel').textContent = on?'Chiaro':'Scuro';
+}
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  applyDark(!isDark);
+  localStorage.setItem('rubrica_dark', (!isDark)?'1':'0');
+}
+
+// ─── BACKUP / RIPRISTINO ─────────────────────────────────────────────────────
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rubrica_cerano_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('💾 Backup salvato!');
+}
+function importJSON(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (!Array.isArray(d)) throw 0;
+      if (confirm(`Importare ${d.length} contatti? I dati attuali verranno sostituiti.`)) {
+        data = d.map(c=>migrate(c)); saveAll(); render(); toast('✅ Rubrica ripristinata!');
+      }
+    } catch { toast('❌ File non valido'); }
+    e.target.value = '';
+  };
+  r.readAsText(file);
+}
+
+// ─── CLOUD SYNC (JSONBin.io) ─────────────────────────────────────────────────
+const JBIN = 'https://api.jsonbin.io/v3/b';
+
+function openCloud() {
+  document.getElementById('cloudApiKey').value = localStorage.getItem('rb_apikey') || '';
+  document.getElementById('cloudBinId').value  = localStorage.getItem('rb_binid')  || '';
+  updateCloudStatus();
+  document.getElementById('overlayCloud').classList.add('open');
+}
+function closeCloud() { document.getElementById('overlayCloud').classList.remove('open'); }
+
+function updateCloudStatus() {
+  const key = localStorage.getItem('rb_apikey');
+  const bin = localStorage.getItem('rb_binid');
+  const last = localStorage.getItem('rb_sync_last');
+  const box = document.getElementById('cloudStatusBox');
+  if (!key) { box.innerHTML = '⚪ Non configurata — inserisci la API Key'; box.style.borderColor='var(--border)'; return; }
+  if (!bin)  { box.innerHTML = '🟡 API Key inserita — clicca <strong>Carica su Cloud</strong> per creare il Bin'; box.style.borderColor='#c9943a'; return; }
+  const ts = last ? new Date(parseInt(last)).toLocaleString('it-IT') : '—';
+  box.innerHTML = `🟢 Sincronizzata &mdash; Bin ID: <strong>${bin.slice(0,12)}…</strong><br><small>Ultima sync: ${ts}</small>`;
+  box.style.borderColor = '#16a34a';
+}
+
+async function cloudUpload() {
+  const key = document.getElementById('cloudApiKey').value.trim();
+  const bin = document.getElementById('cloudBinId').value.trim();
+  if (!key) { toast('⚠️ Inserisci la API Key'); return; }
+  localStorage.setItem('rb_apikey', key);
+  const payload = { rubrica: data, updated: Date.now() };
+  try {
+    let res, json;
+    if (!bin) {
+      // Crea nuovo bin
+      res = await fetch(JBIN, { method:'POST', headers:{'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Name':'Rubrica Cerano'}, body:JSON.stringify(payload) });
+      json = await res.json();
+      if (!res.ok) throw json;
+      const newId = json.metadata.id;
+      localStorage.setItem('rb_binid', newId);
+      document.getElementById('cloudBinId').value = newId;
+    } else {
+      // Aggiorna bin esistente
+      res = await fetch(`${JBIN}/${bin}`, { method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':key}, body:JSON.stringify(payload) });
+      json = await res.json();
+      if (!res.ok) throw json;
+    }
+    localStorage.setItem('rb_sync_last', Date.now().toString());
+    updateCloudStatus();
+    toast('☁️ Dati caricati sul cloud!');
+  } catch(e) { toast('❌ Errore caricamento: ' + (e.message||JSON.stringify(e))); }
+}
+
+async function cloudDownload() {
+  const key = document.getElementById('cloudApiKey').value.trim();
+  const bin = document.getElementById('cloudBinId').value.trim();
+  if (!key || !bin) { toast('⚠️ Inserisci API Key e Bin ID'); return; }
+  localStorage.setItem('rb_apikey', key);
+  localStorage.setItem('rb_binid',  bin);
+  try {
+    const res  = await fetch(`${JBIN}/${bin}/latest`, { headers:{'X-Master-Key':key} });
+    const json = await res.json();
+    if (!res.ok) throw json;
+    const remote = json.record;
+    if (!remote.rubrica || !Array.isArray(remote.rubrica)) throw new Error('Formato non valido');
+    if (!confirm(`Scaricare ${remote.rubrica.length} contatti dal cloud? I dati locali verranno sostituiti.`)) return;
+    data = remote.rubrica.map(c => migrate(c));
+    saveAll(); render();
+    localStorage.setItem('rb_sync_last', Date.now().toString());
+    updateCloudStatus();
+    toast('⬇️ Rubrica scaricata dal cloud!');
+  } catch(e) { toast('❌ Errore download: ' + (e.message||JSON.stringify(e))); }
+}
+
+function toggleApiKey() {
+  const input = document.getElementById('cloudApiKey');
+  const btn   = document.getElementById('btnShowKey');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+// ─── PWA INSTALL ─────────────────────────────────────────────────────────────
+let _pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); _pwaPrompt = e;
+  document.getElementById('btnInstall').style.display = 'flex';
+});
+function installPWA() {
+  if (!_pwaPrompt) { toast('📲 Apri questa pagina in Chrome per installarla'); return; }
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(r => {
+    if (r.outcome === 'accepted') { toast('✅ App installata!'); document.getElementById('btnInstall').style.display='none'; }
+    _pwaPrompt = null;
+  });
+}
+window.addEventListener('appinstalled', () => { document.getElementById('btnInstall').style.display='none'; toast('✅ App installata con successo!'); });
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+// ─── STAMPA GRUPPO ───────────────────────────────────────────────────────────
+function stampaGruppo(grp) {
+  const membri = data.filter(c => c.group === grp).sort((a,b) => a.name.localeCompare(b.name,'it'));
+  const sorv   = membri.find(c => c.role === 'Anziano');
+  const ass    = membri.find(c => c.role === 'Servitore');
+  const hdr    = localStorage.getItem('hdr_sub') || 'Congregazione di Cerano — Circoscrizione Lombardia 4';
+  const rows   = membri.map(c => `
+    <tr>
+      <td style="padding:7px 10px;border-bottom:1px solid #eee;font-weight:${(c.role==='Anziano'||c.role==='Servitore')?'700':'400'}">${c.name}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #eee;color:#555;font-size:12px">${ROLE_LABELS[c.role]||''}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:13px">${c.phone||''}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #eee;font-size:12px;color:#555">${c.address?c.address+(c.city?', '+c.city:''):c.city||''}</td>
+    </tr>`).join('');
+
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html lang="it"><head>
+    <meta charset="UTF-8">
+    <title>${grp}</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 30px; color: #1a1a2e; }
+      h1   { font-size: 22px; margin-bottom: 4px; }
+      .sub { font-size: 13px; color: #666; margin-bottom: 6px; }
+      .info{ font-size: 13px; margin-bottom: 16px; }
+      table{ width: 100%; border-collapse: collapse; }
+      th   { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-size: 12px; }
+      tr:hover td { background: #f5f5ff; }
+      .footer { margin-top: 20px; font-size: 11px; color: #999; text-align: right; }
+      @media print { body { padding: 10px; } }
+    </style>
+  </head><body>
+    <h1>👥 ${grp}</h1>
+    <div class="sub">${hdr}</div>
+    <div class="info">
+      ${sorv?`<strong>Sorvegliante:</strong> ${sorv.name} &nbsp;|&nbsp; `:''}
+      ${ass ?`<strong>Assistente:</strong> ${ass.name} &nbsp;|&nbsp; `:''}
+      <strong>Membri:</strong> ${membri.length}
+    </div>
+    <table>
+      <thead><tr><th>Nome</th><th>Ruolo</th><th>Telefono</th><th>Indirizzo</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="footer">Stampato il ${new Date().toLocaleDateString('it-IT')} — Rubrica Congregazione Cerano</div>
+    <script>window.onload=()=>{window.print();}<\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+// Salva solo in locale senza caricare sul cloud
+function saveLocalOnly() {
+  data.sort((a,b) => a.name.localeCompare(b.name,'it'));
+  localStorage.setItem('rubrica_pro_v2', JSON.stringify(data));
+  localStorage.setItem('rubrica_data_version', 'v11');
+}
+
+function gestRinominaGruppo() {
+  const vecchio = document.getElementById('gestGruppoRinomina').value;
+  const nuovo   = document.getElementById('gestGruppoNuovoNome').value.trim();
+  if (!vecchio || !nuovo) { toast('⚠️ Seleziona gruppo e inserisci nuovo nome'); return; }
+  if (!nuovo.startsWith('Gruppo ')) { toast('⚠️ Il nome deve iniziare con "Gruppo "'); return; }
+  const count = data.filter(c => c.group === vecchio).length;
+  if (!confirm(`Rinominare "${vecchio}" in "${nuovo}"?\n${count} membri verranno aggiornati.`)) return;
+  data.forEach(c => { if (c.group === vecchio) c.group = nuovo; });
+  saveLocalOnly(); render();
+  toast(`✅ Gruppo rinominato! Ora clicca ☁️ Carica su Cloud`);
+  closeGestione();
+}
+
+// ─── GESTIONE RAPIDA ─────────────────────────────────────────────────────────
+function openGestione() {
+  const sorted = [...data].sort((a,b) => a.name.localeCompare(b.name,'it'));
+  const opts = sorted.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('gestDeleteSel').innerHTML = '<option value="">— seleziona da rimuovere —</option>' + opts;
+  document.getElementById('gestRuoloNome').innerHTML  = '<option value="">— seleziona contatto —</option>' + opts;
+  document.getElementById('gestGruppoNome').innerHTML = '<option value="">— seleziona contatto —</option>' + opts;
+  document.getElementById('overlayGestione').classList.add('open');
+}
+function closeGestione() { document.getElementById('overlayGestione').classList.remove('open'); }
+
+function gestElimina() {
+  const name = document.getElementById('gestDeleteSel').value;
+  if (!name) { toast('⚠️ Seleziona un contatto'); return; }
+  if (!confirm(`Eliminare definitivamente "${name}"?`)) return;
+  const idx = data.findIndex(c => c.name === name);
+  if (idx === -1) return;
+  data.splice(idx, 1);
+  saveAll(); render();
+  toast('🗑️ ' + name + ' eliminato');
+  openGestione();
+}
+
+function gestCambiaRuolo() {
+  const name  = document.getElementById('gestRuoloNome').value;
+  const ruolo = document.getElementById('gestRuoloNuovo').value;
+  if (!name || !ruolo) { toast('⚠️ Seleziona contatto e ruolo'); return; }
+  const c = data.find(c => c.name === name);
+  if (!c) return;
+  c.role = ruolo;
+  saveAll(); render();
+  if (pannelloOpen) renderPannello();
+  toast('✅ ' + name + ' → ' + (ROLE_LABELS[ruolo]||ruolo));
+  openGestione();
+}
+
+function gestCambiaGruppo() {
+  const name  = document.getElementById('gestGruppoNome').value;
+  const grp   = document.getElementById('gestGruppoNuovo').value;
+  if (!name || !grp) { toast('⚠️ Seleziona contatto e gruppo'); return; }
+  const c = data.find(c => c.name === name);
+  if (!c) return;
+  c.group = grp;
+  saveAll(); render();
+  toast('✅ ' + name + ' → ' + grp);
+  openGestione();
+}
+
+// ─── MODIFICA GRUPPO ─────────────────────────────────────────────────────────
+let _editingGrp = null;
+
+function editGruppo(grp) {
+  _editingGrp = grp;
+  document.getElementById('grpModalTitle').textContent = '✏️ ' + grp;
+  document.getElementById('grpNome').value = grp;
+
+  // Popola select sorvegliante (anziani)
+  const anziani = data.filter(c => c.role === 'Anziano');
+  const sEl = document.getElementById('grpSorv');
+  sEl.innerHTML = '<option value="">— seleziona —</option>' +
+    anziani.map(c => `<option value="${c.name}" ${(c.group===grp&&c.role==='Anziano')?'selected':''}>${c.name}</option>`).join('');
+
+  // Popola select assistente (servitori)
+  const servitori = data.filter(c => c.role === 'Servitore');
+  const aEl = document.getElementById('grpAss');
+  aEl.innerHTML = '<option value="">— seleziona —</option>' +
+    servitori.map(c => `<option value="${c.name}" ${(c.group===grp&&c.role==='Servitore')?'selected':''}>${c.name}</option>`).join('');
+
+  // Lista membri
+  const membri = data.filter(c => c.group === grp);
+  document.getElementById('grpMembri').innerHTML = membri.map(c => `
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+      <div class="avatar ${avClass(c.name)}" style="width:28px;height:28px;border-radius:8px;font-size:10px;flex-shrink:0">${initials(c.name)}</div>
+      <span style="flex:1;font-size:13px;color:var(--ink)">${c.name}</span>
+      <span style="font-size:11px;color:var(--muted)">${ROLE_LABELS[c.role]||''}</span>
+    </div>`).join('');
+
+  document.getElementById('overlayGruppo').classList.add('open');
+}
+
+function closeGruppo() { document.getElementById('overlayGruppo').classList.remove('open'); }
+
+function saveGruppo() {
+  const nuovoSorv = document.getElementById('grpSorv').value;
+  const nuovoAss  = document.getElementById('grpAss').value;
+
+  // Aggiorna sorvegliante
+  if (nuovoSorv) {
+    const sorv = data.find(c => c.name === nuovoSorv);
+    if (sorv) sorv.group = _editingGrp;
+  }
+  // Aggiorna assistente
+  if (nuovoAss) {
+    const ass = data.find(c => c.name === nuovoAss);
+    if (ass) ass.group = _editingGrp;
+  }
+
+  saveAll(); render(); closeGruppo();
+  toast('✅ Gruppo aggiornato!');
+}
+
+// ─── INTESTAZIONE MODIFICABILE ───────────────────────────────────────────────
+function loadHeader() {
+  const icon  = localStorage.getItem('hdr_icon')  || '📖';
+  const title = localStorage.getItem('hdr_title') || 'Rubrica Congregazione';
+  const sub   = localStorage.getItem('hdr_sub')   || 'Congregazione di Cerano \u2014 Circoscrizione Lombardia 4';
+  document.getElementById('headerIcon').textContent  = icon;
+  document.getElementById('headerTitle').textContent = title;
+  document.getElementById('headerSub').textContent   = sub;
+  document.getElementById('printTitle').textContent  = title;
+  document.getElementById('printSub').textContent    = sub.replace(' \u2014 ',' — ');
+}
+function editHeader() {
+  document.getElementById('hdrIcon').value  = localStorage.getItem('hdr_icon')  || '📖';
+  document.getElementById('hdrTitle').value = localStorage.getItem('hdr_title') || 'Rubrica Congregazione';
+  document.getElementById('hdrSub').value   = localStorage.getItem('hdr_sub')   || 'Congregazione di Cerano \u2014 Circoscrizione Lombardia 4';
+  document.getElementById('overlayHeader').classList.add('open');
+  setTimeout(()=>document.getElementById('hdrTitle').focus(),200);
+}
+function closeHeader() { document.getElementById('overlayHeader').classList.remove('open'); }
+function saveHeader() {
+  const icon  = document.getElementById('hdrIcon').value.trim()  || '📖';
+  const title = document.getElementById('hdrTitle').value.trim() || 'Rubrica Congregazione';
+  const sub   = document.getElementById('hdrSub').value.trim()   || 'Congregazione di Cerano';
+  localStorage.setItem('hdr_icon',  icon);
+  localStorage.setItem('hdr_title', title);
+  localStorage.setItem('hdr_sub',   sub);
+  loadHeader(); closeHeader();
+  toast('✅ Intestazione aggiornata!');
+}
+
+// ─── TIMESTAMP ULTIMO AGGIORNAMENTO ─────────────────────────────────────────
+function aggiornaTimestamp() {
+  const ts = localStorage.getItem('rb_last_update');
+  const el = document.getElementById('lastUpdateLabel');
+  if (!el) return;
+  if (ts) {
+    const d = new Date(parseInt(ts));
+    const data_str = d.toLocaleDateString('it-IT', {day:'2-digit',month:'2-digit',year:'numeric'});
+    const ora_str  = d.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+    el.textContent = `🕐 Ultimo aggiornamento: ${data_str} alle ${ora_str}`;
+  } else {
+    el.textContent = '🕐 Ultimo aggiornamento: —';
+  }
+}
+
+function segnaAggiornamento() {
+  localStorage.setItem('rb_last_update', Date.now().toString());
+  aggiornaTimestamp();
+}
+
+// Bottone Aggiorna — scarica dal cloud
+async function aggiornaOra() {
+  const key = localStorage.getItem('rb_apikey');
+  const bin = localStorage.getItem('rb_binid');
+  if (!key || !bin) {
+    toast('⚠️ Prima configura il Cloud con API Key e Bin ID');
+    return;
+  }
+  toast('⏳ Controllo cloud…');
+  try {
+    const res  = await fetch(`${JBIN}/${bin}/latest`, { headers:{'X-Master-Key':key} });
+    if (!res.ok) throw new Error('Errore di rete');
+    const json = await res.json();
+    const remote = json.record;
+    if (!remote?.rubrica || !Array.isArray(remote.rubrica)) throw new Error('Dati non validi');
+    const remoteN = remote.rubrica.length;
+    const localN  = data.length;
+    // Protezione: avvisa se il cloud ha meno contatti del locale
+    const avviso = remoteN < localN
+      ? `⚠️ ATTENZIONE!\nIl cloud ha ${remoteN} contatti\nIl tuo dispositivo ha ${localN} contatti\n\nScaricando perderesti ${localN - remoteN} contatti!\nVuoi continuare lo stesso?`
+      : `Il cloud ha ${remoteN} contatti (tu ne hai ${localN}).\nVuoi scaricare?`;
+    if (!confirm(avviso)) return;
+    // Backup locale prima di sovrascrivere
+    localStorage.setItem('rb_backup', JSON.stringify(data));
+    data = remote.rubrica.map(c => migrate(c));
+    saveAll(); render();
+    segnaAggiornamento();
+    localStorage.setItem('rb_sync_last', Date.now().toString());
+    toast('✅ Rubrica aggiornata! (backup salvato)');
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+// ─── RIPRISTINA BACKUP ───────────────────────────────────────────────────────
+function ripristinaBackup() {
+  const bk = localStorage.getItem('rb_backup');
+  if (!bk) { toast('⚠️ Nessun backup disponibile'); return; }
+  try {
+    const bkData = JSON.parse(bk);
+    if (!confirm(`Ripristinare il backup con ${bkData.length} contatti?\nI dati attuali verranno sostituiti.`)) return;
+    data = bkData.map(c => migrate(c));
+    saveAll(); render(); segnaAggiornamento();
+    toast('✅ Backup ripristinato!');
+  } catch(e) { toast('❌ Backup non valido'); }
+}
+
+// ─── RESET DATI FRESCHI ───────────────────────────────────────────────────────
+function resetDati() {
+  if (!confirm('Ricaricare i dati base dal file?\n⚠️ Usa questa funzione solo quando ricevi un file aggiornato da Giovanni.\nLe modifiche manuali (email, note, ecc.) andranno perse.')) return;
+  localStorage.removeItem('rubrica_pro_v2');
+  localStorage.removeItem('rubrica_data_version');
+  loadData();
+  // Applica correzioni automatiche
+  let changed = false;
+  data.forEach(c => {
+    if (c.group === 'Gruppo Petrillo') { c.group = 'Gruppo Bellan'; changed = true; }
+  });
+  if (changed) saveAll();
+  render(); aggiornaTimestamp();
+  toast('✅ Dati base ricaricati!');
+}
+
+// ─── AVVIO ───────────────────────────────────────────────────────────────────
+loadData(); render(); aggiornaTimestamp(); loadHeader(); renderCustomCities();
+
+// ─── CORREZIONE AUTOMATICA GRUPPO ────────────────────────────────────────────
+(function fixGruppo() {
+  let changed = false;
+  data.forEach(c => {
+    if (c.group === 'Gruppo Petrillo') { c.group = 'Gruppo Bellan'; changed = true; }
+  });
+  if (changed) {
+    saveAll(); render();
+    toast('✅ Gruppo Bellan aggiornato!');
+  }
+})();
+
+// Auto-sync all'avvio — solo controlla, non sovrascrive
+async function autoSyncAvvio() {
+  const key = localStorage.getItem('rb_apikey');
+  const bin = localStorage.getItem('rb_binid');
+  if (!key || !bin) return;
+  try {
+    const res  = await fetch(`${JBIN}/${bin}/latest`, { headers:{'X-Master-Key':key} });
+    if (!res.ok) return;
+    const json = await res.json();
+    const remote = json.record;
+    if (!remote?.rubrica) return;
+    const remoteTs = remote.updated || 0;
+    const localTs  = parseInt(localStorage.getItem('rb_sync_last') || '0');
+    if (remoteTs > localTs) {
+      toast('🟡 Ci sono novità sul cloud — clicca ⬇️ Aggiorna');
+    }
+  } catch(e) {}
+}
+autoSyncAvvio();
+
+// Polling automatico ogni 5 minuti
+setInterval(async () => {
+  const key = localStorage.getItem('rb_apikey');
+  const bin = localStorage.getItem('rb_binid');
+  if (!key || !bin) return;
+  try {
+    const res  = await fetch(`${JBIN}/${bin}/latest`, { headers:{'X-Master-Key':key} });
+    if (!res.ok) return;
+    const json = await res.json();
+    const remote = json.record;
+    if (!remote?.rubrica) return;
+    const remoteTs = remote.updated || 0;
+    const localTs  = parseInt(localStorage.getItem('rb_sync_last') || '0');
+    if (remoteTs > localTs) {
+      toast('🟡 Ci sono novità sul cloud — clicca ⬇️ Aggiorna');
+    } else {
+    }
+  } catch(e) { }
+}, 5 * 60 * 1000);
+</script>
+</body>
+</html>
+e" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rubrica Cerano">
 <meta name="theme-color" content="#1a1a2e">
