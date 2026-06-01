@@ -295,6 +295,7 @@ body::before { content:''; position:fixed; top:0; left:0; right:0; height:320px;
       <button class="tab" id="cityVES" onclick="setCity('VESPOLATE')" style="font-size:11px;padding:6px 10px">VESPOLATE</button>
       <button class="tab" id="cityGAL" onclick="setCity('GALLIATE')" style="font-size:11px;padding:6px 10px">GALLIATE</button>
       <button class="tab" id="cityMIE" onclick="setCity('CASCINA MIETTA')" style="font-size:11px;padding:6px 10px">C. MIETTA</button>
+      <button class="tab" id="cityAddBtn" onclick="openPaesi()" style="font-size:11px;padding:6px 10px;border-style:dashed;opacity:.85">➕ Paese</button>
     </div>
     <div class="stats">
       <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Totale</div></div>
@@ -564,6 +565,25 @@ body::before { content:''; position:fixed; top:0; left:0; right:0; height:320px;
       📌 <strong>Come usarlo:</strong> registrati gratis su <strong>jsonbin.io</strong> → copia la tua API Key → incollala qui → clicca <em>Carica su Cloud</em>. Sul cellulare incolla la stessa API Key + il Bin ID e clicca <em>Scarica da Cloud</em>.<br><br>
       🔄 <strong>Aggiornamento automatico:</strong> una volta configurato, la rubrica si aggiorna da sola all'apertura e ogni 5 minuti.
     </p>
+  </div>
+</div>
+
+<!-- OVERLAY GESTIONE PAESI -->
+<div class="overlay" id="overlayPaesi" onclick="if(event.target===this)closePaesi()">
+  <div class="modal-edit" style="max-width:460px">
+    <h2>📍 Gestione Paesi</h2>
+    <p style="opacity:.7;font-size:13px;margin:-4px 0 16px;line-height:1.5">Aggiungi o rimuovi i bottoni-filtro dei paesi. I paesi fissi restano sempre presenti.</p>
+    <div class="form-group">
+      <label>Nuovo paese</label>
+      <div style="display:flex;gap:8px">
+        <input id="paeseInput" type="text" placeholder="es. BORGOLAVEZZARO" style="flex:1" onkeydown="if(event.key==='Enter')addPaese()">
+        <button class="btn-primary" style="flex:0 0 auto;padding:12px 16px" onclick="addPaese()">➕ Aggiungi</button>
+      </div>
+    </div>
+    <div id="paesiList" style="margin-top:14px"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closePaesi()">Chiudi</button>
+    </div>
   </div>
 </div>
 
@@ -1056,11 +1076,103 @@ function deleteContact(idx) {
 // ─── CITTÀ ───────────────────────────────────────────────────────────────────
 function setCity(city) {
   filterCity = city; filterLetter = null;
-  // Aggiorna tab città attivo
-  ['cityAll','cityCAR','cityTRE','cityVES','cityGAL','cityMIE'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const map = {null:'cityAll','CERANO':'cityCAR','TRECATE':'cityTRE','VESPOLATE':'cityVES','GALLIATE':'cityGAL','CASCINA MIETTA':'cityMIE'};
-  document.getElementById(map[city]).classList.add('active');
+  // Aggiorna tab città attivo (gestisce sia i fissi che i paesi aggiunti)
+  document.querySelectorAll('#cityTabs .tab').forEach(b => b.classList.remove('active'));
+  let btn = null;
+  if (city === null) {
+    btn = document.getElementById('cityAll');
+  } else {
+    const fixed = {'CERANO':'cityCAR','TRECATE':'cityTRE','VESPOLATE':'cityVES','GALLIATE':'cityGAL','CASCINA MIETTA':'cityMIE'};
+    if (fixed[city]) {
+      btn = document.getElementById(fixed[city]);
+    } else {
+      btn = document.querySelector('#cityTabs .custom-city[data-city="' + city + '"]');
+    }
+  }
+  if (btn) btn.classList.add('active');
   render();
+}
+
+// ─── PAESI PERSONALIZZATI ────────────────────────────────────────────────────
+function loadCustomCities() {
+  try { return JSON.parse(localStorage.getItem('rubrica_custom_cities') || '[]'); }
+  catch { return []; }
+}
+function saveCustomCities(arr) {
+  localStorage.setItem('rubrica_custom_cities', JSON.stringify(arr));
+}
+function renderCustomCities() {
+  const tabs = document.getElementById('cityTabs');
+  const addBtn = document.getElementById('cityAddBtn');
+  if (!tabs || !addBtn) return;
+  tabs.querySelectorAll('.custom-city').forEach(b => b.remove());
+  loadCustomCities().forEach(name => {
+    const b = document.createElement('button');
+    b.className = 'tab custom-city';
+    b.setAttribute('data-city', name);
+    b.style.fontSize = '11px';
+    b.style.padding = '6px 10px';
+    b.textContent = name;
+    b.onclick = () => setCity(name);
+    tabs.insertBefore(b, addBtn);
+  });
+}
+function openPaesi() {
+  renderPaesiList();
+  document.getElementById('overlayPaesi').classList.add('open');
+}
+function closePaesi() {
+  document.getElementById('overlayPaesi').classList.remove('open');
+}
+function renderPaesiList() {
+  const box = document.getElementById('paesiList');
+  const cities = loadCustomCities();
+  if (cities.length === 0) {
+    box.innerHTML = '<p style="opacity:.6;font-size:13px;text-align:center;padding:12px 0;line-height:1.5">Nessun paese aggiunto.<br>I paesi fissi (Cerano, Trecate, Vespolate, Galliate, C. Mietta) restano sempre presenti.</p>';
+    return;
+  }
+  box.innerHTML = '';
+  cities.forEach(name => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--input-bg);border-radius:10px;padding:8px 12px;margin-bottom:6px';
+    const span = document.createElement('span');
+    span.textContent = '📍 ' + name;
+    span.style.fontWeight = '600';
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.title = 'Rimuovi';
+    del.style.cssText = 'background:var(--red-light);color:var(--red);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;flex-shrink:0';
+    del.onclick = () => removePaese(name);
+    row.appendChild(span);
+    row.appendChild(del);
+    box.appendChild(row);
+  });
+}
+function addPaese() {
+  const inp = document.getElementById('paeseInput');
+  const name = (inp.value || '').trim().replace(/["']/g,'').toUpperCase();
+  if (!name) { toast('⚠️ Scrivi il nome del paese'); return; }
+  const cities = loadCustomCities();
+  const fixedNames = ['CERANO','TRECATE','VESPOLATE','GALLIATE','CASCINA MIETTA'];
+  if (fixedNames.indexOf(name) !== -1 || cities.indexOf(name) !== -1) {
+    toast('⚠️ Paese già presente'); return;
+  }
+  cities.push(name);
+  cities.sort((a,b) => a.localeCompare(b,'it'));
+  saveCustomCities(cities);
+  inp.value = '';
+  renderCustomCities();
+  renderPaesiList();
+  toast('✅ Paese aggiunto: ' + name);
+}
+function removePaese(name) {
+  if (!confirm('Rimuovere il paese "' + name + '" dai filtri?\n\nI contatti NON verranno toccati: sparisce solo il bottone-filtro in alto.')) return;
+  const cities = loadCustomCities().filter(c => c !== name);
+  saveCustomCities(cities);
+  if (filterCity === name) setCity(null);
+  renderCustomCities();
+  renderPaesiList();
+  toast('🗑️ Paese rimosso: ' + name);
 }
 
 // ─── PANNELLO VELOCE ─────────────────────────────────────────────────────────
@@ -1532,7 +1644,7 @@ function resetDati() {
 }
 
 // ─── AVVIO ───────────────────────────────────────────────────────────────────
-loadData(); render(); aggiornaTimestamp(); loadHeader();
+loadData(); render(); aggiornaTimestamp(); loadHeader(); renderCustomCities();
 
 // ─── CORREZIONE AUTOMATICA GRUPPO ────────────────────────────────────────────
 (function fixGruppo() {
