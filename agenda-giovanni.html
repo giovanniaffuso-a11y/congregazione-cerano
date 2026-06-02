@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8b5e3c">
+<title>Il Mio Diario – Giovanni</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f0e8;--paper:#fffdf7;--ink:#2c2416;
+    --accent:#8b5e3c;--accent2:#c49a6c;--muted:#9e8f7a;
+    --reminder:#e8f4ea;--reminder-border:#5a9e6f;
+    --shadow:rgba(44,36,22,0.12);--red:#c0392b;--gcal:#1a73e8;
+    --border:#d4c9b5;--input-bg:#fffdf7;
+    --cat-spirituale:#5b8dd9;--cat-congregazione:#5a9e6f;
+    --cat-personale:#c49a6c;--cat-riunione:#9b59b6;--cat-generico:#9e8f7a;
+  }
+  body.dark{
+    --bg:#1c1810;--paper:#28221a;--ink:#ede0cc;
+    --accent:#c49a6c;--accent2:#8b5e3c;--muted:#8a7a6a;
+    --reminder:#1a2b1c;--reminder-border:#4a8e5f;
+    --shadow:rgba(0,0,0,0.4);--border:#3a3028;--input-bg:#2a221a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b5e3c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family:'Lato',sans-serif;color:var(--ink);min-height:100vh;padding:20px;
+    transition:background-color 0.3s,color 0.3s;
+  }
+
+  /* PIN */
+  #pin-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease both}
+  #pin-box{background:var(--paper);border-radius:20px;padding:40px 36px;box-shadow:0 8px 40px var(--shadow);text-align:center;max-width:340px;width:90%}
+  #pin-box h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:6px}
+  #pin-mode-label{color:var(--muted);font-size:0.9rem;margin-bottom:24px;display:block}
+  #pin-dots{display:flex;justify-content:center;gap:16px;margin-bottom:28px}
+  #pin-dots span{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent2);background:transparent;transition:background 0.2s}
+  #pin-dots span.filled{background:var(--accent);border-color:var(--accent)}
+  #pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .pin-key{background:var(--bg);border:2px solid var(--border);border-radius:12px;font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink);padding:14px;cursor:pointer;transition:all 0.15s;user-select:none}
+  .pin-key:hover,.pin-key:active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  #pin-error{color:var(--red);font-size:0.85rem;min-height:20px;margin-bottom:10px;font-weight:700}
+  #pin-forgot{background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;text-decoration:underline}
+
+  /* HEADER */
+  header{text-align:center;padding:30px 20px 16px;animation:fadeDown 0.7s ease both;position:relative}
+  header h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);color:var(--accent);letter-spacing:1px}
+  header p{font-size:0.9rem;color:var(--muted);margin-top:6px;font-style:italic}
+  .date-badge{display:inline-block;background:var(--accent);color:#fff;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:20px;margin-top:10px}
+  .header-actions{position:absolute;top:30px;right:0;display:flex;flex-direction:column;gap:7px;align-items:center}
+  .icon-btn{background:none;border:2px solid var(--accent2);color:var(--accent);font-size:1rem;width:38px;height:38px;border-radius:50%;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center}
+  .icon-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  #install-btn{display:none}
+
+  /* NAV */
+  nav{display:flex;justify-content:center;gap:10px;margin:24px 0 28px;flex-wrap:wrap;animation:fadeDown 0.8s ease both}
+  nav button{background:none;border:2px solid var(--accent2);color:var(--accent);font-family:'Playfair Display',serif;font-size:1rem;padding:8px 20px;border-radius:30px;cursor:pointer;transition:all 0.25s;display:inline-flex;align-items:center;gap:6px}
+  nav button.active,nav button:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .badge{background:#fff;color:var(--accent);font-size:0.68rem;font-weight:700;min-width:18px;height:18px;line-height:18px;border-radius:9px;padding:0 5px;display:inline-block}
+  nav button:not(.active) .badge{background:var(--accent);color:#fff}
+  .badge:empty{display:none}
+
+  /* LAYOUT */
+  .container{max-width:760px;margin:0 auto}
+  .section{display:none;animation:fadeIn 0.4s ease both}
+  .section.active{display:block}
+  .card{background:var(--paper);border-radius:12px;box-shadow:0 4px 20px var(--shadow);padding:28px 30px;margin-bottom:24px;border-left:4px solid var(--accent2);transition:background 0.3s}
+  .card h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--accent);margin-bottom:14px}
+  label{font-size:0.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px}
+
+  /* INPUTS */
+  input[type="text"],input[type="date"],input[type="time"],select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Lato',sans-serif;font-size:0.97rem;background:var(--input-bg);color:var(--ink);outline:none;transition:border-color 0.2s}
+  input:focus,select:focus{border-color:var(--accent)}
+  select{cursor:pointer}
+  textarea{width:100%;border:none;outline:none;background:transparent;font-family:'Lato',sans-serif;font-size:1rem;color:var(--ink);resize:vertical;min-height:130px;line-height:1.9;background-image:repeating-linear-gradient(transparent,transparent 30px,#e0d8cc 30px,#e0d8cc 31px);padding:4px 0}
+  body.dark textarea{background-image:repeating-linear-gradient(transparent,transparent 30px,#3a3028 30px,#3a3028 31px)}
+  textarea.edit-textarea{border:1.5px solid var(--accent2);border-radius:8px;padding:10px 12px;background:var(--input-bg) !important;background-image:none !important;min-height:80px}
+  textarea.reminder-desc{min-height:65px;background-image:repeating-linear-gradient(transparent,transparent 28px,#e0d8cc 28px,#e0d8cc 29px)}
+  body.dark textarea.reminder-desc{background-image:repeating-linear-gradient(transparent,transparent 28px,#3a3028 28px,#3a3028 29px)}
+
+  /* BUTTONS */
+  .btn{background:var(--accent);color:#fff;border:none;padding:10px 26px;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.2s,transform 0.1s;margin-top:14px;display:inline-block}
+  .btn:hover{background:#6e4a2e}
+  .btn:active{transform:scale(0.97)}
+  .btn-sm{padding:5px 14px;font-size:0.82rem;border-radius:6px;margin-top:0}
+  .btn-muted{background:var(--muted)}
+  .btn-muted:hover{background:#7a6a5a}
+  .btn-danger{background:var(--red)}
+  .btn-danger:hover{background:#a93226}
+  .btn-gcal{background:var(--gcal);color:#fff;border:none;padding:5px 12px;border-radius:6px;font-family:'Lato',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;margin-top:0;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:background 0.2s}
+  .btn-gcal:hover{background:#1558b0}
+  .btn-gcal-lg{font-size:0.95rem;padding:10px 20px;margin-top:14px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+
+  /* FILTRI */
+  .filter-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter-btn{background:none;border:1.5px solid var(--border);color:var(--muted);font-family:'Lato',sans-serif;font-size:0.8rem;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;transition:all 0.2s}
+  .filter-btn.active,.filter-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .search-bar{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Lato',sans-serif;font-size:0.97rem;background:var(--input-bg);color:var(--ink);outline:none;transition:border-color 0.2s;margin-bottom:12px}
+  .search-bar:focus{border-color:var(--accent)}
+
+  /* CATEGORIA BADGE */
+  .cat-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 10px;border-radius:10px;color:#fff;margin-bottom:6px;letter-spacing:0.5px}
+
+  /* NOTE */
+  .entries-list{margin-top:4px}
+  .entry-item{background:var(--paper);border-radius:10px;padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 10px var(--shadow);border-left:3px solid var(--accent2);animation:slideUp 0.3s ease both;transition:background 0.3s}
+  .entry-item .entry-date{font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .entry-item .entry-text{font-size:0.97rem;line-height:1.7;color:var(--ink);white-space:pre-wrap}
+  .entry-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .entry-item .entry-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--accent);margin:2px 0 6px;line-height:1.3}
+  .entry-item .nb-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 10px;border-radius:10px;background:var(--accent2);color:#fff;margin-bottom:6px;margin-left:6px;letter-spacing:0.3px}
+  .note-history{margin-top:10px;border-top:1px dashed var(--border);padding-top:10px}
+  .note-history .hist-title{font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .note-history .hist-item{background:var(--bg);border-radius:8px;padding:8px 12px;margin-bottom:8px}
+  .note-history .hist-when{font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:3px}
+  .note-history .hist-vtitle{font-weight:700;color:var(--accent);font-size:0.95rem}
+  .note-history .hist-vtext{font-size:0.9rem;color:var(--ink);white-space:pre-wrap;line-height:1.5;opacity:0.85}
+  #note-input{min-height:220px;overflow:hidden;resize:none}
+
+  /* PROMEMORIA */
+  .reminder-form{display:grid;gap:14px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .reminder-item{background:var(--reminder);border-left:4px solid var(--reminder-border);border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;animation:slideUp 0.3s ease both}
+  .reminder-item.done{opacity:0.5}
+  .reminder-item.done .r-title{text-decoration:line-through}
+  .announcement-item{background:var(--paper);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow);animation:slideUp 0.3s ease both}
+  .announcement-item.done{opacity:0.55}
+  .announcement-item.done .ann-text{text-decoration:line-through}
+  .announcement-item .ann-meta{font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:6px}
+  .announcement-item .ann-type{color:var(--accent)}
+  .announcement-item .ann-text{font-size:0.97rem;line-height:1.6;color:var(--ink);white-space:pre-wrap;margin-bottom:8px}
+  .reminder-info .r-title{font-weight:700;font-size:1rem;color:var(--ink)}
+  .reminder-info .r-desc{font-size:0.88rem;color:var(--muted);margin-top:4px;font-style:italic;white-space:pre-wrap}
+  .reminder-info .r-time{font-size:0.83rem;color:var(--reminder-border);font-weight:700;margin-top:4px}
+  .reminder-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+
+  /* ANTEPRIMA ORARIO */
+  .time-preview{margin-top:6px;font-size:0.85rem;font-weight:700;color:var(--accent);min-height:20px}
+  .time-preview.has-time{color:#2a7a3f}
+  .time-preview.has-time::before{content:"⏰ Orario selezionato: ";font-weight:400;color:var(--muted)}
+
+  /* BANNER DOMANI */
+  .tomorrow-banner{background:linear-gradient(135deg,#fff4d6 0%,#ffe9a8 100%);border:2px solid #e8b94d;border-radius:14px;padding:14px 18px;margin-bottom:18px;box-shadow:0 3px 10px rgba(184,137,38,0.18);animation:slideUp 0.4s ease both}
+  .tomorrow-banner-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#8a5a0a;font-weight:700;margin-bottom:8px}
+  .tomorrow-banner-item{font-size:0.9rem;color:#5c4010;padding:5px 0;border-top:1px solid rgba(184,137,38,0.25)}
+  .tomorrow-banner-item:first-of-type{border-top:none}
+  .tomorrow-banner-item strong{color:#8a5a0a}
+  body.dark .tomorrow-banner{background:linear-gradient(135deg,#3d3220 0%,#5a4a2a 100%);border-color:#c09350}
+  body.dark .tomorrow-banner-title{color:#ffd77a}
+  body.dark .tomorrow-banner-item{color:#f0e0c0;border-top-color:rgba(192,147,80,0.3)}
+  body.dark .tomorrow-banner-item strong{color:#ffd77a}
+
+  /* PROSSIMI EVENTI (lista semplice) */
+  .up-day-group{margin-bottom:20px}
+  .up-day-header{font-family:'Playfair Display',serif;font-size:1rem;color:var(--accent);font-weight:700;padding:8px 12px;background:var(--bg);border-radius:8px;border-left:4px solid var(--accent);margin-bottom:10px}
+  .up-day-header.up-today{background:var(--accent);color:#fff;border-left-color:var(--accent2)}
+  .up-day-header .up-day-count{float:right;font-family:'Lato',sans-serif;font-size:0.78rem;font-weight:400;color:var(--muted);margin-top:3px}
+  .up-today .up-day-count{color:#fff}
+  .up-item{background:var(--paper);border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 8px var(--shadow);border-left:3px solid var(--accent2);animation:slideUp 0.3s ease both}
+  .up-item.up-reminder{border-left-color:var(--reminder-border);background:var(--reminder)}
+  .up-item.up-reminder.done{opacity:0.55}
+  .up-item.up-reminder.done .up-title{text-decoration:line-through}
+  .up-icon{font-size:1rem;margin-right:4px}
+  .up-title{font-weight:700;font-size:0.95rem;color:var(--ink);margin-bottom:3px}
+  .up-meta{font-size:0.78rem;color:var(--muted);margin-bottom:5px}
+  .up-text{font-size:0.88rem;line-height:1.55;color:var(--ink);white-space:pre-wrap;margin-top:4px}
+  .up-text.truncated{max-height:60px;overflow:hidden;position:relative}
+  .up-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+  /* GCAL INFO */
+  .gcal-info{background:#e8f0fe;border-left:4px solid var(--gcal);border-radius:10px;padding:18px 20px;margin-bottom:20px;font-size:0.95rem;color:#1a3c6e;line-height:1.7}
+  body.dark .gcal-info{background:#1a2540;color:#8ab0e8}
+  .gcal-info strong{display:block;margin-bottom:6px;font-size:1rem}
+
+  /* IMPOSTAZIONI / BACKUP */
+  .backup-stat{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+  .stat-box{background:var(--paper);border-radius:10px;padding:14px 20px;text-align:center;box-shadow:0 2px 10px var(--shadow);flex:1;min-width:80px}
+  .stat-box .stat-num{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--accent);font-weight:700}
+  .stat-box .stat-label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+  .settings-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);gap:12px}
+  .settings-row:last-child{border-bottom:none}
+  .settings-label{font-weight:700;font-size:0.95rem;color:var(--ink)}
+  .settings-desc{font-size:0.82rem;color:var(--muted);margin-top:2px}
+
+  /* MISC */
+  .empty-msg{text-align:center;color:var(--muted);font-style:italic;padding:30px 0;font-size:0.95rem}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:12px 28px;border-radius:30px;font-size:0.92rem;font-weight:700;opacity:0;pointer-events:none;transition:all 0.3s;z-index:9998}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .shake{animation:shake 0.4s ease}
+
+  @media(max-width:500px){
+    .form-row{grid-template-columns:1fr}
+    nav button{padding:7px 10px;font-size:0.8rem}
+    .card{padding:20px 16px}
+    .header-actions{gap:5px}
+    .icon-btn{width:34px;height:34px;font-size:0.9rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- SCHERMATA PIN -->
+<div id="pin-screen">
+  <div id="pin-box">
+    <h2>✒️ Il Mio Diario</h2>
+    <span id="pin-mode-label">Inserisci il PIN</span>
+    <div id="pin-dots"><span></span><span></span><span></span><span></span></div>
+    <div id="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinDel()">⌫</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key" onclick="pinConfirm()">✔</button>
+    </div>
+    <p id="pin-error"></p>
+    <button id="pin-forgot" onclick="forgotPin()">Ho dimenticato il PIN</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="main-app" style="display:none">
+<div class="container">
+
+  <header>
+    <div class="header-actions">
+      <button class="icon-btn" id="dark-btn" onclick="toggleDark()" title="Modalità notte">🌙</button>
+      <button class="icon-btn" onclick="lockApp()" title="Blocca">🔒</button>
+      <button class="icon-btn" id="install-btn" onclick="installApp()" title="Installa app">📲</button>
+    </div>
+    <h1>✒️ Il Mio Diario</h1>
+    <p>Note personali e promemoria di Giovanni</p>
+    <div class="date-badge" id="today-date"></div>
+  </header>
+
+  <nav>
+    <button class="active" onclick="showTab('diario',this)">📖 Diario <span class="badge" id="badge-diario"></span></button>
+    <button onclick="showTab('promemoria',this)">🔔 Promemoria <span class="badge" id="badge-promemoria"></span></button>
+    <button onclick="showTab('avvisi',this)">📢 Avvisi <span class="badge" id="badge-avvisi"></span></button>
+    <button onclick="showTab('calendario',this)">📅 Calendario</button>
+    <button onclick="showTab('altro',this)">⚙️ Altro</button>
+  </nav>
+
+  <!-- BANNER DOMANI -->
+  <div id="tomorrow-banner" class="tomorrow-banner" style="display:none">
+    <div class="tomorrow-banner-title">⚠️ Domani hai in programma:</div>
+    <div id="tomorrow-banner-list"></div>
+  </div>
+
+  <!-- DIARIO -->
+  <div id="diario" class="section active">
+    <div class="card">
+      <h2>✏️ Nuova nota</h2>
+      <div style="margin-bottom:14px">
+        <label>Titolo</label>
+        <input type="text" id="note-title" placeholder="Es. Adunanza di stasera, Pensiero su Isaia 56...">
+      </div>
+      <div style="margin-bottom:14px">
+        <label>Quaderno</label>
+        <input type="text" id="note-notebook" list="notebook-list" placeholder="Es. Adunanze, Discorso 67, Pensieri personali...">
+        <datalist id="notebook-list"></datalist>
+      </div>
+      <div style="margin-bottom:14px">
+        <label>Categoria</label>
+        <select id="note-cat">
+          <option value="generico">📌 Generico</option>
+          <option value="spirituale">📖 Spirituale</option>
+          <option value="congregazione">⛪ Congregazione</option>
+          <option value="personale">👤 Personale</option>
+          <option value="riunione">📋 Riunione</option>
+        </select>
+      </div>
+      <label>Testo</label>
+      <textarea id="note-input" placeholder="Scrivi qui i tuoi pensieri del giorno..." oninput="autoGrow(this)"></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="saveNote()">💾 Salva nota</button>
+        <button class="btn-gcal btn-gcal-lg" onclick="addNoteToCalendar()">📅 Google Calendar</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📚 Le mie note</h2>
+      <input type="text" class="search-bar" id="note-search" placeholder="🔍 Cerca nelle note..." oninput="renderNotes()">
+      <select id="notebook-filter" onchange="setNotebookFilter()" style="margin-bottom:12px">
+        <option value="all">📓 Tutti i quaderni</option>
+      </select>
+      <div class="filter-tabs" id="cat-filters">
+        <button class="filter-btn active" onclick="setCatFilter('all',this)">Tutte</button>
+        <button class="filter-btn" onclick="setCatFilter('spirituale',this)" style="border-color:#5b8dd9;color:#5b8dd9">📖 Spirituale</button>
+        <button class="filter-btn" onclick="setCatFilter('congregazione',this)" style="border-color:#5a9e6f;color:#5a9e6f">⛪ Congregazione</button>
+        <button class="filter-btn" onclick="setCatFilter('personale',this)" style="border-color:#c49a6c;color:#c49a6c">👤 Personale</button>
+        <button class="filter-btn" onclick="setCatFilter('riunione',this)" style="border-color:#9b59b6;color:#9b59b6">📋 Riunione</button>
+        <button class="filter-btn" onclick="setCatFilter('generico',this)">📌 Generico</button>
+      </div>
+      <div class="entries-list" id="entries-list"><p class="empty-msg">Ancora nessuna nota salvata.</p></div>
+    </div>
+  </div>
+
+  <!-- PROMEMORIA -->
+  <div id="promemoria" class="section">
+    <div class="card">
+      <h2 id="r-form-title">➕ Nuovo promemoria</h2>
+      <div class="reminder-form">
+        <div><label>Titolo</label><input type="text" id="r-title" placeholder="Es. Riunione, Appuntamento..."></div>
+        <div class="form-row">
+          <div><label>Data</label><input type="date" id="r-date"></div>
+          <div><label>Ora</label><input type="time" id="r-time" onchange="updateTimePreview('r-time','r-time-preview')"><div id="r-time-preview" class="time-preview"></div></div>
+        </div>
+        <div><label>Descrizione (opzionale)</label><textarea id="r-desc" class="reminder-desc" placeholder="Dettagli aggiuntivi..."></textarea></div>
+        <div class="btn-row">
+          <button class="btn" id="r-save-btn" onclick="saveReminder()">🔔 Salva promemoria</button>
+          <button class="btn btn-sm" id="r-cancel-btn" onclick="cancelEdit()" style="display:none;background:#888">❌ Annulla</button>
+          <button class="btn-gcal btn-gcal-lg" onclick="addReminderToCalendar()">📅 Google Calendar</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📋 I miei promemoria</h2>
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setReminderFilter('all',this)">Tutti</button>
+        <button class="filter-btn" onclick="setReminderFilter('todo',this)">Da fare</button>
+        <button class="filter-btn" onclick="setReminderFilter('done',this)">Completati</button>
+      </div>
+      <div id="reminders-list"><p class="empty-msg">Ancora nessun promemoria.</p></div>
+    </div>
+  </div>
+
+  <!-- CALENDARIO (Prossimi eventi) -->
+  <div id="calendario" class="section">
+    <div class="card">
+      <h2>➕ Nuovo evento</h2>
+      <div class="reminder-form">
+        <div><label>Titolo evento</label><input type="text" id="q-title" placeholder="Es. Riunione, Visita, Appuntamento..."></div>
+        <div class="form-row">
+          <div><label>Data</label><input type="date" id="q-date"></div>
+          <div><label>Ora (opzionale)</label><input type="time" id="q-time" onchange="updateTimePreview('q-time','q-time-preview')"><div id="q-time-preview" class="time-preview"></div></div>
+        </div>
+        <div><label>Note (opzionale)</label><textarea id="q-desc" class="reminder-desc" placeholder="Dettagli, luogo, promemoria..."></textarea></div>
+        <div class="btn-row">
+          <button class="btn" onclick="saveQuickEvent()">💾 Salva evento</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📅 Prossimi eventi</h2>
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setUpFilter('oggi',this)">Oggi</button>
+        <button class="filter-btn" onclick="setUpFilter('settimana',this)">Questa settimana</button>
+        <button class="filter-btn" onclick="setUpFilter('mese',this)">Questo mese</button>
+        <button class="filter-btn" onclick="setUpFilter('tutti',this)">Tutti i futuri</button>
+      </div>
+      <div id="upcoming-list"><p class="empty-msg">Caricamento...</p></div>
+    </div>
+    <div class="card">
+      <h2>📅 Google Calendar</h2>
+      <div class="gcal-info">
+        <strong>📌 Come funziona</strong>
+        Clicca il pulsante <strong>blu 📅</strong> su qualsiasi nota o promemoria per aprire Google Calendar con l'evento già precompilato.
+      </div>
+      <a href="https://calendar.google.com" target="_blank" class="btn-gcal btn-gcal-lg">🗓️ Apri Google Calendar</a>
+    </div>
+  </div>
+
+  <!-- AVVISI -->
+  <div id="avvisi" class="section">
+    <div class="card">
+      <h2 id="ann-form-title">📢 Nuovo avviso</h2>
+      <div class="reminder-form">
+        <div><label>Avviso</label><textarea id="ann-text" class="reminder-desc" placeholder="Testo dell'avviso da comunicare..."></textarea></div>
+        <div class="form-row">
+          <div><label>Data riunione</label><input type="date" id="ann-date"></div>
+          <div><label>Dove</label><select id="ann-type"><option value="podio">🎤 Dal podio</option><option value="bacheca">📌 In bacheca</option></select></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="ann-save-btn" onclick="saveAnnouncement()">📢 Salva avviso</button>
+          <button class="btn btn-sm" id="ann-cancel-btn" onclick="cancelEditAnnouncement()" style="display:none;background:#888">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📋 Avvisi</h2>
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setAnnouncementFilter('todo',this)">Da comunicare</button>
+        <button class="filter-btn" onclick="setAnnouncementFilter('done',this)">Comunicati</button>
+        <button class="filter-btn" onclick="setAnnouncementFilter('all',this)">Tutti</button>
+      </div>
+      <div id="announcements-list"><p class="empty-msg">Ancora nessun avviso.</p></div>
+    </div>
+  </div>
+
+  <!-- ALTRO -->
+  <div id="altro" class="section">
+    <div class="card">
+      <h2>📊 Statistiche</h2>
+      <div class="backup-stat" id="backup-stat"></div>
+    </div>
+    <div class="card">
+      <h2>⚙️ Impostazioni</h2>
+      <div class="settings-row">
+        <div><div class="settings-label">🔔 Notifiche browser</div><div class="settings-desc">Avviso automatico all'ora del promemoria</div></div>
+        <button class="btn btn-sm" id="notif-btn" onclick="requestNotifPermission()">Abilita</button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">🔑 Cambia PIN</div><div class="settings-desc">Imposta un nuovo codice di accesso</div></div>
+        <button class="btn btn-sm" onclick="changePin()">Cambia</button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">🔓 Rimuovi PIN</div><div class="settings-desc">Accedi senza codice di protezione</div></div>
+        <button class="btn btn-sm btn-danger" onclick="removePin()">Rimuovi</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>☁️ Sincronizzazione PC ↔ Telefono</h2>
+      <div id="sync-status-box" style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:16px;border:1.5px solid var(--border);font-size:0.9rem;color:var(--muted)">
+        <span id="sync-status-text">Sincronizzazione non configurata.</span>
+      </div>
+      <div style="margin-bottom:12px">
+        <label>Chiave API JSONBin <span style="font-weight:400;text-transform:none;letter-spacing:0">(la stessa delle altre tue app)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="sync-apikey-input" placeholder="Incolla qui la tua chiave JSONBin..." style="font-family:monospace;font-size:0.82rem">
+          <button class="btn btn-sm btn-muted" style="margin-top:0;white-space:nowrap;flex-shrink:0" onclick="saveApiKey()">💾 Salva</button>
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label>Codice sincronizzazione <span style="font-weight:400;text-transform:none;letter-spacing:0">(Bin ID — da copiare sull'altro dispositivo)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="sync-code-input" placeholder="Es. 64a3f2..." style="font-family:monospace;font-size:0.9rem">
+          <button class="btn" style="margin-top:0;white-space:nowrap" onclick="connectSync()">Connetti</button>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="createSync()">🆕 Crea nuovo codice</button>
+        <button class="btn btn-sm btn-muted" onclick="syncNow()">🔄 Sincronizza ora</button>
+        <button class="btn btn-sm btn-danger" onclick="removeSync()">✖️ Rimuovi sync</button>
+      </div>
+      <p style="margin-top:14px;color:var(--muted);font-size:0.82rem;line-height:1.6">
+        <strong>Come funziona:</strong> inserisci la tua chiave API JSONBin, poi clicca <em>Crea nuovo codice</em> su un dispositivo. Copia il codice che appare e incollalo sull'altro dispositivo con <em>Connetti</em>. Da quel momento i dati si sincronizzano automaticamente.
+      </p>
+      <p id="sync-msg" style="margin-top:8px;font-size:0.88rem;color:var(--reminder-border)"></p>
+    </div>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:14px">Esporta i tuoi dati in un file <strong>.json</strong> per salvarli o trasferirli su un altro dispositivo.</p>
+      <div class="btn-row">
+        <button class="btn" onclick="exportData()">⬇️ Esporta</button>
+        <label class="btn" style="cursor:pointer;margin-top:0">⬆️ Importa<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Cancella tutto</button>
+      </div>
+      <p id="backup-msg" style="margin-top:12px;color:var(--muted);font-size:0.88rem"></p>
+    </div>
+  </div>
+
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── DATI ── */
+var notes     = JSON.parse(localStorage.getItem('gv-notes')     || '[]');
+var reminders = JSON.parse(localStorage.getItem('gv-reminders') || '[]');
+var notebooks = JSON.parse(localStorage.getItem('gv-notebooks') || '[]');
+var announcements = JSON.parse(localStorage.getItem('gv-announcements') || '[]');
+var catFilter = 'all', reminderFilter = 'all', notebookFilter = 'all', announcementFilter = 'todo';
+var editingAnnouncementId = null;
+var upFilter = 'oggi';
+var editingReminderId = null;
+
+/* ── CATEGORIE ── */
+var CAT = {
+  spirituale:    { label:'📖 Spirituale',    color:'#5b8dd9' },
+  congregazione: { label:'⛪ Congregazione', color:'#5a9e6f' },
+  personale:     { label:'👤 Personale',     color:'#c49a6c' },
+  riunione:      { label:'📋 Riunione',      color:'#9b59b6' },
+  generico:      { label:'📌 Generico',      color:'#9e8f7a' }
+};
+
+/* ── SINCRONIZZAZIONE CLOUD (jsonbin.io) ── */
+var JSONBIN = 'https://api.jsonbin.io/v3/b';
+var syncBinId  = localStorage.getItem('gv-sync-id')  || '';
+var syncApiKey = localStorage.getItem('gv-sync-key') || '';
+var syncTimer  = null;
+
+function getSyncData() {
+  return { notes: notes, reminders: reminders, announcements: announcements, updated: Date.now() };
+}
+
+function syncHeaders() {
+  return { 'Content-Type': 'application/json', 'X-Master-Key': syncApiKey };
+}
+
+function updateSyncStatus() {
+  var box = document.getElementById('sync-status-text');
+  if (!box) return;
+  var keyInp = document.getElementById('sync-apikey-input');
+  if (keyInp && syncApiKey) keyInp.value = syncApiKey;
+  var codeInp = document.getElementById('sync-code-input');
+  if (codeInp && syncBinId) codeInp.value = syncBinId;
+  if (!syncBinId || !syncApiKey) {
+    box.textContent = syncApiKey ? 'Chiave inserita — clicca Crea o incolla un codice.' : 'Inserisci la chiave API e configura la sincronizzazione.';
+    return;
+  }
+  var lastSync = localStorage.getItem('gv-sync-last');
+  var lastStr  = lastSync ? ' — ultima sync: ' + new Date(parseInt(lastSync)).toLocaleTimeString('it-IT') : '';
+  box.textContent = '✅ Attiva — Codice: ' + syncBinId + lastStr;
+}
+
+function saveApiKey() {
+  var inp = document.getElementById('sync-apikey-input');
+  var key = inp ? inp.value.trim() : '';
+  if (!key) { showToast('⚠️ Incolla prima la chiave!'); return; }
+  syncApiKey = key;
+  localStorage.setItem('gv-sync-key', key);
+  updateSyncStatus();
+  showToast('✅ Chiave salvata!');
+}
+
+function getApiKey() {
+  var inp = document.getElementById('sync-apikey-input');
+  var key = (inp ? inp.value.trim() : '') || syncApiKey;
+  if (!key) { showToast('⚠️ Inserisci prima la chiave API JSONBin!'); return null; }
+  syncApiKey = key;
+  localStorage.setItem('gv-sync-key', key);
+  return key;
+}
+
+function createSync() {
+  var key = getApiKey(); if (!key) return;
+  showToast('⏳ Creazione in corso...');
+  fetch(JSONBIN, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'DiarioGiovanni', 'X-Bin-Private': 'false' },
+    body: JSON.stringify(getSyncData())
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var id = data.metadata && data.metadata.id;
+    if (!id) { showToast('❌ Errore: chiave API non valida?'); return; }
+    syncBinId = id;
+    localStorage.setItem('gv-sync-id', id);
+    localStorage.setItem('gv-sync-last', Date.now().toString());
+    updateSyncStatus();
+    document.getElementById('sync-msg').textContent = '✅ Codice creato: ' + id + '  — Copialo sull\'altro dispositivo!';
+    showToast('✅ Sync creata!');
+  })
+  .catch(function() { showToast('❌ Errore di rete'); });
+}
+
+function connectSync() {
+  var key = getApiKey(); if (!key) return;
+  var id = document.getElementById('sync-code-input').value.trim();
+  if (!id) { showToast('⚠️ Inserisci il codice!'); return; }
+  showToast('⏳ Connessione...');
+  fetch(JSONBIN + '/' + id + '/latest', { headers: { 'X-Master-Key': key } })
+  .then(function(r) { if (!r.ok) { showToast('❌ Codice non valido o chiave errata'); return null; } return r.json(); })
+  .then(function(data) {
+    if (!data || !data.record) return;
+    var rec = data.record;
+    if (rec.notes && Array.isArray(rec.notes))         { notes=rec.notes; saveNotesLS(); renderNotes(); }
+    if (rec.reminders && Array.isArray(rec.reminders)) { reminders=rec.reminders; saveRemindersLS(); renderReminders(); }
+    if (rec.announcements && Array.isArray(rec.announcements)) { announcements=rec.announcements; saveAnnouncementsLS(); renderAnnouncements(); }
+    syncBinId = id;
+    localStorage.setItem('gv-sync-id', id);
+    localStorage.setItem('gv-sync-last', Date.now().toString());
+    updateBadges(); updateSyncStatus(); renderTomorrowBanner();
+    document.getElementById('sync-msg').textContent = '✅ Connesso! Dati scaricati dall\'altro dispositivo.';
+    showToast('✅ Sincronizzato!');
+  })
+  .catch(function() { showToast('❌ Errore di rete'); });
+}
+
+function syncNow() {
+  if (!syncBinId || !syncApiKey) { showToast('⚠️ Configura prima la sincronizzazione'); return; }
+  // Scarica remote, unisci, ricarica
+  fetch(JSONBIN + '/' + syncBinId + '/latest', { headers: { 'X-Master-Key': syncApiKey } })
+  .then(function(r) { return r.ok ? r.json() : null; })
+  .then(function(data) {
+    if (data && data.record && data.record.notes) {
+      notes     = mergeData(notes,     data.record.notes);
+      reminders = mergeData(reminders, data.record.reminders || []);
+      announcements = mergeData(announcements, data.record.announcements || []);
+      saveNotesLS(); saveRemindersLS(); saveAnnouncementsLS(); renderNotebookOptions(); renderNotes(); renderReminders(); renderAnnouncements(); updateBadges(); renderTomorrowBanner();
+    }
+    return fetch(JSONBIN + '/' + syncBinId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': syncApiKey },
+      body: JSON.stringify(getSyncData())
+    });
+  })
+  .then(function() {
+    localStorage.setItem('gv-sync-last', Date.now().toString());
+    updateSyncStatus();
+    var msg = document.getElementById('sync-msg');
+    if (msg) msg.textContent = '✅ Sync completata: ' + new Date().toLocaleTimeString('it-IT');
+    showToast('✅ Sincronizzato!');
+  })
+  .catch(function() { showToast('❌ Errore sync'); });
+}
+
+function mergeData(local, remote) {
+  var map = {};
+  (local || []).forEach(function(x) { map[x.id] = x; });
+  (remote || []).forEach(function(x) {
+    var existing = map[x.id];
+    if (!existing) {
+      map[x.id] = x;
+    } else {
+      // Conflitto: tengo quello con updatedAt più recente
+      var lu = existing.updatedAt || 0;
+      var ru = x.updatedAt || 0;
+      if (ru > lu) map[x.id] = x;
+    }
+  });
+  return Object.values(map).sort(function(a,b) { return b.id - a.id; });
+}
+
+function autoSync() {
+  if (!syncBinId || !syncApiKey) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(function() {
+    fetch(JSONBIN + '/' + syncBinId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': syncApiKey },
+      body: JSON.stringify(getSyncData())
+    })
+    .then(function() { localStorage.setItem('gv-sync-last', Date.now().toString()); updateSyncStatus(); })
+    .catch(function() {});
+  }, 1500);
+}
+
+function removeSync() {
+  if (!confirm('Rimuovere la sincronizzazione da questo dispositivo? I dati restano.')) return;
+  syncBinId = ''; syncApiKey = '';
+  localStorage.removeItem('gv-sync-id');
+  localStorage.removeItem('gv-sync-key');
+  localStorage.removeItem('gv-sync-last');
+  var inp = document.getElementById('sync-code-input'); if (inp) inp.value = '';
+  var key = document.getElementById('sync-apikey-input'); if (key) key.value = '';
+  var msg = document.getElementById('sync-msg'); if (msg) msg.textContent = '';
+  updateSyncStatus(); showToast('🔌 Sync rimossa');
+}
+
+
+
+/* ── UTILITY ── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+function fmtDate(iso) { return new Date(iso).toLocaleDateString('it-IT',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+function fmtDateShort(iso) { return new Date(iso).toLocaleDateString('it-IT'); }
+function escHtml(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function saveNotesLS()     { localStorage.setItem('gv-notes',    JSON.stringify(notes)); }
+function saveNotebooksLS() { localStorage.setItem('gv-notebooks', JSON.stringify(notebooks)); }
+function saveAnnouncementsLS() { localStorage.setItem('gv-announcements', JSON.stringify(announcements)); }
+function saveRemindersLS() { localStorage.setItem('gv-reminders',JSON.stringify(reminders)); }
+function buildGCalUrl(title, details, dateStr, timeStr) {
+  var start, end;
+  if (dateStr && timeStr) {
+    var dt = dateStr.replace(/-/g,'')+'T'+timeStr.replace(':','')+'00';
+    var ed = new Date(dateStr+'T'+timeStr); ed.setHours(ed.getHours()+1);
+    var es = ed.toISOString().replace(/[-:]/g,'').split('.')[0];
+    start=dt; end=es;
+  } else if (dateStr) { start=dateStr.replace(/-/g,''); end=start; }
+  else { var t=new Date(); start=t.toISOString().split('T')[0].replace(/-/g,''); end=start; }
+  var p = new URLSearchParams({action:'TEMPLATE',text:title,dates:start+'/'+end,details:details||''});
+  return 'https://calendar.google.com/calendar/render?'+p.toString();
+}
+function updateBadges() {
+  document.getElementById('badge-diario').textContent = notes.length > 0 ? notes.length : '';
+  var p = reminders.filter(function(r){return !r.done;}).length;
+  document.getElementById('badge-promemoria').textContent = p > 0 ? p : '';
+  var av = announcements.filter(function(a){return !a.done;}).length;
+  var bAv = document.getElementById('badge-avvisi'); if (bAv) bAv.textContent = av > 0 ? av : '';
+}
+
+/* ── TAB ── */
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id==='calendario') {
+    var qd = document.getElementById('q-date');
+    if (qd && !qd.value) qd.value = new Date().toISOString().split('T')[0];
+    renderUpcoming();
+  }
+  if (id==='altro') renderStats();
+}
+
+/* ── DARK MODE ── */
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  var d = document.body.classList.contains('dark');
+  localStorage.setItem('gv-dark', d?'1':'0');
+  document.getElementById('dark-btn').textContent = d ? '☀️' : '🌙';
+}
+if (localStorage.getItem('gv-dark')==='1') document.body.classList.add('dark');
+
+/* ── PWA ── */
+var deferredInstall = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault(); deferredInstall = e;
+  document.getElementById('install-btn').style.display = 'flex';
+});
+function installApp() {
+  if (!deferredInstall) { showToast('ℹ️ Già installata o non disponibile'); return; }
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(function() { deferredInstall=null; document.getElementById('install-btn').style.display='none'; });
+}
+(function() {
+  try {
+    var m = {name:'Il Mio Diario – Giovanni',short_name:'Diario',start_url:'.',display:'standalone',theme_color:'#8b5e3c',background_color:'#f5f0e8',
+      icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%238b5e3c'/%3E%3Ctext x='96' y='140' font-size='110' text-anchor='middle'%3E%E2%9C%92%EF%B8%8F%3C/text%3E%3C/svg%3E",sizes:'192x192',type:'image/svg+xml'}]};
+    var bl = new Blob([JSON.stringify(m)],{type:'application/json'});
+    var lk = document.createElement('link'); lk.rel='manifest'; lk.href=URL.createObjectURL(bl);
+    document.head.appendChild(lk);
+  } catch(e) {}
+})();
+
+/* ── NOTIFICHE ── */
+function updateNotifBtn() {
+  var btn = document.getElementById('notif-btn');
+  if (!btn || !('Notification' in window)) { if(btn){btn.textContent='Non supportate';btn.disabled=true;} return; }
+  if (Notification.permission==='granted') { btn.textContent='✅ Abilitate'; btn.disabled=true; }
+  else if (Notification.permission==='denied') { btn.textContent='❌ Bloccate'; btn.disabled=true; }
+  else { btn.textContent='Abilita'; btn.disabled=false; }
+}
+function requestNotifPermission() {
+  if (!('Notification' in window)) { showToast('❌ Non supportato'); return; }
+  Notification.requestPermission().then(function(p) {
+    updateNotifBtn();
+    showToast(p==='granted' ? '✅ Notifiche abilitate!' : '⚠️ Permesso non concesso');
+  });
+}
+var notifiedIds = JSON.parse(localStorage.getItem('gv-notified')||'[]');
+setInterval(function() {
+  if (!('Notification' in window) || Notification.permission!=='granted') return;
+  var now = new Date();
+  var nd = now.toISOString().split('T')[0];
+  var nt = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  reminders.forEach(function(r) {
+    if (!r.done && r.date===nd && r.time===nt && notifiedIds.indexOf(r.id)===-1) {
+      new Notification('🔔 '+r.title, {body:r.desc||('📅 '+fmtDateShort(r.date))});
+      notifiedIds.push(r.id);
+      localStorage.setItem('gv-notified',JSON.stringify(notifiedIds));
+    }
+  });
+}, 30000);
+
+/* ── PIN ── */
+var pinBuffer='', pinMode='enter', pinTemp='';
+function pinKey(d) { if(pinBuffer.length>=4)return; pinBuffer+=d; updatePinDots(); if(pinBuffer.length===4)setTimeout(pinConfirm,150); }
+function pinDel() { pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
+function updatePinDots() {
+  document.querySelectorAll('#pin-dots span').forEach(function(s,i){s.classList.toggle('filled',i<pinBuffer.length);});
+}
+function pinConfirm() {
+  var stored = localStorage.getItem('gv-pin');
+  if (pinMode==='enter') {
+    if (!stored) { openApp(); return; }
+    if (pinBuffer===stored) { openApp(); }
+    else { pinError('PIN errato. Riprova.'); }
+  } else if (pinMode==='setup1') {
+    if (pinBuffer.length<4) { pinError('Inserisci 4 cifre.'); return; }
+    pinTemp=pinBuffer; pinBuffer=''; updatePinDots(); pinMode='setup2';
+    document.getElementById('pin-mode-label').textContent='Conferma il nuovo PIN';
+    document.getElementById('pin-error').textContent='';
+  } else if (pinMode==='setup2') {
+    if (pinBuffer!==pinTemp) { pinError('I PIN non coincidono.'); pinMode='setup1'; pinTemp=''; document.getElementById('pin-mode-label').textContent='Scegli un PIN a 4 cifre'; return; }
+    localStorage.setItem('gv-pin',pinBuffer); showToast('✅ PIN impostato!'); openApp();
+  }
+}
+function pinError(msg) {
+  var box = document.getElementById('pin-box');
+  box.classList.add('shake'); setTimeout(function(){box.classList.remove('shake');},400);
+  document.getElementById('pin-error').textContent=msg; pinBuffer=''; updatePinDots();
+}
+function openApp() {
+  document.getElementById('pin-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  initApp();
+}
+function lockApp() {
+  if (!localStorage.getItem('gv-pin')) { showToast('ℹ️ Nessun PIN impostato'); return; }
+  document.getElementById('pin-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  pinBuffer=''; pinMode='enter';
+  document.getElementById('pin-mode-label').textContent='Inserisci il PIN';
+  document.getElementById('pin-error').textContent=''; updatePinDots();
+}
+function changePin() {
+  document.getElementById('pin-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  pinBuffer=''; pinMode='setup1'; pinTemp='';
+  document.getElementById('pin-mode-label').textContent='Scegli un PIN a 4 cifre';
+  document.getElementById('pin-error').textContent=''; updatePinDots();
+}
+function removePin() {
+  if (!confirm('Rimuovere il PIN?')) return;
+  localStorage.removeItem('gv-pin'); showToast('🔓 PIN rimosso');
+}
+function forgotPin() {
+  if (!confirm('Rimuovere il PIN dimenticato? I dati resteranno intatti.')) return;
+  localStorage.removeItem('gv-pin'); pinMode='enter'; openApp();
+}
+// Avvio
+(function() {
+  if (localStorage.getItem('gv-pin')) {
+    document.getElementById('pin-mode-label').textContent='Inserisci il PIN';
+  } else { openApp(); }
+})();
+
+/* ── INIT ── */
+function initApp() {
+  var now = new Date();
+  document.getElementById('today-date').textContent =
+    now.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('r-date').value = now.toISOString().split('T')[0];
+  document.getElementById('dark-btn').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  renderNotebookOptions();
+  renderNotes(); renderReminders(); renderAnnouncements(); updateBadges(); updateNotifBtn(); renderTomorrowBanner();
+  // Sincronizza all'avvio se configurato
+  if (syncBinId) syncNow();
+}
+
+/* ── DIARIO ── */
+function autoGrow(el){ if(!el)return; el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+function saveNote() {
+  var title  = document.getElementById('note-title').value.trim();
+  var text   = document.getElementById('note-input').value.trim();
+  var cat    = document.getElementById('note-cat').value;
+  var notebook = document.getElementById('note-notebook').value.trim();
+  if (!text && !title) { showToast('⚠️ Scrivi qualcosa!'); return; }
+  notes.unshift({id:Date.now(),date:new Date().toISOString(),title:title,text:text,category:cat,notebook:notebook,updatedAt:Date.now()});
+  registerNotebook(notebook);
+  saveNotesLS();
+  document.getElementById('note-title').value='';
+  document.getElementById('note-notebook').value='';
+  var ni=document.getElementById('note-input'); ni.value=''; ni.style.height='';
+  renderNotebookOptions();
+  renderNotes(); showToast('✅ Nota salvata!'); autoSync();
+}
+function registerNotebook(name){
+  name=(name||'').trim();
+  if (name && notebooks.indexOf(name)===-1){ notebooks.push(name); saveNotebooksLS(); }
+}
+function getAllNotebooks(){
+  var set={};
+  (notebooks||[]).forEach(function(nb){ if(nb) set[nb]=true; });
+  (notes||[]).forEach(function(n){ if(n.notebook) set[n.notebook]=true; });
+  return Object.keys(set).sort(function(a,b){return a.localeCompare(b,'it',{sensitivity:'base'});});
+}
+function renderNotebookOptions(){
+  var all=getAllNotebooks();
+  var dl=document.getElementById('notebook-list');
+  if (dl){ dl.innerHTML=all.map(function(nb){return '<option value="'+escHtml(nb).replace(/"/g,'&quot;')+'"></option>';}).join(''); }
+  var sel=document.getElementById('notebook-filter');
+  if (sel){
+    var cur=sel.value;
+    var opt='<option value="all">📓 Tutti i quaderni</option>';
+    all.forEach(function(nb){ opt+='<option value="'+escHtml(nb).replace(/"/g,'&quot;')+'">📓 '+escHtml(nb)+'</option>'; });
+    sel.innerHTML=opt;
+    if (cur && (cur==='all' || all.indexOf(cur)!==-1)) sel.value=cur; else { sel.value='all'; notebookFilter='all'; }
+  }
+}
+function setNotebookFilter(){
+  var s=document.getElementById('notebook-filter');
+  notebookFilter = s ? s.value : 'all';
+  renderNotes();
+}
+function addNoteToCalendar() {
+  var title = document.getElementById('note-title').value.trim();
+  var text  = document.getElementById('note-input').value.trim();
+  var base  = title || text;
+  if (!base) { showToast('⚠️ Scrivi una nota prima!'); return; }
+  window.open(buildGCalUrl('📖 '+(base.length>60?base.substring(0,60)+'...':base), text||title, null, null),'_blank');
+}
+function addNoteEntryToCalendar(id) {
+  var n = notes.find(function(x){return x.id===id;});
+  if (!n) return;
+  var base = n.title || n.text || '';
+  window.open(buildGCalUrl('📖 '+(base.length>60?base.substring(0,60)+'...':base), n.text||n.title||'', new Date(n.date).toISOString().split('T')[0], null),'_blank');
+}
+function deleteNote(id) {
+  if (!confirm('Eliminare questa nota?')) return;
+  notes = notes.filter(function(n){return n.id!==id;}); saveNotesLS(); renderNotes(); showToast('🗑️ Eliminata'); autoSync();
+}
+function editNote(id) {
+  var item = document.querySelector('[data-note-id="'+id+'"]');
+  var note = notes.find(function(n){return n.id===id;}); if (!note||!item) return;
+  var c = note.category||'generico';
+  var opts = ''; Object.keys(CAT).forEach(function(k){opts+='<option value="'+k+'"'+(k===c?' selected':'')+'>'+CAT[k].label+'</option>';});
+  var titleVal = escHtml(note.title||'').replace(/"/g,'&quot;');
+  var nbVal = escHtml(note.notebook||'').replace(/"/g,'&quot;');
+  item.innerHTML =
+    '<div class="entry-date">📅 '+fmtDate(note.date)+'</div>'+
+    '<input type="text" class="edit-title" placeholder="Titolo" style="width:100%;margin-bottom:8px;border:1.5px solid var(--accent2);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:0.97rem;background:var(--input-bg);color:var(--ink)" value="'+titleVal+'">'+
+    '<input type="text" class="edit-notebook" list="notebook-list" placeholder="Quaderno" style="width:100%;margin-bottom:8px;border:1.5px solid var(--accent2);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:0.97rem;background:var(--input-bg);color:var(--ink)" value="'+nbVal+'">'+
+    '<select style="margin-bottom:8px;width:100%">'+opts+'</select>'+
+    '<textarea class="edit-textarea">'+escHtml(note.text||'')+'</textarea>'+
+    '<div class="entry-actions">'+
+    '<button class="btn btn-sm" onclick="saveEditNote('+id+',this)">💾 Salva</button>'+
+    '<button class="btn btn-sm btn-muted" onclick="renderNotes()">✖️ Annulla</button>'+
+    '</div>';
+  var firstTa = item.querySelector('.edit-textarea'); if (firstTa) firstTa.focus();
+}
+function saveEditNote(id, btn) {
+  var item = btn.closest('.entry-item');
+  var titleEl = item.querySelector('.edit-title');
+  var nbEl    = item.querySelector('.edit-notebook');
+  var ta      = item.querySelector('.edit-textarea');
+  var sel     = item.querySelector('select');
+  var txt   = ta ? ta.value.trim() : '';
+  var title = titleEl ? titleEl.value.trim() : '';
+  if (!txt && !title) { showToast('⚠️ Testo vuoto!'); return; }
+  var note = notes.find(function(n){return n.id===id;});
+  if (note) {
+    note.history = note.history || [];
+    note.history.unshift({ title:note.title||'', text:note.text||'', notebook:note.notebook||'', category:note.category||'generico', savedAt: note.updatedAt || note.id });
+    if (note.history.length > 20) note.history = note.history.slice(0,20);
+    note.title=title; note.text=txt;
+    note.notebook = nbEl ? nbEl.value.trim() : (note.notebook||'');
+    registerNotebook(note.notebook);
+    note.category=sel?sel.value:(note.category||'generico');
+    note.edited=new Date().toISOString(); note.updatedAt=Date.now();
+    saveNotesLS(); renderNotebookOptions(); renderNotes(); showToast('✅ Nota modificata!'); autoSync();
+  }
+}
+function toggleHistory(id){
+  var box=document.getElementById('hist-'+id);
+  if(!box) return;
+  if(box.style.display==='none'){
+    var n=notes.find(function(x){return x.id===id;});
+    if(!n||!n.history||!n.history.length){ return; }
+    var h='<div class="hist-title">🕐 Versioni precedenti</div>';
+    n.history.forEach(function(v){
+      var when = v.savedAt ? new Date(v.savedAt).toLocaleString('it-IT',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+      h+='<div class="hist-item">';
+      if(when) h+='<div class="hist-when">'+escHtml(when)+'</div>';
+      if(v.title) h+='<div class="hist-vtitle">'+escHtml(v.title)+'</div>';
+      if(v.text)  h+='<div class="hist-vtext">'+escHtml(v.text)+'</div>';
+      h+='</div>';
+    });
+    box.innerHTML=h; box.style.display='block';
+  } else {
+    box.style.display='none';
+  }
+}
+function setCatFilter(cat, btn) {
+  catFilter=cat;
+  document.querySelectorAll('#cat-filters .filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active'); renderNotes();
+}
+function renderNotes() {
+  var list = document.getElementById('entries-list');
+  var search = document.getElementById('note-search')?document.getElementById('note-search').value.toLowerCase().trim():'';
+  var filtered = notes;
+  if (catFilter!=='all') filtered=filtered.filter(function(n){return (n.category||'generico')===catFilter;});
+  if (notebookFilter!=='all') filtered=filtered.filter(function(n){return (n.notebook||'')===notebookFilter;});
+  if (search) filtered=filtered.filter(function(n){return ((n.text||'')+' '+(n.title||'')+' '+(n.notebook||'')).toLowerCase().includes(search);});
+  if (!filtered.length) { list.innerHTML='<p class="empty-msg">'+(search||catFilter!=='all'||notebookFilter!=='all'?'🔍 Nessuna nota trovata.':'Ancora nessuna nota salvata.')+'</p>'; updateBadges(); return; }
+  var html='';
+  for (var i=0;i<filtered.length;i++) {
+    var n=filtered[i], cat=n.category||'generico', ci=CAT[cat]||CAT['generico'];
+    var el=n.edited?'&nbsp;<span style="color:var(--muted);font-size:0.74rem">(modificata)</span>':'';
+    html+='<div class="entry-item" data-note-id="'+n.id+'" style="border-left-color:'+ci.color+'">';
+    html+='<span class="cat-badge" style="background:'+ci.color+'">'+ci.label+'</span>';
+    if (n.notebook) html+='<span class="nb-badge">📓 '+escHtml(n.notebook)+'</span>';
+    html+='<div class="entry-date">📅 '+fmtDate(n.date)+el+'</div>';
+    if (n.title) html+='<div class="entry-title">'+escHtml(n.title)+'</div>';
+    if (n.text)  html+='<div class="entry-text">'+escHtml(n.text)+'</div>';
+    html+='<div class="entry-actions">';
+    html+='<button class="btn btn-sm" onclick="editNote('+n.id+')">✏️ Modifica</button>';
+    html+='<button class="btn-gcal" onclick="addNoteEntryToCalendar('+n.id+')">📅</button>';
+    html+='<button class="btn btn-sm btn-danger" onclick="deleteNote('+n.id+')">🗑️</button>';
+    if (n.history && n.history.length) html+='<button class="btn btn-sm btn-muted" onclick="toggleHistory('+n.id+')">🕐 Storico ('+n.history.length+')</button>';
+    html+='</div>';
+    html+='<div class="note-history" id="hist-'+n.id+'" style="display:none"></div>';
+    html+='</div>';
+  }
+  list.innerHTML=html; updateBadges();
+}
+
+/* ── AVVISI ── */
+function saveAnnouncement(){
+  var text=document.getElementById('ann-text').value.trim();
+  var date=document.getElementById('ann-date').value;
+  var type=document.getElementById('ann-type').value;
+  if(!text){ showToast('⚠️ Scrivi l\'avviso!'); return; }
+  if(editingAnnouncementId){
+    var a=announcements.find(function(x){return x.id===editingAnnouncementId;});
+    if(a){ a.text=text; a.date=date; a.type=type; a.updatedAt=Date.now(); }
+    editingAnnouncementId=null;
+  } else {
+    announcements.unshift({id:Date.now(),text:text,date:date,type:type,done:false,updatedAt:Date.now()});
+  }
+  saveAnnouncementsLS();
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-date').value='';
+  document.getElementById('ann-type').value='podio';
+  document.getElementById('ann-form-title').textContent='📢 Nuovo avviso';
+  document.getElementById('ann-save-btn').textContent='📢 Salva avviso';
+  document.getElementById('ann-cancel-btn').style.display='none';
+  renderAnnouncements(); updateBadges(); showToast('✅ Avviso salvato!'); autoSync();
+}
+function editAnnouncement(id){
+  var a=announcements.find(function(x){return x.id===id;}); if(!a) return;
+  editingAnnouncementId=id;
+  document.getElementById('ann-text').value=a.text||'';
+  document.getElementById('ann-date').value=a.date||'';
+  document.getElementById('ann-type').value=a.type||'podio';
+  document.getElementById('ann-form-title').textContent='✏️ Modifica avviso';
+  document.getElementById('ann-save-btn').textContent='💾 Aggiorna';
+  document.getElementById('ann-cancel-btn').style.display='inline-block';
+  var sec=document.getElementById('avvisi'); if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function cancelEditAnnouncement(){
+  editingAnnouncementId=null;
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-date').value='';
+  document.getElementById('ann-type').value='podio';
+  document.getElementById('ann-form-title').textContent='📢 Nuovo avviso';
+  document.getElementById('ann-save-btn').textContent='📢 Salva avviso';
+  document.getElementById('ann-cancel-btn').style.display='none';
+}
+function deleteAnnouncement(id){
+  if(!confirm('Eliminare questo avviso?')) return;
+  announcements=announcements.filter(function(a){return a.id!==id;});
+  saveAnnouncementsLS(); renderAnnouncements(); updateBadges(); showToast('🗑️ Eliminato'); autoSync();
+}
+function toggleAnnouncement(id){
+  var a=announcements.find(function(x){return x.id===id;});
+  if(a){ a.done=!a.done; a.updatedAt=Date.now(); saveAnnouncementsLS(); renderAnnouncements(); updateBadges(); autoSync(); }
+}
+function setAnnouncementFilter(f,btn){
+  announcementFilter=f;
+  var tabs=btn.parentNode.querySelectorAll('.filter-btn');
+  tabs.forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderAnnouncements();
+}
+function renderAnnouncements(){
+  var list=document.getElementById('announcements-list');
+  if(!list) return;
+  var filtered=announcements;
+  if(announcementFilter==='todo') filtered=filtered.filter(function(a){return !a.done;});
+  else if(announcementFilter==='done') filtered=filtered.filter(function(a){return a.done;});
+  if(!filtered.length){
+    var msg = announcementFilter==='done' ? 'Nessun avviso comunicato.' : (announcementFilter==='todo' ? 'Nessun avviso da comunicare. 👍' : 'Ancora nessun avviso.');
+    list.innerHTML='<p class="empty-msg">'+msg+'</p>'; return;
+  }
+  filtered=filtered.slice().sort(function(a,b){
+    var da=a.date||'9999', db=b.date||'9999';
+    if(da!==db) return da<db?-1:1;
+    return b.id-a.id;
+  });
+  var html='';
+  filtered.forEach(function(a){
+    var typeLabel = a.type==='bacheca' ? '📌 Bacheca' : '🎤 Podio';
+    var dateLabel = a.date ? fmtDateShort(a.date) : 'Senza data';
+    html+='<div class="announcement-item'+(a.done?' done':'')+'" data-ann-id="'+a.id+'">';
+    html+='<div class="ann-meta"><span class="ann-type">'+typeLabel+'</span> · 📅 '+escHtml(dateLabel)+(a.done?' · ✅ Comunicato':'')+'</div>';
+    html+='<div class="ann-text">'+escHtml(a.text||'')+'</div>';
+    html+='<div class="entry-actions">';
+    html+='<button class="btn btn-sm" onclick="toggleAnnouncement('+a.id+')">'+(a.done?'↩️ Riapri':'✔️ Comunicato')+'</button>';
+    html+='<button class="btn btn-sm" style="background:#e8a43c" onclick="editAnnouncement('+a.id+')">✏️ Modifica</button>';
+    html+='<button class="btn btn-sm btn-danger" onclick="deleteAnnouncement('+a.id+')">🗑️</button>';
+    html+='</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+/* ── PROMEMORIA ── */
+function updateTimePreview(inputId, previewId) {
+  var v = document.getElementById(inputId).value;
+  var p = document.getElementById(previewId);
+  if (!p) return;
+  if (v) { p.textContent = v; p.classList.add('has-time'); }
+  else { p.textContent = ''; p.classList.remove('has-time'); }
+}
+
+function renderTomorrowBanner() {
+  var banner = document.getElementById('tomorrow-banner');
+  var listBox = document.getElementById('tomorrow-banner-list');
+  if (!banner || !listBox) return;
+  try {
+    var tom = new Date(); tom.setDate(tom.getDate()+1);
+    var tomStr = tom.getFullYear()+'-'+(tom.getMonth()<9?'0':'')+(tom.getMonth()+1)+'-'+(tom.getDate()<10?'0':'')+tom.getDate();
+    var tomReminders = (reminders||[]).filter(function(r){return r.date===tomStr && !r.done;});
+    var tomNotes = (notes||[]).filter(function(n){
+      var d = (n.date||'').split('T')[0];
+      return d === tomStr;
+    });
+    if (tomReminders.length===0 && tomNotes.length===0) { banner.style.display='none'; return; }
+    // Ordina promemoria per orario
+    tomReminders.sort(function(a,b){return (a.time||'99')>(b.time||'99')?1:-1;});
+    var html = '';
+    tomReminders.forEach(function(r){
+      html += '<div class="tomorrow-banner-item">🔔 <strong>'+escHtml(r.title)+'</strong>' + (r.time?' — ore '+r.time:'') + '</div>';
+    });
+    tomNotes.forEach(function(n){
+      var ci = CAT[n.category||'generico'] || CAT['generico'];
+      var src = n.title || n.text || '';
+      var t = src.substring(0,60);
+      html += '<div class="tomorrow-banner-item">📖 <strong>'+ci.label+'</strong> — '+escHtml(t)+(src.length>60?'…':'')+'</div>';
+    });
+    listBox.innerHTML = html;
+    banner.style.display = 'block';
+  } catch(e) {
+    banner.style.display = 'none';
+  }
+}
+
+function saveReminder() {
+  var title=document.getElementById('r-title').value.trim(),
+      date=document.getElementById('r-date').value,
+      time=document.getElementById('r-time').value,
+      desc=document.getElementById('r-desc').value.trim();
+  if (!title||!date) { showToast('⚠️ Inserisci titolo e data!'); return; }
+  if (editingReminderId !== null) {
+    // MODIFICA
+    var r = reminders.find(function(x){return x.id===editingReminderId;});
+    if (r) {
+      r.title = title; r.date = date; r.time = time; r.desc = desc;
+      r.updatedAt = Date.now();
+      reminders.sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time);});
+      saveRemindersLS();
+      cancelEdit();
+      renderReminders(); renderUpcoming(); renderTomorrowBanner();
+      showToast('✏️ Modificato: ' + title + (time?' alle '+time:' (tutto il giorno)'));
+      autoSync();
+      return;
+    }
+  }
+  // NUOVO
+  reminders.push({id:Date.now(),title:title,date:date,time:time,desc:desc,done:false,updatedAt:Date.now()});
+  reminders.sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time);});
+  saveRemindersLS();
+  document.getElementById('r-title').value=''; document.getElementById('r-time').value=''; document.getElementById('r-desc').value='';
+  updateTimePreview('r-time','r-time-preview');
+  renderReminders(); renderUpcoming(); renderTomorrowBanner();
+  showToast('🔔 Salvato: ' + title + (time?' alle '+time:' (tutto il giorno)'));
+  autoSync();
+}
+
+function editReminder(id) {
+  var r = reminders.find(function(x){return x.id===id;});
+  if (!r) return;
+  editingReminderId = id;
+  document.getElementById('r-title').value = r.title || '';
+  document.getElementById('r-date').value  = r.date  || '';
+  document.getElementById('r-time').value  = r.time  || '';
+  document.getElementById('r-desc').value  = r.desc  || '';
+  updateTimePreview('r-time','r-time-preview');
+  // Mostra il banner di modifica e sposta il pulsante
+  var btnBox = document.getElementById('r-save-btn');
+  if (btnBox) btnBox.textContent = '💾 Salva modifiche';
+  var cancelBtn = document.getElementById('r-cancel-btn');
+  if (cancelBtn) cancelBtn.style.display = 'inline-block';
+  var head = document.getElementById('r-form-title');
+  if (head) head.innerHTML = '✏️ Modifica promemoria';
+  // Porta la tab Promemoria in primo piano e scorre in alto
+  var promoBtn = document.querySelector('nav button:nth-child(2)');
+  if (promoBtn) showTab('promemoria', promoBtn);
+  window.scrollTo({top:0, behavior:'smooth'});
+  showToast('✏️ Modifica in corso...');
+}
+
+function cancelEdit() {
+  editingReminderId = null;
+  document.getElementById('r-title').value=''; document.getElementById('r-time').value=''; document.getElementById('r-desc').value='';
+  document.getElementById('r-date').value='';
+  updateTimePreview('r-time','r-time-preview');
+  var btnBox = document.getElementById('r-save-btn');
+  if (btnBox) btnBox.textContent = '🔔 Salva promemoria';
+  var cancelBtn = document.getElementById('r-cancel-btn');
+  if (cancelBtn) cancelBtn.style.display = 'none';
+  var head = document.getElementById('r-form-title');
+  if (head) head.innerHTML = '➕ Nuovo promemoria';
+}
+function addReminderToCalendar() {
+  var t=document.getElementById('r-title').value.trim(), d=document.getElementById('r-date').value,
+      ti=document.getElementById('r-time').value, desc=document.getElementById('r-desc').value.trim();
+  if (!t||!d) { showToast('⚠️ Inserisci titolo e data!'); return; }
+  window.open(buildGCalUrl('🔔 '+t, desc, d, ti),'_blank');
+}
+function addReminderItemToCalendar(id) {
+  var r=reminders.find(function(x){return x.id===id;}); if (!r) return;
+  window.open(buildGCalUrl('🔔 '+r.title, r.desc||'', r.date, r.time),'_blank');
+}
+function toggleReminder(id) {
+  var r=reminders.find(function(x){return x.id===id;}); if (r){r.done=!r.done;r.updatedAt=Date.now();saveRemindersLS();renderReminders();renderUpcoming();renderTomorrowBanner();autoSync();}
+}
+function deleteReminder(id) {
+  if (!confirm('Eliminare questo promemoria?')) return;
+  reminders=reminders.filter(function(r){return r.id!==id;}); saveRemindersLS(); renderReminders(); renderUpcoming(); renderTomorrowBanner(); showToast('🗑️ Eliminato'); autoSync();
+}
+function setReminderFilter(f, btn) {
+  reminderFilter=f;
+  document.querySelectorAll('#promemoria .filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active'); renderReminders();
+}
+function renderReminders() {
+  var list=document.getElementById('reminders-list');
+  var filtered=reminders;
+  if (reminderFilter==='todo') filtered=reminders.filter(function(r){return !r.done;});
+  if (reminderFilter==='done') filtered=reminders.filter(function(r){return r.done;});
+  if (!filtered.length) {
+    var m={all:'Ancora nessun promemoria.',todo:'Nessun promemoria da fare! ✅',done:'Nessun promemoria completato.'};
+    list.innerHTML='<p class="empty-msg">'+m[reminderFilter]+'</p>'; updateBadges(); return;
+  }
+  var html='';
+  for (var i=0;i<filtered.length;i++) {
+    var r=filtered[i], dh=r.desc?'<div class="r-desc">'+escHtml(r.desc)+'</div>':'';
+    html+='<div class="reminder-item '+(r.done?'done':'')+'"><div class="reminder-info">';
+    html+='<div class="r-title">'+escHtml(r.title)+'</div>'+dh;
+    html+='<div class="r-time">📅 '+fmtDateShort(r.date)+(r.time?'&nbsp;⏰ '+r.time:'')+'</div>';
+    html+='</div><div class="reminder-actions">';
+    html+='<button class="btn-gcal" onclick="addReminderItemToCalendar('+r.id+')" title="Google Calendar">📅</button>';
+    html+='<button class="btn btn-sm" onclick="editReminder('+r.id+')" title="Modifica" style="background:#e8a43c">✏️</button>';
+    html+='<button class="btn btn-sm" onclick="toggleReminder('+r.id+')">'+(r.done?'↩️':'✔️')+'</button>';
+    html+='<button class="btn btn-sm btn-danger" onclick="deleteReminder('+r.id+')">🗑️</button>';
+    html+='</div></div>';
+  }
+  list.innerHTML=html; updateBadges();
+}
+
+/* ── PROSSIMI EVENTI ── */
+function pad2(n){return n<10?'0'+n:''+n;}
+var MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+
+function saveQuickEvent() {
+  var title = document.getElementById('q-title').value.trim();
+  var date  = document.getElementById('q-date').value;
+  var time  = document.getElementById('q-time').value;
+  var desc  = document.getElementById('q-desc').value.trim();
+  if (!title) { showToast('⚠️ Inserisci un titolo!'); return; }
+  if (!date)  { showToast('⚠️ Scegli una data!'); return; }
+  reminders.unshift({ id:Date.now(), title:title, date:date, time:time, desc:desc, done:false, updatedAt:Date.now() });
+  saveRemindersLS();
+  document.getElementById('q-title').value = '';
+  document.getElementById('q-time').value  = '';
+  document.getElementById('q-desc').value  = '';
+  updateTimePreview('q-time','q-time-preview');
+  // Mantengo la data così puoi aggiungere più eventi lo stesso giorno
+  renderUpcoming(); renderReminders(); renderTomorrowBanner(); updateBadges();
+  showToast('✅ Salvato: ' + title + (time?' alle '+time:' (tutto il giorno)'));
+  autoSync();
+}
+
+function setUpFilter(f, btn) {
+  upFilter = f;
+  document.querySelectorAll('#calendario .filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderUpcoming();
+}
+
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+}
+
+function fmtDayHeader(ds) {
+  var dt = new Date(ds+'T12:00:00');
+  var today = new Date(); today.setHours(0,0,0,0);
+  var target = new Date(ds+'T12:00:00'); target.setHours(0,0,0,0);
+  var diff = Math.round((target - today) / 86400000);
+  var label;
+  if (diff===0) label = '📍 OGGI';
+  else if (diff===1) label = 'DOMANI';
+  else if (diff<=7) label = GIORNI[dt.getDay()].toUpperCase();
+  else label = GIORNI[dt.getDay()];
+  return label + ' — ' + dt.getDate() + ' ' + MESI[dt.getMonth()] + ' ' + dt.getFullYear();
+}
+
+function renderUpcoming() {
+  var list = document.getElementById('upcoming-list');
+  if (!list) return;
+  try {
+    var today = todayStr();
+    // Calcolo data limite in base al filtro
+    var now = new Date(); now.setHours(0,0,0,0);
+    var limit = null;
+    if (upFilter==='oggi') {
+      limit = today;
+    } else if (upFilter==='settimana') {
+      var end = new Date(now); end.setDate(end.getDate()+7);
+      limit = end.getFullYear()+'-'+pad2(end.getMonth()+1)+'-'+pad2(end.getDate());
+    } else if (upFilter==='mese') {
+      var endm = new Date(now.getFullYear(), now.getMonth()+1, 0);
+      limit = endm.getFullYear()+'-'+pad2(endm.getMonth()+1)+'-'+pad2(endm.getDate());
+    }
+    // Raggruppa per data
+    var dayMap = {};
+    (notes||[]).forEach(function(n){
+      var d = (n.date||'').split('T')[0];
+      if (!d || d < today) return;
+      if (upFilter==='oggi' && d !== today) return;
+      if (limit && d > limit) return;
+      if (!dayMap[d]) dayMap[d] = { notes:[], reminders:[] };
+      dayMap[d].notes.push(n);
+    });
+    (reminders||[]).forEach(function(r){
+      var d = r.date;
+      if (!d || d < today) return;
+      if (upFilter==='oggi' && d !== today) return;
+      if (limit && d > limit) return;
+      if (!dayMap[d]) dayMap[d] = { notes:[], reminders:[] };
+      dayMap[d].reminders.push(r);
+    });
+    var dates = Object.keys(dayMap).sort();
+    if (dates.length===0) {
+      var msg;
+      if (upFilter==='oggi') msg = 'Nessun evento per oggi.';
+      else if (upFilter==='settimana') msg = 'Nessun evento nei prossimi 7 giorni.';
+      else if (upFilter==='mese') msg = 'Nessun evento in questo mese.';
+      else msg = 'Nessun evento futuro.';
+      list.innerHTML = '<p class="empty-msg">'+msg+'</p>';
+      return;
+    }
+    var html = '';
+    dates.forEach(function(d){
+      var data = dayMap[d];
+      var count = data.notes.length + data.reminders.length;
+      var isToday = (d === today);
+      html += '<div class="up-day-group">';
+      html += '<div class="up-day-header'+(isToday?' up-today':'')+'">'+fmtDayHeader(d);
+      html += '<span class="up-day-count">'+count+' '+(count===1?'elemento':'elementi')+'</span></div>';
+      // Prima i promemoria (con orario), poi le note
+      data.reminders.sort(function(a,b){return (a.time||'99')>(b.time||'99')?1:-1;});
+      data.reminders.forEach(function(r){
+        var desc = r.desc?'<div class="up-text">'+escHtml(r.desc)+'</div>':'';
+        html += '<div class="up-item up-reminder'+(r.done?' done':'')+'">';
+        html += '<div class="up-title"><span class="up-icon">🔔</span>'+escHtml(r.title)+'</div>';
+        html += '<div class="up-meta">'+(r.time?'⏰ '+r.time:'Tutto il giorno')+(r.done?' ✅ Completato':'')+'</div>';
+        html += desc;
+        html += '<div class="up-actions">';
+        html += '<button class="btn-gcal" onclick="addReminderItemToCalendar('+r.id+')">📅 Calendar</button>';
+        html += '<button class="btn btn-sm" onclick="editReminder('+r.id+')" style="background:#e8a43c">✏️ Modifica</button>';
+        html += '<button class="btn btn-sm" onclick="toggleReminder('+r.id+')">'+(r.done?'↩️ Riapri':'✔️ Fatto')+'</button>';
+        html += '</div></div>';
+      });
+      data.notes.forEach(function(n){
+        var ci = CAT[n.category||'generico'] || CAT['generico'];
+        var safeText = n.text || '';
+        var txt = safeText.length>180 ? safeText.substring(0,180)+'…' : safeText;
+        html += '<div class="up-item">';
+        html += '<div class="up-title"><span class="up-icon">📖</span><span class="cat-badge" style="background:'+ci.color+'">'+ci.label+'</span>'+(n.title?' '+escHtml(n.title):'')+'</div>';
+        if (txt) html += '<div class="up-text">'+escHtml(txt)+'</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    list.innerHTML = html;
+  } catch(err) {
+    list.innerHTML = '<p class="empty-msg">⚠️ Errore: '+escHtml(err.message||'sconosciuto')+'</p>';
+  }
+}
+
+/* ── BACKUP / STATISTICHE ── */
+function renderStats() {
+  var p=reminders.filter(function(r){return !r.done;}).length;
+  document.getElementById('backup-stat').innerHTML=
+    '<div class="stat-box"><div class="stat-num">'+notes.length+'</div><div class="stat-label">Note</div></div>'+
+    '<div class="stat-box"><div class="stat-num">'+reminders.length+'</div><div class="stat-label">Promemoria</div></div>'+
+    '<div class="stat-box"><div class="stat-num">'+p+'</div><div class="stat-label">Da fare</div></div>';
+  updateNotifBtn(); updateSyncStatus();
+}
+function exportData() {
+  var data={notes:notes,reminders:reminders,notebooks:notebooks,announcements:announcements,exported:new Date().toISOString(),version:5};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='diario-giovanni-backup.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✅ Backup esportato!');
+}
+function importData(event) {
+  var file=event.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try {
+      var data=JSON.parse(e.target.result);
+      if(data.notes&&Array.isArray(data.notes)){notes=data.notes;saveNotesLS();renderNotes();}
+      if(data.reminders&&Array.isArray(data.reminders)){reminders=data.reminders;saveRemindersLS();renderReminders();}
+      if(data.notebooks&&Array.isArray(data.notebooks)){notebooks=data.notebooks;saveNotebooksLS();}
+      if(data.announcements&&Array.isArray(data.announcements)){announcements=data.announcements;saveAnnouncementsLS();renderAnnouncements();}
+      renderNotebookOptions();
+      renderStats(); updateBadges(); renderTomorrowBanner();
+      var msg='✅ Importate: '+(data.notes?data.notes.length:0)+' note, '+(data.reminders?data.reminders.length:0)+' promemoria.';
+      if(data.exported) msg+=' (backup del '+new Date(data.exported).toLocaleDateString('it-IT')+')';
+      document.getElementById('backup-msg').textContent=msg;
+      showToast('✅ Dati importati!');
+    } catch(err){showToast('❌ File non valido!');}
+  };
+  reader.readAsText(file); event.target.value='';
+}
+function clearAllData() {
+  if(!confirm('⚠️ Eliminare TUTTE le note e i promemoria? Operazione irreversibile.')) return;
+  notes=[]; reminders=[]; notebooks=[]; announcements=[];
+  saveNotesLS(); saveRemindersLS(); saveNotebooksLS(); saveAnnouncementsLS();
+  renderNotebookOptions(); renderAnnouncements();
+  renderNotes(); renderReminders(); renderStats(); updateBadges();
+  document.getElementById('backup-msg').textContent='Tutti i dati sono stati eliminati.';
+  showToast('🗑️ Dati eliminati');
+}
+</script>
+</body>
+</html>
