@@ -1716,32 +1716,72 @@ function stampaGrigliaCerano(){
   var sv=state.grigliaCerano;
   var FC=getFratelliCerano();
   var MGC2=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  var d=new Date(anno,0,1); while(d.getDay()!==6) d.setDate(d.getDate()+1);
-  var righe=''; var mp=-1; var ri=0;
-  while(d.getFullYear()===anno){
-    var m=d.getMonth()+1,g=d.getDate();
+  // Foglio annuale: per ogni settimana riga Sabato + riga Domenica; impegni gia presi precompilati, resto vuoto
+  function orarioDi(cong){var gi=state.congregazioni.find(function(c){return c.nome===cong;});return gi&&gi.orario?gi.orario:'';}
+  function impegniData(m,g){
     var rk=anno+'_'+String(m).padStart(2,'0')+'_'+String(g).padStart(2,'0');
-    if(m!==mp){righe+='<tr style="background:#1a2744;color:#fff;"><td colspan="'+(FC.length+1)+'" style="padding:6px 10px;font-weight:700;font-size:.85rem;">'+MGC2[m].toUpperCase()+' '+anno+'</td></tr>';mp=m;}
-    righe+='<tr style="background:'+(ri%2===0?'#fff':'#f5f5f5')+';border-bottom:1px solid #ddd;"><td style="padding:6px 10px;font-weight:700;white-space:nowrap;">'+g+' '+MGC2[m].substring(0,3)+'</td>';
+    var arr=[];
     FC.forEach(function(f,fi){
-      var ck=rk+'_'+fi,s=sv[ck]||{};
-      var testo=s.cong?(s.cong+(s.disc?' / N°'+s.disc:'')):'';
-      righe+='<td style="padding:6px 10px;font-size:.85rem;">'+testo+'</td>';
+      var s=sv[rk+'_'+fi];
+      if(s&&(s.cong||s.disc)){
+        arr.push({nome:((f.cognome||'')+' '+(f.nome||'')).trim(),paese:s.cong||'',orario:s.cong?orarioDi(s.cong):'',disc:s.disc||''});
+      }
     });
-    righe+='</tr>';
-    ri++; d.setDate(d.getDate()+7);
+    return arr;
   }
-  var header='<tr style="background:#1a2744;color:#fff;"><th style="padding:8px 10px;">Data</th>';
-  FC.forEach(function(f){header+='<th style="padding:8px 10px;text-align:center;">'+f.cognome+'<br><span style="font-weight:400;font-size:.75rem;">'+f.nome+'</span></th>';});
-  header+='</tr>';
+  var cellaVuota='<td style="border:1px solid #999;height:34px;"></td>';
+  function rigaPiena(dataTxt,giornoTxt,imp){
+    return '<tr style="background:#eef3fb;">'
+      +'<td style="border:1px solid #999;padding:6px 10px;font-weight:700;white-space:nowrap;">'+dataTxt+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;white-space:nowrap;">'+giornoTxt+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;font-weight:600;">'+imp.nome+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;">'+imp.paese+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;white-space:nowrap;">'+(imp.orario?'ore '+imp.orario:'')+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;text-align:center;">'+(imp.disc?'N\u00b0'+imp.disc:'')+'</td>'
+      +'</tr>';
+  }
+  function rigaVuota(dataTxt,giornoTxt){
+    return '<tr>'
+      +'<td style="border:1px solid #999;padding:6px 10px;font-weight:700;white-space:nowrap;">'+dataTxt+'</td>'
+      +'<td style="border:1px solid #999;padding:6px 10px;white-space:nowrap;">'+giornoTxt+'</td>'
+      +cellaVuota+cellaVuota+cellaVuota+cellaVuota
+      +'</tr>';
+  }
+  function blocco(m,g,giornoTxt){
+    var imp=impegniData(m,g);
+    var dataTxt=g+' '+MGC2[m];
+    if(imp.length){var r='';imp.forEach(function(i){r+=rigaPiena(dataTxt,giornoTxt,i);});return r;}
+    return rigaVuota(dataTxt,giornoTxt);
+  }
+  var d=new Date(anno,0,1); while(d.getDay()!==6) d.setDate(d.getDate()+1); // primo sabato
+  var righe=''; var mp=-1;
+  while(d.getFullYear()===anno){
+    var mS=d.getMonth()+1, gS=d.getDate();
+    if(mS!==mp){
+      righe+='<tr><td colspan="6" style="background:#1a2744;color:#fff;padding:7px 10px;font-weight:700;font-size:.9rem;">'+MGC2[mS].toUpperCase()+' '+anno+'</td></tr>';
+      mp=mS;
+    }
+    righe+=blocco(mS,gS,'Sabato');
+    var dDom=new Date(anno,mS-1,gS+1);
+    if(dDom.getFullYear()===anno){ righe+=blocco(dDom.getMonth()+1,dDom.getDate(),'Domenica'); }
+    d.setDate(d.getDate()+7);
+  }
+  var header='<tr style="background:#1a2744;color:#fff;">'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:left;">Data</th>'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:left;">Giorno</th>'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:left;">Nome</th>'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:left;">Paese</th>'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:left;">Orario</th>'
+    +'<th style="border:1px solid #1a2744;padding:8px 10px;text-align:center;">N. schema</th>'
+    +'</tr>';
   var w=window.open('','_blank');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>D-Out '+anno+'</title>'
     +'<style>body{font-family:Georgia,serif;padding:30px;color:#1a2744;font-size:13px;}'
     +'h1{font-size:1.4rem;margin-bottom:4px;}h2{font-size:1rem;color:#555;margin-bottom:20px;}'
-    +'table{width:100%;border-collapse:collapse;}'
-    +'@media print{button{display:none;}}</style></head><body>'
+    +'table{width:100%;border-collapse:collapse;}th,td{vertical-align:middle;}'
+    +'@media print{button{display:none;} tr{page-break-inside:avoid;}}</style></head><body>'
     +'<h1>🕊 Pianificazione Discorsi in Uscita</h1>'
-    +'<h2>Fratelli di Cerano — Anno '+anno+'</h2>'
+    +'<h2>Fratelli di Cerano — Anno '+anno+' (foglio da compilare)</h2>'
     +'<table><thead>'+header+'</thead><tbody>'+righe+'</tbody></table>'
     +'<br><button onclick="window.print()" style="padding:10px 24px;background:#1a2744;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">🖨 Stampa / Salva PDF</button>'
     +'</body></html>');
