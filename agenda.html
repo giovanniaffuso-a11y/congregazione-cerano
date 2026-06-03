@@ -110,6 +110,15 @@
   .entry-item .entry-date{font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
   .entry-item .entry-text{font-size:0.97rem;line-height:1.7;color:var(--ink);white-space:pre-wrap}
   .entry-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .entry-item .entry-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--accent);margin:2px 0 6px;line-height:1.3}
+  .entry-item .nb-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 10px;border-radius:10px;background:var(--accent2);color:#fff;margin-bottom:6px;margin-left:6px;letter-spacing:0.3px}
+  .note-history{margin-top:10px;border-top:1px dashed var(--border);padding-top:10px}
+  .note-history .hist-title{font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .note-history .hist-item{background:var(--bg);border-radius:8px;padding:8px 12px;margin-bottom:8px}
+  .note-history .hist-when{font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:3px}
+  .note-history .hist-vtitle{font-weight:700;color:var(--accent);font-size:0.95rem}
+  .note-history .hist-vtext{font-size:0.9rem;color:var(--ink);white-space:pre-wrap;line-height:1.5;opacity:0.85}
+  #note-input{min-height:220px;overflow:hidden;resize:none}
 
   /* PROMEMORIA */
   .reminder-form{display:grid;gap:14px}
@@ -117,6 +126,12 @@
   .reminder-item{background:var(--reminder);border-left:4px solid var(--reminder-border);border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;animation:slideUp 0.3s ease both}
   .reminder-item.done{opacity:0.5}
   .reminder-item.done .r-title{text-decoration:line-through}
+  .announcement-item{background:var(--paper);border-left:4px solid var(--accent);border-radius:10px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow);animation:slideUp 0.3s ease both}
+  .announcement-item.done{opacity:0.55}
+  .announcement-item.done .ann-text{text-decoration:line-through}
+  .announcement-item .ann-meta{font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:6px}
+  .announcement-item .ann-type{color:var(--accent)}
+  .announcement-item .ann-text{font-size:0.97rem;line-height:1.6;color:var(--ink);white-space:pre-wrap;margin-bottom:8px}
   .reminder-info .r-title{font-weight:700;font-size:1rem;color:var(--ink)}
   .reminder-info .r-desc{font-size:0.88rem;color:var(--muted);margin-top:4px;font-style:italic;white-space:pre-wrap}
   .reminder-info .r-time{font-size:0.83rem;color:var(--reminder-border);font-weight:700;margin-top:4px}
@@ -235,6 +250,7 @@
   <nav>
     <button class="active" onclick="showTab('diario',this)">📖 Diario <span class="badge" id="badge-diario"></span></button>
     <button onclick="showTab('promemoria',this)">🔔 Promemoria <span class="badge" id="badge-promemoria"></span></button>
+    <button onclick="showTab('avvisi',this)">📢 Avvisi <span class="badge" id="badge-avvisi"></span></button>
     <button onclick="showTab('calendario',this)">📅 Calendario</button>
     <button onclick="showTab('altro',this)">⚙️ Altro</button>
   </nav>
@@ -250,6 +266,15 @@
     <div class="card">
       <h2>✏️ Nuova nota</h2>
       <div style="margin-bottom:14px">
+        <label>Titolo</label>
+        <input type="text" id="note-title" placeholder="Es. Adunanza di stasera, Pensiero su Isaia 56...">
+      </div>
+      <div style="margin-bottom:14px">
+        <label>Quaderno</label>
+        <input type="text" id="note-notebook" list="notebook-list" placeholder="Es. Adunanze, Discorso 67, Pensieri personali...">
+        <datalist id="notebook-list"></datalist>
+      </div>
+      <div style="margin-bottom:14px">
         <label>Categoria</label>
         <select id="note-cat">
           <option value="generico">📌 Generico</option>
@@ -259,7 +284,8 @@
           <option value="riunione">📋 Riunione</option>
         </select>
       </div>
-      <textarea id="note-input" placeholder="Scrivi qui i tuoi pensieri del giorno..."></textarea>
+      <label>Testo</label>
+      <textarea id="note-input" placeholder="Scrivi qui i tuoi pensieri del giorno..." oninput="autoGrow(this)"></textarea>
       <div class="btn-row">
         <button class="btn" onclick="saveNote()">💾 Salva nota</button>
         <button class="btn-gcal btn-gcal-lg" onclick="addNoteToCalendar()">📅 Google Calendar</button>
@@ -268,6 +294,9 @@
     <div class="card">
       <h2>📚 Le mie note</h2>
       <input type="text" class="search-bar" id="note-search" placeholder="🔍 Cerca nelle note..." oninput="renderNotes()">
+      <select id="notebook-filter" onchange="setNotebookFilter()" style="margin-bottom:12px">
+        <option value="all">📓 Tutti i quaderni</option>
+      </select>
       <div class="filter-tabs" id="cat-filters">
         <button class="filter-btn active" onclick="setCatFilter('all',this)">Tutte</button>
         <button class="filter-btn" onclick="setCatFilter('spirituale',this)" style="border-color:#5b8dd9;color:#5b8dd9">📖 Spirituale</button>
@@ -345,6 +374,33 @@
     </div>
   </div>
 
+  <!-- AVVISI -->
+  <div id="avvisi" class="section">
+    <div class="card">
+      <h2 id="ann-form-title">📢 Nuovo avviso</h2>
+      <div class="reminder-form">
+        <div><label>Avviso</label><textarea id="ann-text" class="reminder-desc" placeholder="Testo dell'avviso da comunicare..."></textarea></div>
+        <div class="form-row">
+          <div><label>Data riunione</label><input type="date" id="ann-date"></div>
+          <div><label>Dove</label><select id="ann-type"><option value="podio">🎤 Dal podio</option><option value="bacheca">📌 In bacheca</option></select></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="ann-save-btn" onclick="saveAnnouncement()">📢 Salva avviso</button>
+          <button class="btn btn-sm" id="ann-cancel-btn" onclick="cancelEditAnnouncement()" style="display:none;background:#888">❌ Annulla</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📋 Avvisi</h2>
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setAnnouncementFilter('todo',this)">Da comunicare</button>
+        <button class="filter-btn" onclick="setAnnouncementFilter('done',this)">Comunicati</button>
+        <button class="filter-btn" onclick="setAnnouncementFilter('all',this)">Tutti</button>
+      </div>
+      <div id="announcements-list"><p class="empty-msg">Ancora nessun avviso.</p></div>
+    </div>
+  </div>
+
   <!-- ALTRO -->
   <div id="altro" class="section">
     <div class="card">
@@ -413,7 +469,10 @@
 /* ── DATI ── */
 var notes     = JSON.parse(localStorage.getItem('gv-notes')     || '[]');
 var reminders = JSON.parse(localStorage.getItem('gv-reminders') || '[]');
-var catFilter = 'all', reminderFilter = 'all';
+var notebooks = JSON.parse(localStorage.getItem('gv-notebooks') || '[]');
+var announcements = JSON.parse(localStorage.getItem('gv-announcements') || '[]');
+var catFilter = 'all', reminderFilter = 'all', notebookFilter = 'all', announcementFilter = 'todo';
+var editingAnnouncementId = null;
 var upFilter = 'oggi';
 var editingReminderId = null;
 
@@ -433,7 +492,7 @@ var syncApiKey = localStorage.getItem('gv-sync-key') || '';
 var syncTimer  = null;
 
 function getSyncData() {
-  return { notes: notes, reminders: reminders, updated: Date.now() };
+  return { notes: notes, reminders: reminders, announcements: announcements, updated: Date.now() };
 }
 
 function syncHeaders() {
@@ -509,6 +568,7 @@ function connectSync() {
     var rec = data.record;
     if (rec.notes && Array.isArray(rec.notes))         { notes=rec.notes; saveNotesLS(); renderNotes(); }
     if (rec.reminders && Array.isArray(rec.reminders)) { reminders=rec.reminders; saveRemindersLS(); renderReminders(); }
+    if (rec.announcements && Array.isArray(rec.announcements)) { announcements=rec.announcements; saveAnnouncementsLS(); renderAnnouncements(); }
     syncBinId = id;
     localStorage.setItem('gv-sync-id', id);
     localStorage.setItem('gv-sync-last', Date.now().toString());
@@ -528,7 +588,8 @@ function syncNow() {
     if (data && data.record && data.record.notes) {
       notes     = mergeData(notes,     data.record.notes);
       reminders = mergeData(reminders, data.record.reminders || []);
-      saveNotesLS(); saveRemindersLS(); renderNotes(); renderReminders(); updateBadges(); renderTomorrowBanner();
+      announcements = mergeData(announcements, data.record.announcements || []);
+      saveNotesLS(); saveRemindersLS(); saveAnnouncementsLS(); renderNotebookOptions(); renderNotes(); renderReminders(); renderAnnouncements(); updateBadges(); renderTomorrowBanner();
     }
     return fetch(JSONBIN + '/' + syncBinId, {
       method: 'PUT',
@@ -601,6 +662,8 @@ function fmtDate(iso) { return new Date(iso).toLocaleDateString('it-IT',{weekday
 function fmtDateShort(iso) { return new Date(iso).toLocaleDateString('it-IT'); }
 function escHtml(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function saveNotesLS()     { localStorage.setItem('gv-notes',    JSON.stringify(notes)); }
+function saveNotebooksLS() { localStorage.setItem('gv-notebooks', JSON.stringify(notebooks)); }
+function saveAnnouncementsLS() { localStorage.setItem('gv-announcements', JSON.stringify(announcements)); }
 function saveRemindersLS() { localStorage.setItem('gv-reminders',JSON.stringify(reminders)); }
 function buildGCalUrl(title, details, dateStr, timeStr) {
   var start, end;
@@ -618,6 +681,8 @@ function updateBadges() {
   document.getElementById('badge-diario').textContent = notes.length > 0 ? notes.length : '';
   var p = reminders.filter(function(r){return !r.done;}).length;
   document.getElementById('badge-promemoria').textContent = p > 0 ? p : '';
+  var av = announcements.filter(function(a){return !a.done;}).length;
+  var bAv = document.getElementById('badge-avvisi'); if (bAv) bAv.textContent = av > 0 ? av : '';
 }
 
 /* ── TAB ── */
@@ -764,29 +829,69 @@ function initApp() {
     now.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('r-date').value = now.toISOString().split('T')[0];
   document.getElementById('dark-btn').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-  renderNotes(); renderReminders(); updateBadges(); updateNotifBtn(); renderTomorrowBanner();
+  renderNotebookOptions();
+  renderNotes(); renderReminders(); renderAnnouncements(); updateBadges(); updateNotifBtn(); renderTomorrowBanner();
   // Sincronizza all'avvio se configurato
   if (syncBinId) syncNow();
 }
 
 /* ── DIARIO ── */
+function autoGrow(el){ if(!el)return; el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
 function saveNote() {
-  var text = document.getElementById('note-input').value.trim();
-  var cat  = document.getElementById('note-cat').value;
-  if (!text) { showToast('⚠️ Scrivi qualcosa!'); return; }
-  notes.unshift({id:Date.now(),date:new Date().toISOString(),text:text,category:cat,updatedAt:Date.now()});
-  saveNotesLS(); document.getElementById('note-input').value='';
+  var title  = document.getElementById('note-title').value.trim();
+  var text   = document.getElementById('note-input').value.trim();
+  var cat    = document.getElementById('note-cat').value;
+  var notebook = document.getElementById('note-notebook').value.trim();
+  if (!text && !title) { showToast('⚠️ Scrivi qualcosa!'); return; }
+  notes.unshift({id:Date.now(),date:new Date().toISOString(),title:title,text:text,category:cat,notebook:notebook,updatedAt:Date.now()});
+  registerNotebook(notebook);
+  saveNotesLS();
+  document.getElementById('note-title').value='';
+  document.getElementById('note-notebook').value='';
+  var ni=document.getElementById('note-input'); ni.value=''; ni.style.height='';
+  renderNotebookOptions();
   renderNotes(); showToast('✅ Nota salvata!'); autoSync();
 }
+function registerNotebook(name){
+  name=(name||'').trim();
+  if (name && notebooks.indexOf(name)===-1){ notebooks.push(name); saveNotebooksLS(); }
+}
+function getAllNotebooks(){
+  var set={};
+  (notebooks||[]).forEach(function(nb){ if(nb) set[nb]=true; });
+  (notes||[]).forEach(function(n){ if(n.notebook) set[n.notebook]=true; });
+  return Object.keys(set).sort(function(a,b){return a.localeCompare(b,'it',{sensitivity:'base'});});
+}
+function renderNotebookOptions(){
+  var all=getAllNotebooks();
+  var dl=document.getElementById('notebook-list');
+  if (dl){ dl.innerHTML=all.map(function(nb){return '<option value="'+escHtml(nb).replace(/"/g,'&quot;')+'"></option>';}).join(''); }
+  var sel=document.getElementById('notebook-filter');
+  if (sel){
+    var cur=sel.value;
+    var opt='<option value="all">📓 Tutti i quaderni</option>';
+    all.forEach(function(nb){ opt+='<option value="'+escHtml(nb).replace(/"/g,'&quot;')+'">📓 '+escHtml(nb)+'</option>'; });
+    sel.innerHTML=opt;
+    if (cur && (cur==='all' || all.indexOf(cur)!==-1)) sel.value=cur; else { sel.value='all'; notebookFilter='all'; }
+  }
+}
+function setNotebookFilter(){
+  var s=document.getElementById('notebook-filter');
+  notebookFilter = s ? s.value : 'all';
+  renderNotes();
+}
 function addNoteToCalendar() {
-  var text = document.getElementById('note-input').value.trim();
-  if (!text) { showToast('⚠️ Scrivi una nota prima!'); return; }
-  window.open(buildGCalUrl('📖 '+(text.length>60?text.substring(0,60)+'...':text), text, null, null),'_blank');
+  var title = document.getElementById('note-title').value.trim();
+  var text  = document.getElementById('note-input').value.trim();
+  var base  = title || text;
+  if (!base) { showToast('⚠️ Scrivi una nota prima!'); return; }
+  window.open(buildGCalUrl('📖 '+(base.length>60?base.substring(0,60)+'...':base), text||title, null, null),'_blank');
 }
 function addNoteEntryToCalendar(id) {
   var n = notes.find(function(x){return x.id===id;});
   if (!n) return;
-  window.open(buildGCalUrl('📖 '+(n.text.length>60?n.text.substring(0,60)+'...':n.text), n.text, new Date(n.date).toISOString().split('T')[0], null),'_blank');
+  var base = n.title || n.text || '';
+  window.open(buildGCalUrl('📖 '+(base.length>60?base.substring(0,60)+'...':base), n.text||n.title||'', new Date(n.date).toISOString().split('T')[0], null),'_blank');
 }
 function deleteNote(id) {
   if (!confirm('Eliminare questa nota?')) return;
@@ -797,22 +902,61 @@ function editNote(id) {
   var note = notes.find(function(n){return n.id===id;}); if (!note||!item) return;
   var c = note.category||'generico';
   var opts = ''; Object.keys(CAT).forEach(function(k){opts+='<option value="'+k+'"'+(k===c?' selected':'')+'>'+CAT[k].label+'</option>';});
+  var titleVal = escHtml(note.title||'').replace(/"/g,'&quot;');
+  var nbVal = escHtml(note.notebook||'').replace(/"/g,'&quot;');
   item.innerHTML =
     '<div class="entry-date">📅 '+fmtDate(note.date)+'</div>'+
+    '<input type="text" class="edit-title" placeholder="Titolo" style="width:100%;margin-bottom:8px;border:1.5px solid var(--accent2);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:0.97rem;background:var(--input-bg);color:var(--ink)" value="'+titleVal+'">'+
+    '<input type="text" class="edit-notebook" list="notebook-list" placeholder="Quaderno" style="width:100%;margin-bottom:8px;border:1.5px solid var(--accent2);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:0.97rem;background:var(--input-bg);color:var(--ink)" value="'+nbVal+'">'+
     '<select style="margin-bottom:8px;width:100%">'+opts+'</select>'+
-    '<textarea class="edit-textarea">'+escHtml(note.text)+'</textarea>'+
+    '<textarea class="edit-textarea">'+escHtml(note.text||'')+'</textarea>'+
     '<div class="entry-actions">'+
     '<button class="btn btn-sm" onclick="saveEditNote('+id+',this)">💾 Salva</button>'+
     '<button class="btn btn-sm btn-muted" onclick="renderNotes()">✖️ Annulla</button>'+
     '</div>';
-  item.querySelector('textarea').focus();
+  var firstTa = item.querySelector('.edit-textarea'); if (firstTa) firstTa.focus();
 }
 function saveEditNote(id, btn) {
   var item = btn.closest('.entry-item');
-  var ta = item.querySelector('textarea'), sel = item.querySelector('select');
-  var txt = ta.value.trim(); if (!txt) { showToast('⚠️ Testo vuoto!'); return; }
+  var titleEl = item.querySelector('.edit-title');
+  var nbEl    = item.querySelector('.edit-notebook');
+  var ta      = item.querySelector('.edit-textarea');
+  var sel     = item.querySelector('select');
+  var txt   = ta ? ta.value.trim() : '';
+  var title = titleEl ? titleEl.value.trim() : '';
+  if (!txt && !title) { showToast('⚠️ Testo vuoto!'); return; }
   var note = notes.find(function(n){return n.id===id;});
-  if (note) { note.text=txt; note.category=sel?sel.value:(note.category||'generico'); note.edited=new Date().toISOString(); note.updatedAt=Date.now(); saveNotesLS(); renderNotes(); showToast('✅ Nota modificata!'); autoSync(); }
+  if (note) {
+    note.history = note.history || [];
+    note.history.unshift({ title:note.title||'', text:note.text||'', notebook:note.notebook||'', category:note.category||'generico', savedAt: note.updatedAt || note.id });
+    if (note.history.length > 20) note.history = note.history.slice(0,20);
+    note.title=title; note.text=txt;
+    note.notebook = nbEl ? nbEl.value.trim() : (note.notebook||'');
+    registerNotebook(note.notebook);
+    note.category=sel?sel.value:(note.category||'generico');
+    note.edited=new Date().toISOString(); note.updatedAt=Date.now();
+    saveNotesLS(); renderNotebookOptions(); renderNotes(); showToast('✅ Nota modificata!'); autoSync();
+  }
+}
+function toggleHistory(id){
+  var box=document.getElementById('hist-'+id);
+  if(!box) return;
+  if(box.style.display==='none'){
+    var n=notes.find(function(x){return x.id===id;});
+    if(!n||!n.history||!n.history.length){ return; }
+    var h='<div class="hist-title">🕐 Versioni precedenti</div>';
+    n.history.forEach(function(v){
+      var when = v.savedAt ? new Date(v.savedAt).toLocaleString('it-IT',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+      h+='<div class="hist-item">';
+      if(when) h+='<div class="hist-when">'+escHtml(when)+'</div>';
+      if(v.title) h+='<div class="hist-vtitle">'+escHtml(v.title)+'</div>';
+      if(v.text)  h+='<div class="hist-vtext">'+escHtml(v.text)+'</div>';
+      h+='</div>';
+    });
+    box.innerHTML=h; box.style.display='block';
+  } else {
+    box.style.display='none';
+  }
 }
 function setCatFilter(cat, btn) {
   catFilter=cat;
@@ -824,23 +968,118 @@ function renderNotes() {
   var search = document.getElementById('note-search')?document.getElementById('note-search').value.toLowerCase().trim():'';
   var filtered = notes;
   if (catFilter!=='all') filtered=filtered.filter(function(n){return (n.category||'generico')===catFilter;});
-  if (search) filtered=filtered.filter(function(n){return n.text.toLowerCase().includes(search);});
-  if (!filtered.length) { list.innerHTML='<p class="empty-msg">'+(search||catFilter!=='all'?'🔍 Nessuna nota trovata.':'Ancora nessuna nota salvata.')+'</p>'; updateBadges(); return; }
+  if (notebookFilter!=='all') filtered=filtered.filter(function(n){return (n.notebook||'')===notebookFilter;});
+  if (search) filtered=filtered.filter(function(n){return ((n.text||'')+' '+(n.title||'')+' '+(n.notebook||'')).toLowerCase().includes(search);});
+  if (!filtered.length) { list.innerHTML='<p class="empty-msg">'+(search||catFilter!=='all'||notebookFilter!=='all'?'🔍 Nessuna nota trovata.':'Ancora nessuna nota salvata.')+'</p>'; updateBadges(); return; }
   var html='';
   for (var i=0;i<filtered.length;i++) {
     var n=filtered[i], cat=n.category||'generico', ci=CAT[cat]||CAT['generico'];
     var el=n.edited?'&nbsp;<span style="color:var(--muted);font-size:0.74rem">(modificata)</span>':'';
     html+='<div class="entry-item" data-note-id="'+n.id+'" style="border-left-color:'+ci.color+'">';
     html+='<span class="cat-badge" style="background:'+ci.color+'">'+ci.label+'</span>';
+    if (n.notebook) html+='<span class="nb-badge">📓 '+escHtml(n.notebook)+'</span>';
     html+='<div class="entry-date">📅 '+fmtDate(n.date)+el+'</div>';
-    html+='<div class="entry-text">'+escHtml(n.text)+'</div>';
+    if (n.title) html+='<div class="entry-title">'+escHtml(n.title)+'</div>';
+    if (n.text)  html+='<div class="entry-text">'+escHtml(n.text)+'</div>';
     html+='<div class="entry-actions">';
     html+='<button class="btn btn-sm" onclick="editNote('+n.id+')">✏️ Modifica</button>';
     html+='<button class="btn-gcal" onclick="addNoteEntryToCalendar('+n.id+')">📅</button>';
     html+='<button class="btn btn-sm btn-danger" onclick="deleteNote('+n.id+')">🗑️</button>';
-    html+='</div></div>';
+    if (n.history && n.history.length) html+='<button class="btn btn-sm btn-muted" onclick="toggleHistory('+n.id+')">🕐 Storico ('+n.history.length+')</button>';
+    html+='</div>';
+    html+='<div class="note-history" id="hist-'+n.id+'" style="display:none"></div>';
+    html+='</div>';
   }
   list.innerHTML=html; updateBadges();
+}
+
+/* ── AVVISI ── */
+function saveAnnouncement(){
+  var text=document.getElementById('ann-text').value.trim();
+  var date=document.getElementById('ann-date').value;
+  var type=document.getElementById('ann-type').value;
+  if(!text){ showToast('⚠️ Scrivi l\'avviso!'); return; }
+  if(editingAnnouncementId){
+    var a=announcements.find(function(x){return x.id===editingAnnouncementId;});
+    if(a){ a.text=text; a.date=date; a.type=type; a.updatedAt=Date.now(); }
+    editingAnnouncementId=null;
+  } else {
+    announcements.unshift({id:Date.now(),text:text,date:date,type:type,done:false,updatedAt:Date.now()});
+  }
+  saveAnnouncementsLS();
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-date').value='';
+  document.getElementById('ann-type').value='podio';
+  document.getElementById('ann-form-title').textContent='📢 Nuovo avviso';
+  document.getElementById('ann-save-btn').textContent='📢 Salva avviso';
+  document.getElementById('ann-cancel-btn').style.display='none';
+  renderAnnouncements(); updateBadges(); showToast('✅ Avviso salvato!'); autoSync();
+}
+function editAnnouncement(id){
+  var a=announcements.find(function(x){return x.id===id;}); if(!a) return;
+  editingAnnouncementId=id;
+  document.getElementById('ann-text').value=a.text||'';
+  document.getElementById('ann-date').value=a.date||'';
+  document.getElementById('ann-type').value=a.type||'podio';
+  document.getElementById('ann-form-title').textContent='✏️ Modifica avviso';
+  document.getElementById('ann-save-btn').textContent='💾 Aggiorna';
+  document.getElementById('ann-cancel-btn').style.display='inline-block';
+  var sec=document.getElementById('avvisi'); if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function cancelEditAnnouncement(){
+  editingAnnouncementId=null;
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-date').value='';
+  document.getElementById('ann-type').value='podio';
+  document.getElementById('ann-form-title').textContent='📢 Nuovo avviso';
+  document.getElementById('ann-save-btn').textContent='📢 Salva avviso';
+  document.getElementById('ann-cancel-btn').style.display='none';
+}
+function deleteAnnouncement(id){
+  if(!confirm('Eliminare questo avviso?')) return;
+  announcements=announcements.filter(function(a){return a.id!==id;});
+  saveAnnouncementsLS(); renderAnnouncements(); updateBadges(); showToast('🗑️ Eliminato'); autoSync();
+}
+function toggleAnnouncement(id){
+  var a=announcements.find(function(x){return x.id===id;});
+  if(a){ a.done=!a.done; a.updatedAt=Date.now(); saveAnnouncementsLS(); renderAnnouncements(); updateBadges(); autoSync(); }
+}
+function setAnnouncementFilter(f,btn){
+  announcementFilter=f;
+  var tabs=btn.parentNode.querySelectorAll('.filter-btn');
+  tabs.forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderAnnouncements();
+}
+function renderAnnouncements(){
+  var list=document.getElementById('announcements-list');
+  if(!list) return;
+  var filtered=announcements;
+  if(announcementFilter==='todo') filtered=filtered.filter(function(a){return !a.done;});
+  else if(announcementFilter==='done') filtered=filtered.filter(function(a){return a.done;});
+  if(!filtered.length){
+    var msg = announcementFilter==='done' ? 'Nessun avviso comunicato.' : (announcementFilter==='todo' ? 'Nessun avviso da comunicare. 👍' : 'Ancora nessun avviso.');
+    list.innerHTML='<p class="empty-msg">'+msg+'</p>'; return;
+  }
+  filtered=filtered.slice().sort(function(a,b){
+    var da=a.date||'9999', db=b.date||'9999';
+    if(da!==db) return da<db?-1:1;
+    return b.id-a.id;
+  });
+  var html='';
+  filtered.forEach(function(a){
+    var typeLabel = a.type==='bacheca' ? '📌 Bacheca' : '🎤 Podio';
+    var dateLabel = a.date ? fmtDateShort(a.date) : 'Senza data';
+    html+='<div class="announcement-item'+(a.done?' done':'')+'" data-ann-id="'+a.id+'">';
+    html+='<div class="ann-meta"><span class="ann-type">'+typeLabel+'</span> · 📅 '+escHtml(dateLabel)+(a.done?' · ✅ Comunicato':'')+'</div>';
+    html+='<div class="ann-text">'+escHtml(a.text||'')+'</div>';
+    html+='<div class="entry-actions">';
+    html+='<button class="btn btn-sm" onclick="toggleAnnouncement('+a.id+')">'+(a.done?'↩️ Riapri':'✔️ Comunicato')+'</button>';
+    html+='<button class="btn btn-sm" style="background:#e8a43c" onclick="editAnnouncement('+a.id+')">✏️ Modifica</button>';
+    html+='<button class="btn btn-sm btn-danger" onclick="deleteAnnouncement('+a.id+')">🗑️</button>';
+    html+='</div></div>';
+  });
+  list.innerHTML=html;
 }
 
 /* ── PROMEMORIA ── */
@@ -873,8 +1112,9 @@ function renderTomorrowBanner() {
     });
     tomNotes.forEach(function(n){
       var ci = CAT[n.category||'generico'] || CAT['generico'];
-      var t = (n.text||'').substring(0,60);
-      html += '<div class="tomorrow-banner-item">📖 <strong>'+ci.label+'</strong> — '+escHtml(t)+((n.text||'').length>60?'…':'')+'</div>';
+      var src = n.title || n.text || '';
+      var t = src.substring(0,60);
+      html += '<div class="tomorrow-banner-item">📖 <strong>'+ci.label+'</strong> — '+escHtml(t)+(src.length>60?'…':'')+'</div>';
     });
     listBox.innerHTML = html;
     banner.style.display = 'block';
@@ -1118,8 +1358,8 @@ function renderUpcoming() {
         var safeText = n.text || '';
         var txt = safeText.length>180 ? safeText.substring(0,180)+'…' : safeText;
         html += '<div class="up-item">';
-        html += '<div class="up-title"><span class="up-icon">📖</span><span class="cat-badge" style="background:'+ci.color+'">'+ci.label+'</span></div>';
-        html += '<div class="up-text">'+escHtml(txt)+'</div>';
+        html += '<div class="up-title"><span class="up-icon">📖</span><span class="cat-badge" style="background:'+ci.color+'">'+ci.label+'</span>'+(n.title?' '+escHtml(n.title):'')+'</div>';
+        if (txt) html += '<div class="up-text">'+escHtml(txt)+'</div>';
         html += '</div>';
       });
       html += '</div>';
@@ -1140,7 +1380,7 @@ function renderStats() {
   updateNotifBtn(); updateSyncStatus();
 }
 function exportData() {
-  var data={notes:notes,reminders:reminders,exported:new Date().toISOString(),version:3};
+  var data={notes:notes,reminders:reminders,notebooks:notebooks,announcements:announcements,exported:new Date().toISOString(),version:5};
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   var url=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=url; a.download='diario-giovanni-backup.json';
@@ -1155,6 +1395,9 @@ function importData(event) {
       var data=JSON.parse(e.target.result);
       if(data.notes&&Array.isArray(data.notes)){notes=data.notes;saveNotesLS();renderNotes();}
       if(data.reminders&&Array.isArray(data.reminders)){reminders=data.reminders;saveRemindersLS();renderReminders();}
+      if(data.notebooks&&Array.isArray(data.notebooks)){notebooks=data.notebooks;saveNotebooksLS();}
+      if(data.announcements&&Array.isArray(data.announcements)){announcements=data.announcements;saveAnnouncementsLS();renderAnnouncements();}
+      renderNotebookOptions();
       renderStats(); updateBadges(); renderTomorrowBanner();
       var msg='✅ Importate: '+(data.notes?data.notes.length:0)+' note, '+(data.reminders?data.reminders.length:0)+' promemoria.';
       if(data.exported) msg+=' (backup del '+new Date(data.exported).toLocaleDateString('it-IT')+')';
@@ -1166,8 +1409,9 @@ function importData(event) {
 }
 function clearAllData() {
   if(!confirm('⚠️ Eliminare TUTTE le note e i promemoria? Operazione irreversibile.')) return;
-  notes=[]; reminders=[];
-  saveNotesLS(); saveRemindersLS();
+  notes=[]; reminders=[]; notebooks=[]; announcements=[];
+  saveNotesLS(); saveRemindersLS(); saveNotebooksLS(); saveAnnouncementsLS();
+  renderNotebookOptions(); renderAnnouncements();
   renderNotes(); renderReminders(); renderStats(); updateBadges();
   document.getElementById('backup-msg').textContent='Tutti i dati sono stati eliminati.';
   showToast('🗑️ Dati eliminati');
