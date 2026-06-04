@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gestione Badante - Strus-Halyna</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#F5F7FA;--card:#fff;--primary:#2563EB;--pri-light:#EFF6FF;--pri-dark:#1D4ED8;
+  --green:#059669;--grn-light:#ECFDF5;--orange:#EA580C;--orn-light:#FFF7ED;
+  --yellow:#D97706;--yel-light:#FFFBEB;--red:#DC2626;--red-light:#FEF2F2;
+  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;--border:#E5E7EB;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);--r:16px;--rs:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:16px;}
+body.fl{font-size:18px;}body.fh{font-size:20px;}
+
+/* TOPBAR */
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.topbar h1{font-size:18px;font-weight:700;color:var(--primary);}
+.topbar-sub{font-size:12px;color:var(--text2);}
+.fbtns{display:flex;gap:4px;}
+.fbtn{border:1px solid var(--border);background:var(--bg);border-radius:7px;padding:4px 9px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);}
+.fbtn.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+/* TABS */
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;padding:0 8px;}
+.tab{padding:13px 14px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s;display:flex;align-items:center;gap:5px;}
+.tab.on{color:var(--primary);border-color:var(--primary);}
+.bdg{background:var(--red);color:#fff;border-radius:99px;font-size:10px;padding:1px 6px;font-weight:700;}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:16px 14px 80px;}
+.sec{display:none;}.sec.on{display:block;}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;border:1px solid var(--border);}
+.ctitle{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;}
+
+/* STAT GRID */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media(min-width:560px){.sgrid{grid-template-columns:repeat(4,1fr);}}
+.sc{border-radius:var(--rs);padding:14px;border:1px solid var(--border);}
+.sc-label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+.sc-val{font-size:20px;font-weight:800;margin-top:3px;}
+.sc-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.sc.blue{background:var(--pri-light);border-color:#BFDBFE;}.sc.blue .sc-val{color:var(--primary);}
+.sc.grn{background:var(--grn-light);border-color:#A7F3D0;}.sc.grn .sc-val{color:var(--green);}
+.sc.orn{background:var(--orn-light);border-color:#FED7AA;}.sc.orn .sc-val{color:var(--orange);}
+.sc.red{background:var(--red-light);border-color:#FECACA;}.sc.red .sc-val{color:var(--red);}
+
+/* FORM */
+.fg{margin-bottom:12px;}
+.fl2{font-size:13px;font-weight:600;margin-bottom:5px;display:block;}
+.fi,.fsel,.fta{width:100%;border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 13px;font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--card);outline:none;transition:.2s;}
+.fi:focus,.fsel:focus,.fta:focus{border-color:var(--primary);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+@media(max-width:460px){.fg2{grid-template-columns:1fr;}}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--rs);padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:'DM Sans',sans-serif;transition:.2s;}
+.bp{background:var(--primary);color:#fff;}.bp:hover{background:var(--pri-dark);}
+.bg{background:var(--green);color:#fff;}.bg:hover{background:#047857;}
+.bo{background:var(--orange);color:#fff;}.bo:hover{background:#C2410C;}
+.br{background:var(--red-light);color:var(--red);border:1px solid #FECACA;}.br:hover{background:var(--red);color:#fff;}
+.bgh{background:var(--bg);color:var(--text2);border:1px solid var(--border);}.bgh:hover{background:var(--border);}
+.bfull{width:100%;justify-content:center;}
+.bsm{padding:6px 11px;font-size:12px;border-radius:8px;}
+
+/* ROW */
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.row:last-child{border-bottom:none;}
+.row.tot{font-weight:700;font-size:16px;padding-top:13px;}
+.row .lbl{color:var(--text2);}
+
+/* EXPENSE ITEM */
+.ei{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--border);}
+.ei:last-child{border-bottom:none;padding-bottom:0;}
+.eico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.einf{flex:1;min-width:0;}
+.etit{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.emeta{font-size:12px;color:var(--text2);margin-top:1px;}
+.eamt{font-size:15px;font-weight:700;flex-shrink:0;}
+.eact{display:flex;gap:5px;flex-shrink:0;}
+
+/* REMINDER */
+.ri{border-radius:var(--rs);padding:14px;margin-bottom:10px;border:1px solid var(--border);background:var(--bg);}
+.ri.yel{background:var(--yel-light);border-color:#FDE68A;}
+.ri.orn{background:var(--orn-light);border-color:#FED7AA;}
+.ri.red{background:var(--red-light);border-color:#FECACA;}
+.ri.grn{background:var(--grn-light);border-color:#A7F3D0;}
+.ri-head{display:flex;gap:12px;align-items:flex-start;}
+.ri-dot{width:9px;height:9px;border-radius:50%;background:var(--text3);flex-shrink:0;margin-top:6px;}
+.ri-dot.yel{background:var(--yellow);}
+.ri-dot.orn{background:var(--orange);}
+.ri-dot.red{background:var(--red);}
+.ri-dot.grn{background:var(--green);}
+.ri-inf{flex:1;}
+.ri-status{font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;display:inline-block;margin-bottom:4px;}
+.s-grn{background:var(--grn-light);color:var(--green);}
+.s-yel{background:var(--yel-light);color:var(--yellow);}
+.s-orn{background:var(--orn-light);color:var(--orange);}
+.s-red{background:var(--red-light);color:var(--red);}
+.ri-tit{font-size:13px;font-weight:700;}
+.ri-amt{font-size:22px;font-weight:800;color:var(--primary);margin:3px 0;}
+.ri-date{font-size:12px;color:var(--text2);}
+.ri-btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+
+/* MONTH NAV */
+.mnav{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.mnav button{border:1px solid var(--border);background:var(--card);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.mnav button:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+.mlbl{font-size:15px;font-weight:700;flex:1;text-align:center;}
+
+/* PAGAMENTO CARD */
+.pc{background:var(--grn-light);border:1px solid #A7F3D0;border-radius:var(--rs);padding:13px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.pc-inf{flex:1;}
+.pc-cat{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;}
+.pc-amt{font-size:17px;font-weight:800;}
+.pc-det{font-size:11px;color:var(--text2);}
+
+/* INFO BOX */
+.infobox{border-radius:var(--rs);padding:13px;margin-bottom:14px;font-size:13px;}
+.infobox.blue{background:var(--pri-light);border:1px solid #BFDBFE;color:var(--pri-dark);}
+.infobox.grn{background:var(--grn-light);border:1px solid #A7F3D0;color:var(--green);}
+
+/* NETTO BOX */
+.nettobox{background:var(--grn-light);border:1px solid #A7F3D0;border-radius:var(--rs);padding:14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+
+/* QUICK PAY */
+.qpay{background:var(--grn-light);border:2px solid var(--green);border-radius:var(--r);padding:18px;margin-bottom:14px;}
+.qpay .ctitle{color:var(--green);}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 16px;color:var(--text2);}
+.empty-ico{font-size:44px;margin-bottom:10px;}
+
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:14px;}
+.mdl{background:var(--card);border-radius:var(--r);padding:22px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+.mdl-tit{font-size:17px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+.mdl-x{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:11px 22px;border-radius:99px;font-size:14px;font-weight:600;z-index:9999;transition:.3s;white-space:nowrap;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>👩‍⚕️ Gestione Badante</h1>
+    <div class="topbar-sub" id="tsub">Strus-Halyna · €8,30/ora · 30 ore/sett.</div>
+  </div>
+  <div class="fbtns">
+    <button class="fbtn" onclick="sf('n')">A</button>
+    <button class="fbtn" onclick="sf('l')">A+</button>
+    <button class="fbtn on" onclick="sf('h')">A++</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="st('dash',this)">🏠 Riepilogo</div>
+  <div class="tab" onclick="st('spese',this)">📝 Spese</div>
+  <div class="tab" onclick="st('pag',this)">✅ Pagamenti</div>
+  <div class="tab" onclick="st('scad',this)">🔔 Scadenze <span class="bdg" id="bdg" style="display:none">0</span></div>
+  <div class="tab" onclick="st('imp',this)">⚙️ Impostazioni</div>
+</div>
+
+<div class="main">
+
+<!-- ===== RIEPILOGO ===== -->
+<div class="sec on" id="sec-dash">
+
+  <div class="mnav">
+    <button onclick="cm(-1)">◀</button>
+    <div class="mlbl" id="mlbl">—</div>
+    <button onclick="cm(1)">▶</button>
+  </div>
+
+  <div id="dash-alert"></div>
+
+  <!-- Note contratto -->
+  <div class="infobox blue" style="margin-bottom:14px">
+    <div style="font-weight:700;margin-bottom:8px">📋 Date importanti dal contratto</div>
+    <div style="display:grid;gap:4px;line-height:1.5">
+      <div>💵 Busta paga: inviata il <strong>25 di ogni mese</strong></div>
+      <div>💳 Pagamento stipendio: entro il <strong>1° del mese successivo</strong> — netto <strong id="nc-netto">€1.105,80</strong></div>
+      <div>🏛️ INPS Q2 (solo Giugno 2026): entro <strong>10 luglio 2026</strong></div>
+      <div>🏛️ INPS Q3 (Lug-Set): entro <strong>10 ottobre 2026</strong></div>
+      <div>🏛️ INPS Q4 (Ott-Dic): entro <strong>10 gennaio 2027</strong></div>
+      <div>🏛️ INPS Q1 (Gen-Mar): entro <strong>10 aprile 2027</strong></div>
+      <div>📋 CAF CISL gestione trimestrale: <strong>~€120</strong></div>
+      <div>🎄 Tredicesima: a Dicembre &nbsp;|&nbsp; 📦 TFR: <strong>€79,93/mese</strong> accantonato</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="sgrid">
+    <div class="sc blue">
+      <div class="sc-label">💰 Stipendio da Pagare</div>
+      <div class="sc-val" id="s-netto">€1.105,80</div>
+      <div class="sc-sub" id="s-netto-sub">Lordo: €1.145,40 · Netto: €1.105,80</div>
+    </div>
+    <div class="sc orn">
+      <div class="sc-label">🏛️ INPS Trimestrale</div>
+      <div class="sc-val" id="s-inps">€409,50</div>
+      <div class="sc-sub">ogni 3 mesi</div>
+    </div>
+    <div class="sc grn">
+      <div class="sc-label">📊 Spese del Mese</div>
+      <div class="sc-val" id="s-spese">€0</div>
+      <div class="sc-sub" id="s-spese-sub">0 voci</div>
+    </div>
+    <div class="sc red">
+      <div class="sc-label">📅 Costo Annuo</div>
+      <div class="sc-val" id="s-annuo">€0</div>
+      <div class="sc-sub">solo contratto</div>
+    </div>
+  </div>
+
+  <!-- Busta paga reale -->
+  <div class="card">
+    <div class="ctitle">📋 Busta Paga Mensile (come da contratto CAF CISL)</div>
+    <div class="row"><span class="lbl">💼 Retribuzione lorda (130 ore × €8,30)</span><span id="bp-lordo">€1.079,00</span></div>
+    <div class="row"><span class="lbl">🎉 Festività</span><span id="bp-fest">€41,50</span></div>
+    <div class="row"><span class="lbl">⏱️ Straordinario domenica/festività</span><span id="bp-straord">€24,90</span></div>
+    <div class="row tot"><span>📊 Totale lordo</span><span id="bp-tot-lordo">€1.145,40</span></div>
+    <div class="row"><span class="lbl" style="color:var(--red)">(-) Contributi INPS lavoratrice (120h × €0,31)</span><span style="color:var(--red)">- €37,20</span></div>
+    <div class="row"><span class="lbl" style="color:var(--red)">(-) Cassa malattia COLF (120h × €0,02)</span><span style="color:var(--red)">- €2,40</span></div>
+    <div class="nettobox">
+      <span style="font-weight:700;color:var(--green);font-size:15px">💵 NETTO DA PAGARE alla badante</span>
+      <span id="bp-netto" style="font-weight:800;color:var(--green);font-size:24px">€1.105,80</span>
+    </div>
+  </div>
+
+  <!-- Costo datore -->
+  <div class="card">
+    <div class="ctitle">💳 Costo Reale Mensile — tutto incluso e spalmato</div>
+    <div class="row"><span class="lbl">💼 Stipendio lordo</span><span id="c-stip">€0</span></div>
+    <div class="row"><span class="lbl">🏛️ Quota INPS mensile (paghi ogni 3 mesi)</span><span id="c-inps">€0</span></div>
+    <div class="row"><span class="lbl">🎄 Quota 13ª mensile (paghi a Dicembre)</span><span id="c-13">€0</span></div>
+    <div class="row"><span class="lbl">📦 Quota TFR mensile (paghi a fine contratto)</span><span id="c-tfr">€0</span></div>
+    <div class="row tot"><span>💰 Costo reale mensile (tutto incluso)</span><span id="c-tot" style="color:var(--primary)">€0</span></div>
+    <div style="background:var(--yel-light);border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-top:10px;font-size:13px;color:var(--yellow)">
+      ⚠️ <strong>Ogni mese paghi solo <span id="cd-netto">€1.105,80</span></strong> alla badante. Le altre voci (INPS, 13ª, TFR) vengono pagate in momenti diversi durante l'anno.
+    </div>
+  </div>
+
+  <!-- Riepilogo trimestrale -->
+  <div class="card">
+    <div class="ctitle">📊 Riepilogo Trimestrale (costi contrattuali)</div>
+    <div class="row"><span class="lbl">💼 Stipendi netti × 3 mesi</span><span id="t-stip">€3.118,20</span></div>
+    <div class="row"><span class="lbl">🏛️ Contributi INPS</span><span id="t-inps">€0</span></div>
+    <div class="row"><span class="lbl">🎄 13ª accantonata × 3</span><span id="t-13">€0</span></div>
+    <div class="row"><span class="lbl">📦 TFR accantonato × 3</span><span id="t-tfr">€0</span></div>
+    <div class="row tot"><span>💳 Totale trimestrale</span><span id="t-tot" style="color:var(--orange)">€0</span></div>
+  </div>
+
+  <!-- Registra pagamento veloce -->
+  <div class="qpay">
+    <div class="ctitle">✅ Registra Pagamento Veloce</div>
+    <div class="fg2" style="margin-bottom:11px">
+      <div class="fg">
+        <label class="fl2">Tipo pagamento</label>
+        <select class="fsel" id="q-tipo" onchange="aggQImporto()">
+          <option value="stipendio" id="q-opt-stip" data-imp="1105.80">💼 Stipendio mensile (€1.105,80)</option>
+          <option value="contributi" data-imp="409.50">🏛️ Contributi INPS trimestrale</option>
+          <option value="tredicesima" data-imp="1079">🎄 Tredicesima (€1.079)</option>
+          <option value="caf" data-imp="120">📋 CAF CISL trimestrale (~€120)</option>
+          <option value="altro" data-imp="">📌 Altro</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl2">Data pagamento</label>
+        <input class="fi" id="q-data" type="date"/>
+      </div>
+    </div>
+    <div class="fg2" style="margin-bottom:11px">
+      <div class="fg">
+        <label class="fl2">Importo (€)</label>
+        <input class="fi" id="q-imp" type="number" step="0.01" placeholder="0.00"/>
+      </div>
+      <div class="fg">
+        <label class="fl2">Note (opzionale)</label>
+        <input class="fi" id="q-note" placeholder="Bonifico, contanti..."/>
+      </div>
+    </div>
+    <button class="btn bg bfull" onclick="regPagVeloce()">✅ Salva Pagamento → va in tab Pagamenti</button>
+  </div>
+
+</div>
+
+<!-- ===== SPESE ===== -->
+<div class="sec" id="sec-spese">
+  <div class="card">
+    <div class="ctitle" id="form-title">➕ Nuova Spesa</div>
+    <input type="hidden" id="edit-id"/>
+    <div class="fg">
+      <label class="fl2">Descrizione *</label>
+      <input class="fi" id="i-tit" placeholder="Es: Spesa Eurospin, Farmacia..."/>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">Importo (€) *</label><input class="fi" id="i-imp" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="fg"><label class="fl2">Data *</label><input class="fi" id="i-dat" type="date"/></div>
+    </div>
+    <div class="fg">
+      <label class="fl2">Categoria</label>
+      <select class="fsel" id="i-cat">
+        <option value="spesa_alimentare">🛒 Spesa Alimentare</option>
+        <option value="farmaci">💊 Farmaci / Salute</option>
+        <option value="trasporti">🚌 Trasporti</option>
+        <option value="utenze">💡 Utenze / Bollette</option>
+        <option value="anticipi">💵 Anticipi ed Extra</option>
+        <option value="altro">📌 Altro</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl2">Note</label><textarea class="fta" id="i-not" rows="2" placeholder="Note aggiuntive..."></textarea></div>
+    <div style="display:flex;gap:9px">
+      <button class="btn bp" onclick="salvaSpesa()" style="flex:1">✅ Salva Spesa</button>
+      <button class="btn bgh" onclick="annEdit()" id="btn-ann" style="display:none">✖ Annulla</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mnav" style="margin-bottom:10px">
+      <button onclick="cm(-1)">◀</button>
+      <div class="mlbl" id="mlbl2">—</div>
+      <button onclick="cm(1)">▶</button>
+    </div>
+    <div class="ctitle">
+      📋 Spese del Mese
+      <span style="font-size:12px;font-weight:700;background:var(--pri-light);color:var(--primary);padding:2px 9px;border-radius:99px;margin-left:auto" id="tot-mese">€0</span>
+    </div>
+    <div id="lista-spese"></div>
+  </div>
+</div>
+
+<!-- ===== PAGAMENTI ===== -->
+<div class="sec" id="sec-pag">
+  <div class="infobox grn">💡 Qui trovi tutti i pagamenti registrati. Usa il pulsante "✅ Salva Pagamento" nel Riepilogo oppure "Saldato" nelle Scadenze.</div>
+  <div class="card">
+    <div class="ctitle">✅ Storico Pagamenti</div>
+    <div id="lista-pag"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">📊 Totali per Categoria</div>
+    <div id="tot-pag"></div>
+  </div>
+</div>
+
+<!-- ===== SCADENZE ===== -->
+<div class="sec" id="sec-scad">
+  <div id="alert-scad"></div>
+  <div class="card">
+    <div class="ctitle">🔔 Promemoria Pagamenti</div>
+    <div id="lista-scad"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">➕ Aggiungi Promemoria</div>
+    <div class="fg"><label class="fl2">Descrizione</label><input class="fi" id="r-tit" placeholder="Es: Stipendio luglio..."/></div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">Importo (€)</label><input class="fi" id="r-imp" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="fg"><label class="fl2">Data Scadenza</label><input class="fi" id="r-dat" type="date"/></div>
+    </div>
+    <div class="fg2">
+      <div class="fg">
+        <label class="fl2">Categoria</label>
+        <select class="fsel" id="r-cat">
+          <option value="stipendio">💼 Stipendio</option>
+          <option value="contributi">🏛️ Contributi INPS</option>
+          <option value="tredicesima">🎄 Tredicesima</option>
+          <option value="caf">📋 CAF CISL</option>
+          <option value="altro">📌 Altro</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl2">Frequenza</label>
+        <select class="fsel" id="r-freq">
+          <option value="mensile">Mensile</option>
+          <option value="trimestrale">Trimestrale</option>
+          <option value="annuale">Annuale</option>
+          <option value="una_tantum">Una tantum</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn bo bfull" onclick="addReminder()">🔔 Aggiungi Promemoria</button>
+  </div>
+</div>
+
+<!-- ===== IMPOSTAZIONI ===== -->
+<div class="sec" id="sec-imp">
+  <div class="infobox blue">ℹ️ Modifica i dati del contratto qui. Vengono usati per tutti i calcoli automatici.</div>
+  <div class="card">
+    <div class="ctitle">👩‍⚕️ Dati Badante</div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">Nome Badante</label><input class="fi" id="s-nome" value="Strus-Halyna"/></div>
+      <div class="fg"><label class="fl2">Data Inizio Contratto</label><input class="fi" id="s-dinizio" type="date" value="2026-06-01"/></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">💰 Parametri Contrattuali</div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">Tariffa Oraria (€/ora)</label><input class="fi" id="s-tar" type="number" step="0.01" value="8.30" oninput="agPrev()"/></div>
+      <div class="fg"><label class="fl2">Ore Settimanali</label><input class="fi" id="s-ore" type="number" step="0.5" value="30" oninput="agPrev()"/></div>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">Aliquota INPS (€/ora lavorata)</label><input class="fi" id="s-inps" type="number" step="0.01" value="1.05" oninput="agPrev()"/></div>
+      <div class="fg"><label class="fl2">Budget Mensile (€)</label><input class="fi" id="s-bud" type="number" value="1500"/></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">📋 Voci variabili del mese (dalla busta paga)</div>
+    <div class="infobox blue" style="margin-bottom:12px;font-size:12px">Ogni mese copia qui i due importi che leggi sulla busta paga. Cambiano in base alle feste e agli straordinari del mese. Poi premi <strong>💾 Salva Impostazioni</strong> qui sotto: il netto si aggiorna da solo ovunque.</div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">🎉 Festività (€)</label><input class="fi" id="s-fest" type="number" step="0.01" value="41.50" oninput="agPrev()"/></div>
+      <div class="fg"><label class="fl2">⏱️ Straordinario (€)</label><input class="fi" id="s-straord" type="number" step="0.01" value="24.90" oninput="agPrev()"/></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">🧮 Anteprima Calcoli</div>
+    <div class="row"><span class="lbl">💼 Stipendio lordo (base calcoli)</span><span id="p-stip" style="color:var(--primary);font-weight:700">€0</span></div>
+    <div class="row" style="background:var(--grn-light);border-radius:8px;padding:10px;margin:4px 0"><span class="lbl" style="color:var(--green);font-weight:700">💵 Netto da pagare alla badante</span><span id="p-netto" style="color:var(--green);font-weight:800;font-size:18px">€1.105,80</span></div>
+    <div class="row"><span class="lbl">INPS trimestrale</span><span id="p-inps" style="color:var(--orange);font-weight:700">€0</span></div>
+    <div class="row"><span class="lbl">INPS mensile (1/3)</span><span id="p-inpsm">€0</span></div>
+    <div class="row"><span class="lbl">13ª mensile (÷12)</span><span id="p-13">€0</span></div>
+    <div class="row"><span class="lbl">TFR mensile (÷13,5)</span><span id="p-tfr">€0</span></div>
+    <div class="row tot"><span>Costo totale mensile</span><span id="p-tot" style="color:var(--primary)">€0</span></div>
+  </div>
+  <button class="btn bp bfull" onclick="salvaImp()" style="margin-bottom:14px">💾 Salva Impostazioni</button>
+  <div class="card" style="border-color:#BFDBFE;margin-bottom:14px">
+    <div class="ctitle" style="color:var(--primary)">☁️ Sincronizzazione Cloud (PC ↔ Cellulare)</div>
+    <div class="infobox blue" style="margin-bottom:12px;font-size:12px">Inserisci la tua API Key di JSONBin.io. <strong>Carica</strong> dal PC, poi <strong>Scarica</strong> sul cellulare.</div>
+    <div class="fg" style="margin-bottom:10px">
+      <label class="fl2">JSONBin API Key</label>
+      <input class="fi" id="jb-key" type="password" placeholder="$2a$10$..."/>
+    </div>
+    <div class="fg" style="margin-bottom:10px">
+      <label class="fl2">Bin ID (si crea automaticamente al primo caricamento)</label>
+      <input class="fi" id="jb-bin" placeholder="lascia vuoto la prima volta"/>
+    </div>
+    <div style="display:flex;gap:9px">
+      <button class="btn bp" style="flex:1" onclick="syncUp()">☁️ Carica sul Cloud</button>
+      <button class="btn bg" style="flex:1" onclick="syncDown()">📥 Scarica dal Cloud</button>
+    </div>
+    <div id="sync-status" style="margin-top:10px;font-size:13px;text-align:center;color:var(--text2)"></div>
+  </div>
+
+  <div class="card" style="border-color:#FECACA">
+    <div class="ctitle" style="color:var(--red)">⚠️ Zona Dati</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button class="btn bo bfull" onclick="ripScad()">🔄 Ripristina scadenze dal contratto</button>
+      <button class="btn br bfull" onclick="delSpese()">🗑️ Cancella tutte le spese</button>
+      <button class="btn br bfull" onclick="delTutto()">🗑️ Cancella TUTTI i dati</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- main -->
+
+<div class="toast" id="toast"></div>
+
+<div class="mover" id="modal" style="display:none">
+  <div class="mdl">
+    <div class="mdl-tit">✅ Conferma Pagamento <button class="mdl-x" onclick="closeModal()">×</button></div>
+    <div id="modal-body"></div>
+    <div style="display:flex;gap:9px;margin-top:14px">
+      <button class="btn bg" style="flex:1" onclick="confSaldato()">✅ Conferma e Registra</button>
+      <button class="btn bgh" onclick="closeModal()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STATO =====
+let curM = new Date().getMonth();
+let curY = new Date().getFullYear();
+let editId = null;
+let saldando = null;
+
+// ===== CATEGORIE =====
+const CAT = {
+  stipendio:       {e:'💼',l:'Stipendio',        c:'#EFF6FF',t:'#2563EB'},
+  contributi:      {e:'🏛️',l:'Contributi INPS',  c:'#FFF7ED',t:'#EA580C'},
+  tredicesima:     {e:'🎄',l:'Tredicesima',       c:'#ECFDF5',t:'#059669'},
+  tfr:             {e:'📦',l:'TFR',               c:'#F9FAFB',t:'#374151'},
+  caf:             {e:'📋',l:'CAF CISL',          c:'#F0F9FF',t:'#0284C7'},
+  spesa_alimentare:{e:'🛒',l:'Spesa Alimentare',  c:'#F0FDF4',t:'#059669'},
+  farmaci:         {e:'💊',l:'Farmaci/Salute',    c:'#FDF4FF',t:'#9333EA'},
+  trasporti:       {e:'🚌',l:'Trasporti',         c:'#F0F9FF',t:'#0284C7'},
+  utenze:          {e:'💡',l:'Utenze/Bollette',   c:'#FFFBEB',t:'#D97706'},
+  anticipi:        {e:'💵',l:'Anticipi/Extra',    c:'#F0FDF4',t:'#16A34A'},
+  altro:           {e:'📌',l:'Altro',             c:'#F9FAFB',t:'#6B7280'},
+};
+
+// ===== STORAGE =====
+const DEF_SETTINGS = {nome:'Strus-Halyna',tar:8.30,ore:30,inps:1.05,bud:1500,dinizio:'2026-06-01',fest:41.50,straord:24.90};
+
+function gS(){
+  try{
+    const s=localStorage.getItem('gsb2_set');
+    const set=s?JSON.parse(s):Object.assign({},DEF_SETTINGS);
+    if(set.fest===undefined)set.fest=DEF_SETTINGS.fest;
+    if(set.straord===undefined)set.straord=DEF_SETTINGS.straord;
+    return set;
+  }
+  catch(e){return Object.assign({},DEF_SETTINGS);}
+}
+function gSpese(){
+  try{const s=localStorage.getItem('gsb2_spese');return s?JSON.parse(s):[];}
+  catch(e){return [];}
+}
+function gPag(){
+  try{const s=localStorage.getItem('gsb2_pag');return s?JSON.parse(s):[];}
+  catch(e){return [];}
+}
+function gRem(){
+  try{
+    const s=localStorage.getItem('gsb2_rem');
+    if(s)return JSON.parse(s);
+  }catch(e){}
+  return defReminders();
+}
+function defReminders(){
+  const set=gS();
+  const c=calc(set);
+  const inpsTrim=c.inpsTrim;
+  return[
+    {id:'r1',tit:'💼 Stipendio netto Strus-Halyna (busta del 25/6)',imp:c.netto,cat:'stipendio',dat:'2026-07-01',freq:'mensile',on:true},
+    {id:'r2',tit:'🏛️ Contributi INPS Q2 2026 (solo Giugno)',imp:inpsTrim/3,cat:'contributi',dat:'2026-07-10',freq:'una_tantum',on:true},
+    {id:'r3',tit:'🏛️ Contributi INPS Q3 2026 (Lug-Set)',imp:inpsTrim,cat:'contributi',dat:'2026-10-10',freq:'una_tantum',on:true},
+    {id:'r4',tit:'🏛️ Contributi INPS Q4 2026 (Ott-Dic)',imp:inpsTrim,cat:'contributi',dat:'2027-01-10',freq:'una_tantum',on:true},
+    {id:'r5',tit:'🏛️ Contributi INPS Q1 2027 (Gen-Mar)',imp:inpsTrim,cat:'contributi',dat:'2027-04-10',freq:'una_tantum',on:true},
+    {id:'r6',tit:'📋 CAF CISL gestione trimestrale',imp:120,cat:'caf',dat:'2026-07-10',freq:'trimestrale',on:true},
+  ];
+}
+function ssave(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function savS(d){ssave('gsb2_set',d);}
+function savSp(d){ssave('gsb2_spese',d);}
+function savP(d){ssave('gsb2_pag',d);}
+function savR(d){ssave('gsb2_rem',d);}
+
+// ===== CALCOLI =====
+function calc(set){
+  const lordoBase=Math.round(set.tar*set.ore*4.333);        // retribuzione base (~130 ore)
+  const fest=parseFloat(set.fest)||0;                        // festività del mese (da busta paga)
+  const straord=parseFloat(set.straord)||0;                  // straordinario del mese (da busta paga)
+  const lordo=Math.round((lordoBase+fest+straord)*100)/100;  // totale lordo busta paga
+  const trattenute=39.60;                                    // INPS €37,20 + cassa malattia €2,40 (a carico lavoratrice)
+  const netto=Math.round((lordo-trattenute)*100)/100;        // netto da pagare alla badante
+  const stip=lordoBase;
+  const inpsTrim=Math.round(set.inps*set.ore*13*100)/100;
+  const inpsM=Math.round(inpsTrim/3*100)/100;
+  const m13=Math.round(stip/12*100)/100;
+  const tfr=Math.round(stip/13.5*100)/100;
+  const totM=Math.round((netto+inpsM+m13+tfr)*100)/100;
+  const totT=Math.round((netto*3+inpsTrim+m13*3+tfr*3)*100)/100;
+  const ann=Math.round(totT*4*100)/100;
+  return{stip,lordo,fest,straord,trattenute,netto,inpsTrim,inpsM,m13,tfr,totM,totT,ann};
+}
+function eu(n){return '€'+parseFloat(n).toLocaleString('it-IT',{minimumFractionDigits:2});}
+
+// ===== TABS =====
+function st(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  el.classList.add('on');
+  renderAll();
+}
+
+// ===== MESE =====
+function cm(d){
+  curM+=d;
+  if(curM>11){curM=0;curY++;}
+  if(curM<0){curM=11;curY--;}
+  renderAll();
+}
+const MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+function getML(){return MESI[curM]+' '+curY;}
+function speseMese(){
+  return gSpese().filter(s=>{const d=new Date(s.dat);return d.getMonth()===curM&&d.getFullYear()===curY;});
+}
+
+// ===== DIFF INFO =====
+function di(dat){
+  const og=new Date();og.setHours(0,0,0,0);
+  const du=new Date(dat);du.setHours(0,0,0,0);
+  const df=Math.ceil((du-og)/(1000*60*60*24));
+  if(df<0) return{df,cls:'red', dot:'red', sc:'s-red', tx:'⚠️ Scaduto da '+Math.abs(df)+' giorni!'};
+  if(df===0)return{df,cls:'red', dot:'red', sc:'s-red', tx:'🔴 Scade OGGI!'};
+  if(df<=7) return{df,cls:'orn', dot:'orn', sc:'s-orn', tx:'🟠 Scade tra '+df+' giorni'};
+  if(df<=20)return{df,cls:'yel', dot:'yel', sc:'s-yel', tx:'🟡 Scade tra '+df+' giorni'};
+  if(df<=30)return{df,cls:'grn', dot:'grn', sc:'s-grn', tx:'🟢 Scade tra '+df+' giorni'};
+  return{df,cls:'',dot:'',sc:'s-grn',tx:'✅ Scade il '+du.toLocaleDateString('it-IT')};
+}
+
+// ===== RENDER =====
+function renderAll(){
+  const set=gS();
+  const c=calc(set);
+  const ml=getML();
+  const sm=speseMese();
+  const totSm=sm.reduce((a,x)=>a+x.imp,0);
+
+  // Topbar
+  document.getElementById('tsub').textContent=set.nome+' · €'+set.tar.toFixed(2)+'/ora · '+set.ore+' ore/sett.';
+
+  // Month labels
+  ['mlbl','mlbl2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=ml;});
+
+  // Stats
+  sel('s-stip',eu(c.stip));
+  sel('s-inps',eu(c.inpsTrim));
+  sel('s-spese',eu(totSm));
+  sel('s-spese-sub',sm.length+' voci');
+  sel('s-annuo',eu(c.ann));
+  sel('s-netto',eu(c.netto));
+  sel('s-netto-sub','Lordo: '+eu(c.lordo)+' · Netto: '+eu(c.netto));
+
+  // Busta paga (aggiorna con impostazioni)
+  sel('bp-lordo',eu(c.stip));
+  sel('bp-fest',eu(c.fest));
+  sel('bp-straord',eu(c.straord));
+  sel('bp-tot-lordo',eu(c.lordo));
+  sel('bp-netto',eu(c.netto));
+  sel('nc-netto',eu(c.netto));
+  sel('cd-netto',eu(c.netto));
+  const qos=document.getElementById('q-opt-stip');
+  if(qos){qos.dataset.imp=c.netto.toFixed(2);qos.textContent='💼 Stipendio mensile ('+eu(c.netto)+')';}
+
+  // Costo datore
+  sel('c-stip',eu(c.stip));
+  sel('c-inps',eu(c.inpsM));
+  sel('c-13',eu(c.m13));
+  sel('c-tfr',eu(c.tfr));
+  sel('c-tot',eu(c.totM));
+
+  // Trimestrale
+  sel('t-stip',eu(c.netto*3));
+  sel('t-inps',eu(c.inpsTrim));
+  sel('t-13',eu(c.m13*3));
+  sel('t-tfr',eu(c.tfr*3));
+  sel('t-tot',eu(c.totT));
+
+  // Alert dashboard
+  const rems=gRem();
+  const pags=gPag();
+  const og=new Date();og.setHours(0,0,0,0);
+  // Semaforo
+  const scaduti=rems.filter(r=>{
+    if(!r.on)return false;
+    const du=new Date(r.dat);du.setHours(0,0,0,0);
+    return Math.ceil((du-og)/(1000*60*60*24))<=0;
+  });
+  const inScadenza=rems.filter(r=>{
+    if(!r.on)return false;
+    const du=new Date(r.dat);du.setHours(0,0,0,0);
+    const df=Math.ceil((du-og)/(1000*60*60*24));
+    return df>0&&df<=7;
+  });
+  const pagatiMese=pags.filter(p=>{
+    const d=new Date(p.dat);
+    return d.getMonth()===curM&&d.getFullYear()===curY;
+  });
+  const urg=rems.filter(r=>{
+    if(!r.on)return false;
+    const du=new Date(r.dat);du.setHours(0,0,0,0);
+    return Math.ceil((du-og)/(1000*60*60*24))<=30;
+  });
+  const da=document.getElementById('dash-alert');
+  if(da){
+    let html='<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">'
+      +'<div onclick="document.querySelectorAll(\'.tab\')[3].click()" style="flex:1;min-width:90px;background:var(--red-light);border:2px solid #FECACA;border-radius:var(--rs);padding:12px;text-align:center;cursor:pointer">'
+        +'<div style="font-size:22px">🔴</div>'
+        +'<div style="font-size:24px;font-weight:800;color:var(--red)">'+scaduti.length+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--red);letter-spacing:.03em">DA PAGARE</div>'
+      +'</div>'
+      +'<div onclick="document.querySelectorAll(\'.tab\')[3].click()" style="flex:1;min-width:90px;background:var(--yel-light);border:2px solid #FDE68A;border-radius:var(--rs);padding:12px;text-align:center;cursor:pointer">'
+        +'<div style="font-size:22px">🟡</div>'
+        +'<div style="font-size:24px;font-weight:800;color:var(--yellow)">'+inScadenza.length+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--yellow);letter-spacing:.03em">IN SCADENZA</div>'
+      +'</div>'
+      +'<div onclick="document.querySelectorAll(\'.tab\')[2].click()" style="flex:1;min-width:90px;background:var(--grn-light);border:2px solid #A7F3D0;border-radius:var(--rs);padding:12px;text-align:center;cursor:pointer">'
+        +'<div style="font-size:22px">🟢</div>'
+        +'<div style="font-size:24px;font-weight:800;color:var(--green)">'+pagatiMese.length+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--green);letter-spacing:.03em">PAGATI</div>'
+      +'</div>'
+    +'</div>';
+    if(urg.length>0){
+      const f=urg[0];const info=di(f.dat);
+      html+='<div style="background:var(--orn-light);border:1px solid #FED7AA;border-radius:var(--r);padding:14px;margin-bottom:14px;cursor:pointer" onclick="document.querySelectorAll(\'.tab\')[3].click()">'
+        +'<span style="font-weight:700;color:var(--orange)">🔔 '+urg.length+' scadenza/e nei prossimi 30 giorni!</span><br>'
+        +'<span style="font-size:13px;color:var(--text2)">Prossima: <strong>'+f.tit+'</strong> — '+eu(f.imp)+' — '+info.tx+'</span><br>'
+        +'<span style="font-size:12px;color:var(--primary)">👆 Clicca per vedere le scadenze</span>'
+      +'</div>';
+    }
+    da.innerHTML=html;
+  }
+
+  // Lista spese
+  const ls=document.getElementById('lista-spese');
+  const tl=document.getElementById('tot-mese');
+  if(tl)tl.textContent=eu(totSm);
+  if(ls){
+    if(sm.length===0){ls.innerHTML='<div class="empty"><div class="empty-ico">📭</div>Nessuna spesa per questo mese</div>';}
+    else{ls.innerHTML=[...sm].sort((a,b)=>new Date(b.dat)-new Date(a.dat)).map(s=>renderEI(s,true)).join('');}
+  }
+
+  // Pagamenti
+  renderPag();
+
+  // Scadenze
+  renderScad();
+
+  // Impostazioni
+  const sn=document.getElementById('s-nome');if(sn)sn.value=set.nome;
+  const st2=document.getElementById('s-tar');if(st2)st2.value=set.tar;
+  const so=document.getElementById('s-ore');if(so)so.value=set.ore;
+  const si=document.getElementById('s-inps');if(si)si.value=set.inps;
+  const sb=document.getElementById('s-bud');if(sb)sb.value=set.bud;
+  const sd=document.getElementById('s-dinizio');if(sd)sd.value=set.dinizio;
+  const sfe=document.getElementById('s-fest');if(sfe)sfe.value=set.fest;
+  const sst=document.getElementById('s-straord');if(sst)sst.value=set.straord;
+  agPrev();
+}
+
+function sel(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+
+function renderEI(s,wa){
+  const cat=CAT[s.cat]||CAT.altro;
+  const dt=new Date(s.dat).toLocaleDateString('it-IT');
+  return `<div class="ei">
+    <div class="eico" style="background:${cat.c};color:${cat.t}">${cat.e}</div>
+    <div class="einf"><div class="etit">${s.tit}</div><div class="emeta">${cat.l} · ${dt}${s.not?' · '+s.not:''}</div></div>
+    <div class="eamt">${eu(s.imp)}</div>
+    ${wa?`<div class="eact">
+      <button class="btn bgh bsm" onclick="editSp('${s.id}')">✏️</button>
+      <button class="btn br bsm" onclick="delSp('${s.id}')">🗑️</button>
+    </div>`:''}
+  </div>`;
+}
+
+function renderPag(){
+  const pags=gPag();
+  const lp=document.getElementById('lista-pag');
+  const tp=document.getElementById('tot-pag');
+  if(!lp)return;
+  if(pags.length===0){
+    lp.innerHTML='<div class="empty"><div class="empty-ico">📭</div>Nessun pagamento ancora registrato.<br><small>Usa "✅ Salva Pagamento" nel Riepilogo<br>oppure "Saldato" nelle Scadenze</small></div>';
+    if(tp)tp.innerHTML='';
+    return;
+  }
+  const sorted=[...pags].sort((a,b)=>new Date(b.dat)-new Date(a.dat));
+  lp.innerHTML=sorted.map(p=>{
+    const cat=CAT[p.cat]||CAT.altro;
+    return `<div class="pc">
+      <div style="font-size:26px">${cat.e}</div>
+      <div class="pc-inf">
+        <div class="pc-cat">✅ ${cat.l}</div>
+        <div class="pc-amt">${eu(p.imp)}</div>
+        <div class="pc-det">📅 ${new Date(p.dat).toLocaleDateString('it-IT')} — ${p.tit}${p.not?' · '+p.not:''}</div>
+      </div>
+      <button class="btn br bsm" onclick="delPag('${p.id}')">🗑️</button>
+    </div>`;
+  }).join('');
+  if(tp){
+    const tots={};
+    pags.forEach(p=>{if(!tots[p.cat])tots[p.cat]=0;tots[p.cat]+=p.imp;});
+    const totG=Object.values(tots).reduce((a,b)=>a+b,0);
+    tp.innerHTML=Object.entries(tots).map(([k,v])=>{const c=CAT[k]||CAT.altro;return `<div class="row"><span class="lbl">${c.e} ${c.l}</span><span>${eu(v)}</span></div>`;}).join('')
+      +`<div class="row tot"><span>💳 Totale pagato</span><span style="color:var(--green)">${eu(totG)}</span></div>`;
+  }
+}
+
+function renderScad(){
+  const rems=gRem();
+  let urg=0;
+  const html=rems.filter(r=>r.on).map(r=>{
+    const info=di(r.dat);
+    if(info.df<=30)urg++;
+    const fq=r.freq==='mensile'?'Mensile':r.freq==='trimestrale'?'Trimestrale':r.freq==='annuale'?'Annuale':'Una tantum';
+    return `<div class="ri ${info.cls}" style="margin-bottom:10px">
+      <div class="ri-head">
+        <div class="ri-dot ${info.dot}"></div>
+        <div class="ri-inf">
+          <div class="ri-status ${info.sc}">${info.tx}</div>
+          <div class="ri-tit">${r.tit}</div>
+          <div class="ri-amt">${eu(r.imp)}</div>
+          <div class="ri-date">📅 ${new Date(r.dat).toLocaleDateString('it-IT')} · ${fq}</div>
+        </div>
+        <div class="ri-btns">
+          <button class="btn bg bsm" onclick="openSaldato('${r.id}')">✅ Saldato</button>
+          <button class="btn br bsm" onclick="delRem('${r.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const ls=document.getElementById('lista-scad');
+  if(ls)ls.innerHTML=html||'<div class="empty"><div class="empty-ico">✅</div>Nessuna scadenza attiva!</div>';
+  const bdg=document.getElementById('bdg');
+  if(bdg){if(urg>0){bdg.style.display='inline';bdg.textContent=urg;}else{bdg.style.display='none';}}
+  const al=document.getElementById('alert-scad');
+  if(al){
+    if(urg>0){al.innerHTML=`<div style="background:var(--orn-light);border:1px solid #FED7AA;border-radius:var(--r);padding:14px;margin-bottom:14px"><span style="font-weight:700;color:var(--orange)">⚠️ ${urg} scadenza/e nei prossimi 30 giorni!</span><br><span style="font-size:13px;color:var(--text2)">Clicca "✅ Saldato" quando effettui il pagamento — viene registrato automaticamente.</span></div>`;}
+    else{al.innerHTML='';}
+  }
+}
+
+// ===== SPESE CRUD =====
+function salvaSpesa(){
+  const tit=document.getElementById('i-tit').value.trim();
+  const imp=parseFloat(document.getElementById('i-imp').value);
+  const dat=document.getElementById('i-dat').value;
+  const cat=document.getElementById('i-cat').value;
+  const not=document.getElementById('i-not').value.trim();
+  if(!tit||!imp||!dat){toast('⚠️ Compila tutti i campi!');return;}
+  const spese=gSpese();
+  if(editId){
+    const i=spese.findIndex(s=>s.id===editId);
+    if(i>=0)spese[i]={...spese[i],tit,imp,dat,cat,not};
+    editId=null;
+    document.getElementById('form-title').textContent='➕ Nuova Spesa';
+    document.getElementById('btn-ann').style.display='none';
+    toast('✅ Spesa aggiornata!');
+  }else{
+    spese.unshift({id:Date.now().toString(),tit,imp,dat,cat,not});
+    toast('✅ Spesa aggiunta!');
+  }
+  savSp(spese);
+  document.getElementById('i-tit').value='';
+  document.getElementById('i-imp').value='';
+  document.getElementById('i-not').value='';
+  renderAll();
+}
+function editSp(id){
+  const s=gSpese().find(x=>x.id===id);if(!s)return;
+  editId=id;
+  document.getElementById('i-tit').value=s.tit;
+  document.getElementById('i-imp').value=s.imp;
+  document.getElementById('i-dat').value=s.dat;
+  document.getElementById('i-cat').value=s.cat;
+  document.getElementById('i-not').value=s.not||'';
+  document.getElementById('form-title').textContent='✏️ Modifica Spesa';
+  document.getElementById('btn-ann').style.display='';
+  document.querySelector('#sec-spese .card').scrollIntoView({behavior:'smooth'});
+}
+function annEdit(){
+  editId=null;
+  document.getElementById('form-title').textContent='➕ Nuova Spesa';
+  document.getElementById('btn-ann').style.display='none';
+  document.getElementById('i-tit').value='';
+  document.getElementById('i-imp').value='';
+  document.getElementById('i-not').value='';
+}
+function delSp(id){
+  if(!confirm('Eliminare questa spesa?'))return;
+  savSp(gSpese().filter(s=>s.id!==id));
+  renderAll();toast('🗑️ Spesa eliminata');
+}
+
+// ===== PAGAMENTI =====
+function aggQImporto(){
+  const sel=document.getElementById('q-tipo');
+  const imp=sel.options[sel.selectedIndex].dataset.imp;
+  const el=document.getElementById('q-imp');
+  if(el&&imp)el.value=imp;
+}
+function regPagVeloce(){
+  const tipo=document.getElementById('q-tipo');
+  const cat=tipo.value;
+  const dat=document.getElementById('q-data').value;
+  const imp=parseFloat(document.getElementById('q-imp').value);
+  const not=document.getElementById('q-note').value.trim();
+  const labels={stipendio:'💼 Stipendio mensile Strus-Halyna',contributi:'🏛️ Contributi INPS',tredicesima:'🎄 Tredicesima',caf:'📋 CAF CISL',altro:'📌 Pagamento'};
+  if(!dat){toast('⚠️ Inserisci la data!');return;}
+  if(!imp||imp<=0){toast('⚠️ Inserisci un importo valido!');return;}
+  const pags=gPag();
+  pags.unshift({id:Date.now().toString(),tit:labels[cat],imp,cat,dat,not:not||'Registrato dal Riepilogo'});
+  savP(pags);
+  document.getElementById('q-imp').value='';
+  document.getElementById('q-note').value='';
+  renderAll();
+  toast('✅ Pagamento salvato! Vai in tab Pagamenti');
+}
+function delPag(id){
+  if(!confirm('Rimuovere questo pagamento?'))return;
+  savP(gPag().filter(p=>p.id!==id));
+  renderAll();toast('🗑️ Pagamento rimosso');
+}
+
+// ===== SALDATO MODAL =====
+function openSaldato(id){
+  const r=gRem().find(x=>x.id===id);if(!r)return;
+  saldando=r;
+  document.getElementById('modal-body').innerHTML=`
+    <div style="text-align:center;padding:14px 0">
+      <div style="font-size:44px;margin-bottom:10px">💳</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:5px">${r.tit}</div>
+      <div style="font-size:34px;font-weight:800;color:var(--green);margin:10px 0">${eu(r.imp)}</div>
+      <div style="font-size:13px;color:var(--text2)">Il pagamento verrà registrato nello storico Pagamenti e la prossima scadenza aggiornata automaticamente.</div>
+    </div>`;
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none';saldando=null;}
+function confSaldato(){
+  if(!saldando)return;
+  const r=saldando;
+  const og=new Date().toISOString().split('T')[0];
+  const pags=gPag();
+  pags.unshift({id:Date.now().toString(),tit:r.tit,imp:r.imp,cat:r.cat,dat:og,not:'Da scadenzario ('+r.freq+')'});
+  savP(pags);
+  const rems=gRem().map(x=>{
+    if(x.id!==r.id)return x;
+    if(r.freq==='una_tantum')return{...x,on:false};
+    const d=new Date(r.dat);
+    if(r.freq==='mensile')d.setMonth(d.getMonth()+1);
+    else if(r.freq==='trimestrale')d.setMonth(d.getMonth()+3);
+    else if(r.freq==='annuale')d.setFullYear(d.getFullYear()+1);
+    return{...x,dat:d.toISOString().split('T')[0]};
+  });
+  savR(rems);
+  closeModal();renderAll();toast('✅ Pagamento registrato!');
+}
+
+// ===== REMINDERS =====
+function addReminder(){
+  const tit=document.getElementById('r-tit').value.trim();
+  const imp=parseFloat(document.getElementById('r-imp').value);
+  const dat=document.getElementById('r-dat').value;
+  const cat=document.getElementById('r-cat').value;
+  const freq=document.getElementById('r-freq').value;
+  if(!tit||!imp||!dat){toast('⚠️ Compila tutti i campi!');return;}
+  const rems=gRem();
+  rems.unshift({id:Date.now().toString(),tit,imp,cat,dat,freq,on:true});
+  savR(rems);
+  document.getElementById('r-tit').value='';
+  document.getElementById('r-imp').value='';
+  renderAll();toast('🔔 Promemoria aggiunto!');
+}
+function delRem(id){
+  if(!confirm('Eliminare questo promemoria?'))return;
+  savR(gRem().filter(r=>r.id!==id));
+  renderAll();toast('🗑️ Promemoria eliminato');
+}
+
+// ===== IMPOSTAZIONI =====
+function salvaImp(){
+  const set={
+    nome:document.getElementById('s-nome').value.trim()||'Badante',
+    tar:parseFloat(document.getElementById('s-tar').value)||8.30,
+    ore:parseFloat(document.getElementById('s-ore').value)||30,
+    inps:parseFloat(document.getElementById('s-inps').value)||1.05,
+    bud:parseFloat(document.getElementById('s-bud').value)||1500,
+    dinizio:document.getElementById('s-dinizio').value,
+    fest:parseFloat(document.getElementById('s-fest').value)||0,
+    straord:parseFloat(document.getElementById('s-straord').value)||0,
+  };
+  savS(set);
+  // Allinea l'importo dello stipendio nelle Scadenze al nuovo netto
+  const c=calc(set);
+  const rems=gRem();
+  const r1=rems.find(r=>r.id==='r1');
+  if(r1){r1.imp=c.netto;savR(rems);}
+  renderAll();toast('✅ Impostazioni salvate!');
+}
+function agPrev(){
+  const tar=parseFloat(document.getElementById('s-tar')?.value)||8.30;
+  const ore=parseFloat(document.getElementById('s-ore')?.value)||30;
+  const inps=parseFloat(document.getElementById('s-inps')?.value)||1.05;
+  const fest=parseFloat(document.getElementById('s-fest')?.value)||0;
+  const straord=parseFloat(document.getElementById('s-straord')?.value)||0;
+  const c=calc({tar,ore,inps,fest,straord});
+  sel('p-stip',eu(c.stip));sel('p-netto',eu(c.netto));sel('p-inps',eu(c.inpsTrim));sel('p-inpsm',eu(c.inpsM));
+  sel('p-13',eu(c.m13));sel('p-tfr',eu(c.tfr));sel('p-tot',eu(c.totM));
+}
+function ripScad(){
+  if(!confirm('Ripristinare le scadenze predefinite dal contratto?'))return;
+  localStorage.removeItem('gsb2_rem');
+  renderAll();toast('✅ Scadenze ripristinate!');
+}
+function delSpese(){
+  if(!confirm('Eliminare TUTTE le spese?'))return;
+  savSp([]);renderAll();toast('🗑️ Spese cancellate');
+}
+function delTutto(){
+  if(!confirm('Cancellare TUTTI i dati?'))return;
+  ['gsb2_set','gsb2_spese','gsb2_pag','gsb2_rem'].forEach(k=>localStorage.removeItem(k));
+  renderAll();toast('🗑️ Tutti i dati cancellati');
+}
+
+// ===== SYNC CLOUD =====
+const JB_URL='https://api.jsonbin.io/v3/b';
+function jbKey(){return document.getElementById('jb-key').value.trim();}
+function jbBin(){return document.getElementById('jb-bin').value.trim();}
+function syncStat(msg,col){const el=document.getElementById('sync-status');if(el){el.textContent=msg;el.style.color=col||'var(--text2)';}}
+function allData(){return{set:gS(),spese:gSpese(),pag:gPag(),rem:gRem()};}
+async function syncUp(){
+  const key=jbKey();if(!key){toast('⚠️ Inserisci la API Key!');return;}
+  syncStat('☁️ Caricamento in corso...','var(--primary)');
+  try{
+    const bin=jbBin();
+    let url=JB_URL,method='POST',headers={'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Private':'false'};
+    if(bin){url=JB_URL+'/'+bin;method='PUT';}
+    const res=await fetch(url,{method,headers,body:JSON.stringify(allData())});
+    const d=await res.json();
+    if(!res.ok)throw new Error(d.message||'Errore');
+    const bid=d.metadata?.id||bin;
+    if(bid){document.getElementById('jb-bin').value=bid;localStorage.setItem('gsb2_jbbin',bid);}
+    localStorage.setItem('gsb2_jbkey',key);
+    syncStat('✅ Caricato! Bin ID: '+bid,'var(--green)');
+    toast('☁️ Dati caricati sul cloud!');
+  }catch(e){syncStat('❌ Errore: '+e.message,'var(--red)');toast('❌ Errore sync!');}
+}
+async function syncDown(){
+  const key=jbKey();const bin=jbBin();
+  if(!key||!bin){toast('⚠️ Inserisci API Key e Bin ID!');return;}
+  syncStat('📥 Scaricamento in corso...','var(--primary)');
+  try{
+    const res=await fetch(JB_URL+'/'+bin+'/latest',{headers:{'X-Master-Key':key}});
+    const d=await res.json();
+    if(!res.ok)throw new Error(d.message||'Errore');
+    const rec=d.record;
+    if(rec.set)savS(rec.set);if(rec.spese)savSp(rec.spese);
+    if(rec.pag)savP(rec.pag);if(rec.rem)savR(rec.rem);
+    localStorage.setItem('gsb2_jbkey',key);localStorage.setItem('gsb2_jbbin',bin);
+    renderAll();syncStat('✅ Dati aggiornati dal cloud!','var(--green)');
+    toast('📥 Dati scaricati dal cloud!');
+  }catch(e){syncStat('❌ Errore: '+e.message,'var(--red)');toast('❌ Errore sync!');}
+}
+
+// ===== FONT =====
+function sf(s){
+  document.body.className=s==='n'?'':s==='l'?'fl':'fh';
+  localStorage.setItem('gsb2_font',s);
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  const i={n:0,l:1,h:2}[s];
+  document.querySelectorAll('.fbtn')[i].classList.add('on');
+}
+
+// ===== TOAST =====
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),2800);}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded',()=>{
+  const oggi=new Date().toISOString().split('T')[0];
+  ['i-dat','r-dat','q-data'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=oggi;});
+  // Imposta importo default per quick pay
+  aggQImporto();
+  // Sync key/bin salvati
+  const sk=localStorage.getItem('gsb2_jbkey');const sb2=localStorage.getItem('gsb2_jbbin');
+  if(sk){const ke=document.getElementById('jb-key');if(ke)ke.value=sk;}
+  if(sb2){const be=document.getElementById('jb-bin');if(be)be.value=sb2;}
+  // Font
+  const f=localStorage.getItem('gsb2_font')||'h';
+  sf(f);
+  // Allinea la scadenza dello stipendio al netto calcolato (anche per dati già salvati)
+  try{
+    const c0=calc(gS());
+    const rems0=gRem();
+    const r1=rems0.find(r=>r.id==='r1');
+    if(r1 && r1.imp!==c0.netto){r1.imp=c0.netto;savR(rems0);}
+  }catch(e){}
+  renderAll();
+});
+</script>
+</body>
+</html>
