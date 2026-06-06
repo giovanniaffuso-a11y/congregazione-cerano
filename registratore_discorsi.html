@@ -114,6 +114,12 @@
   .hint{font-size:.85rem;color:var(--muted);margin-top:12px;line-height:1.55}
   .hint b{color:var(--accent)}
 
+  .vol-ctrl{margin-top:16px;font-size:.92rem;color:var(--muted)}
+  .vol-ctrl label{display:block;margin-bottom:8px}
+  .vol-ctrl b{color:var(--accent)}
+  .vol-ctrl input[type=range]{width:100%;accent-color:var(--accent);height:26px}
+  .vol-hint{font-size:.8rem;margin-top:4px}
+
   /* sessioni salvate */
   .sessione{
     border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--bg);
@@ -166,6 +172,11 @@
         <span class="inner"></span>
       </button>
     </div>
+    <div class="vol-ctrl">
+      <label for="volRange">🔊 Volume registrazione: <b id="volVal">2.5×</b></label>
+      <input type="range" id="volRange" min="1" max="5" step="0.5" value="2.5">
+      <div class="vol-hint">Se l'oratore è lontano, alza il volume. Se l'audio "gracchia", abbassalo.</div>
+    </div>
     <div class="playback" id="playback">
       <audio id="audioPlayer" controls></audio>
       <div class="row">
@@ -217,12 +228,16 @@
   let recording=false;
   let finalText="";
   let mediaRecorder=null, audioChunks=[], audioStream=null, audioUrl=null;
+  let audioCtx=null, gainNode=null, gainValue=2.5;
   let recognition=null, recoSupported=true;
   let seconds=0, timerInt=null;
   let startStamp=null;
 
   // ---------- supporto ----------
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(location.protocol==="file:"){
+    showWarn("⚠️ <b>Hai aperto il file con doppio click.</b> Così il browser blocca la trascrizione e tiene basso il microfono. Per farla funzionare davvero, carica l'app su GitHub e aprila dal <b>link (https://…)</b> — meglio dal telefono.");
+  }
   if(!SR){
     recoSupported=false;
     showWarn("⚠️ Questo browser non supporta la trascrizione dal vivo. Su telefono usa <b>Google Chrome</b>. La registrazione audio funziona comunque.");
@@ -231,7 +246,11 @@
     showWarn("⚠️ Questo browser non permette di usare il microfono.");
   }
 
-  function showWarn(html){ warnBox.innerHTML=html; warnBox.classList.add("show"); }
+  function showWarn(html){
+    if(warnBox.innerHTML) warnBox.innerHTML += "<hr style='border:none;border-top:1px solid rgba(255,255,255,.15);margin:10px 0'>";
+    warnBox.innerHTML += html;
+    warnBox.classList.add("show");
+  }
 
   // ---------- timer ----------
   function fmt(s){
@@ -261,7 +280,10 @@
     r.onerror=(e)=>{
       // 'no-speech' e 'aborted' sono normali: lasciamo che onend riavvii
       if(e.error==="not-allowed"||e.error==="service-not-allowed"){
-        showWarn("⚠️ Permesso microfono negato. Controlla le impostazioni del telefono per questa pagina.");
+        showWarn("⚠️ Permesso microfono negato. Controlla le impostazioni del browser per questa pagina.");
+      }
+      if(e.error==="network"){
+        showWarn("⚠️ La trascrizione non riesce a collegarsi. Apri l'app dal <b>link https (GitHub)</b>, non dal file scaricato, e controlla la connessione internet.");
       }
     };
     r.onend=()=>{
@@ -282,15 +304,29 @@
   // ---------- registrazione ----------
   async function startRecording(){
     try{
-      audioStream = await navigator.mediaDevices.getUserMedia({audio:true});
+      audioStream = await navigator.mediaDevices.getUserMedia({audio:{
+        echoCancellation:false, noiseSuppression:false, autoGainControl:false
+      }});
     }catch(err){
       showWarn("⚠️ Non riesco ad accedere al microfono. Concedi il permesso e riprova.");
       return;
     }
+    // amplificazione del volume (Web Audio)
+    let recStream = audioStream;
+    try{
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==="suspended") await audioCtx.resume();
+      const src = audioCtx.createMediaStreamSource(audioStream);
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = gainValue;
+      const dest = audioCtx.createMediaStreamDestination();
+      src.connect(gainNode); gainNode.connect(dest);
+      recStream = dest.stream;
+    }catch(_){ recStream = audioStream; }
     // audio
     audioChunks=[];
     try{
-      mediaRecorder=new MediaRecorder(audioStream);
+      mediaRecorder=new MediaRecorder(recStream);
       mediaRecorder.ondataavailable=ev=>{ if(ev.data.size>0) audioChunks.push(ev.data); };
       mediaRecorder.onstop=()=>{
         const blob=new Blob(audioChunks,{type: mediaRecorder.mimeType || "audio/webm"});
@@ -321,6 +357,7 @@
     if(recognition){ try{ recognition.stop(); }catch(_){ } }
     if(mediaRecorder && mediaRecorder.state!=="inactive"){ try{ mediaRecorder.stop(); }catch(_){ } }
     if(audioStream){ audioStream.getTracks().forEach(t=>t.stop()); }
+    if(audioCtx){ try{ audioCtx.close(); }catch(_){ } audioCtx=null; gainNode=null; }
     recBtn.classList.remove("recording"); recBtn.classList.add("idle");
     statusEl.classList.remove("live"); statusText.textContent="Fermato";
     stopTimer();
@@ -328,6 +365,14 @@
   }
 
   recBtn.addEventListener("click",()=>{ recording? stopRecording() : startRecording(); });
+
+  // ---------- volume ----------
+  const volRange=$("volRange"), volVal=$("volVal");
+  volRange.addEventListener("input",()=>{
+    gainValue=parseFloat(volRange.value);
+    volVal.textContent=gainValue+"×";
+    if(gainNode) gainNode.gain.value=gainValue;
+  });
 
   // ---------- download audio ----------
   downloadBtn.addEventListener("click",()=>{
