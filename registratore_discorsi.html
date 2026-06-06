@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#14110f">
+<title>Registratore Discorsi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14110f;
+    --surface:#1f1a17;
+    --surface-2:#2a231e;
+    --text:#f0e9e2;
+    --muted:#a89b8f;
+    --accent:#f0b860;
+    --accent-deep:#d99838;
+    --rec:#ff5a4d;
+    --green:#7bc47f;
+    --border:rgba(255,255,255,.09);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Outfit',system-ui,sans-serif;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(240,184,96,.10), transparent 60%),
+      radial-gradient(700px 500px at -10% 110%, rgba(255,90,77,.07), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    min-height:100dvh;
+    line-height:1.5;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:22px 16px 60px}
+  header{text-align:center;margin-bottom:22px}
+  header .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:600;font-size:2rem;margin:.25rem 0 .15rem;
+    letter-spacing:-.01em;
+  }
+  header p{color:var(--muted);font-size:.92rem;margin:0}
+
+  .card{
+    background:linear-gradient(180deg,var(--surface),var(--surface-2));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;margin-bottom:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .card h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;margin:0 0 14px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .card h2 .ic{font-size:1.15rem}
+
+  /* registrazione */
+  .rec-stage{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .timer{
+    font-family:'Fraunces',serif;font-variant-numeric:tabular-nums;
+    font-size:2.8rem;font-weight:600;letter-spacing:.02em;line-height:1;
+  }
+  .status{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:8px;min-height:22px}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--muted)}
+  .status.live .dot{background:var(--rec);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,90,77,.55)}70%{box-shadow:0 0 0 10px rgba(255,90,77,0)}100%{box-shadow:0 0 0 0 rgba(255,90,77,0)}}
+
+  .rec-btn{
+    width:96px;height:96px;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 30% 25%, #ff7a6e, var(--rec));
+    box-shadow:0 12px 28px rgba(255,90,77,.35), inset 0 0 0 6px rgba(255,255,255,.10);
+    display:grid;place-items:center;transition:transform .15s ease;
+  }
+  .rec-btn:active{transform:scale(.94)}
+  .rec-btn .inner{width:30px;height:30px;border-radius:8px;background:#fff;transition:all .2s}
+  .rec-btn.recording .inner{border-radius:5px;width:26px;height:26px}
+  .rec-btn.idle .inner{border-radius:50%}
+
+  /* playback */
+  .playback{width:100%;margin-top:6px;display:none}
+  .playback.show{display:block}
+  audio{width:100%;margin-bottom:10px;filter:saturate(.8)}
+
+  /* trascrizione */
+  .titolo-input{
+    width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+    font-family:'Outfit',sans-serif;font-size:1rem;padding:12px 14px;border-radius:12px;margin-bottom:12px;
+  }
+  .titolo-input::placeholder{color:var(--muted)}
+  .titolo-input:focus{outline:none;border-color:var(--accent)}
+  .transcript{
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    padding:16px;min-height:160px;max-height:340px;overflow-y:auto;
+    font-size:1.05rem;line-height:1.65;white-space:pre-wrap;word-break:break-word;
+  }
+  .transcript:empty::before{content:"Il testo apparirà qui mentre parli…";color:var(--muted)}
+  .interim{color:var(--muted);font-style:italic}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{
+    flex:1 1 auto;min-width:120px;border:1px solid var(--border);cursor:pointer;
+    background:var(--surface-2);color:var(--text);font-family:'Outfit',sans-serif;
+    font-size:.95rem;font-weight:500;padding:13px 14px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-deep));color:#2a1c08;border-color:transparent;font-weight:600}
+  .btn.ghost{background:transparent}
+  .btn.danger{color:var(--rec)}
+
+  .hint{font-size:.85rem;color:var(--muted);margin-top:12px;line-height:1.55}
+  .hint b{color:var(--accent)}
+
+  /* sessioni salvate */
+  .sessione{
+    border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--bg);
+  }
+  .sessione .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;cursor:pointer}
+  .sessione .nome{font-weight:600;font-size:1rem}
+  .sessione .meta{font-size:.78rem;color:var(--muted);margin-top:2px}
+  .sessione .testo{
+    margin-top:12px;font-size:.95rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+    color:var(--text);display:none;border-top:1px solid var(--border);padding-top:12px;
+  }
+  .sessione.open .testo{display:block}
+  .sessione .chev{color:var(--muted);font-size:1.1rem;transition:transform .2s}
+  .sessione.open .chev{transform:rotate(180deg)}
+  .empty{color:var(--muted);font-size:.92rem;text-align:center;padding:14px 0}
+
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--green);color:#0c1a0d;font-weight:600;padding:12px 22px;border-radius:30px;
+    opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.4);
+    font-size:.92rem;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .warn{
+    background:rgba(255,90,77,.12);border:1px solid rgba(255,90,77,.4);color:#ffb3ac;
+    border-radius:12px;padding:14px;font-size:.9rem;margin-bottom:16px;display:none;
+  }
+  .warn.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Congregazione di Cerano</div>
+    <h1>Registratore Discorsi</h1>
+    <p>Registra, trascrivi e salva i punti dei discorsi</p>
+  </header>
+
+  <div class="warn" id="warnBox"></div>
+
+  <!-- REGISTRAZIONE -->
+  <div class="card">
+    <h2><span class="ic">🎙️</span> Registrazione</h2>
+    <div class="rec-stage">
+      <div class="timer" id="timer">00:00:00</div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">Pronto</span></div>
+      <button class="rec-btn idle" id="recBtn" aria-label="Avvia o ferma la registrazione">
+        <span class="inner"></span>
+      </button>
+    </div>
+    <div class="playback" id="playback">
+      <audio id="audioPlayer" controls></audio>
+      <div class="row">
+        <button class="btn ghost" id="downloadBtn">⬇️ Scarica audio</button>
+      </div>
+    </div>
+    <div class="hint">L'audio si può riascoltare e scaricare subito. ⚠️ <b>Scaricalo se ti serve</b>: non resta salvato dentro l'app dopo che la chiudi (i file audio sono troppo pesanti). Il testo invece sì, resta salvato.</div>
+  </div>
+
+  <!-- TRASCRIZIONE -->
+  <div class="card">
+    <h2><span class="ic">✍️</span> Trascrizione dal vivo</h2>
+    <input class="titolo-input" id="titolo" placeholder="Titolo del discorso (es. Discorso N°67 – fratello…)" />
+    <div class="transcript" id="transcript"></div>
+    <div class="row">
+      <button class="btn" id="copyBtn">📋 Copia trascrizione</button>
+      <button class="btn primary" id="saveBtn">💾 Salva</button>
+    </div>
+    <div class="row">
+      <button class="btn ghost danger" id="clearBtn">🗑️ Cancella testo</button>
+    </div>
+    <div class="hint">Per i <b>punti più importanti</b>: premi “Copia trascrizione”, poi incolla il testo a Claude e chiedi il riassunto. 😊</div>
+  </div>
+
+  <!-- SALVATE -->
+  <div class="card">
+    <h2><span class="ic">📚</span> Discorsi salvati</h2>
+    <div id="lista"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  const STORE_KEY = "registratore_discorsi_v1";
+
+  // ---------- elementi ----------
+  const $ = id => document.getElementById(id);
+  const recBtn=$("recBtn"), timerEl=$("timer"), statusEl=$("status"), statusText=$("statusText");
+  const transcriptEl=$("transcript"), titoloEl=$("titolo");
+  const playback=$("playback"), audioPlayer=$("audioPlayer"), downloadBtn=$("downloadBtn");
+  const copyBtn=$("copyBtn"), saveBtn=$("saveBtn"), clearBtn=$("clearBtn");
+  const listaEl=$("lista"), toastEl=$("toast"), warnBox=$("warnBox");
+
+  // ---------- stato ----------
+  let recording=false;
+  let finalText="";
+  let mediaRecorder=null, audioChunks=[], audioStream=null, audioUrl=null;
+  let recognition=null, recoSupported=true;
+  let seconds=0, timerInt=null;
+  let startStamp=null;
+
+  // ---------- supporto ----------
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    recoSupported=false;
+    showWarn("⚠️ Questo browser non supporta la trascrizione dal vivo. Su telefono usa <b>Google Chrome</b>. La registrazione audio funziona comunque.");
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showWarn("⚠️ Questo browser non permette di usare il microfono.");
+  }
+
+  function showWarn(html){ warnBox.innerHTML=html; warnBox.classList.add("show"); }
+
+  // ---------- timer ----------
+  function fmt(s){
+    const h=String(Math.floor(s/3600)).padStart(2,"0");
+    const m=String(Math.floor((s%3600)/60)).padStart(2,"0");
+    const sec=String(s%60).padStart(2,"0");
+    return `${h}:${m}:${sec}`;
+  }
+  function startTimer(){ seconds=0; timerEl.textContent="00:00:00"; timerInt=setInterval(()=>{seconds++;timerEl.textContent=fmt(seconds);},1000); }
+  function stopTimer(){ clearInterval(timerInt); timerInt=null; }
+
+  // ---------- riconoscimento vocale (con auto-restart) ----------
+  function buildRecognition(){
+    const r=new SR();
+    r.lang="it-IT";
+    r.continuous=true;
+    r.interimResults=true;
+    r.onresult=(e)=>{
+      let interim="";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const t=e.results[i][0].transcript;
+        if(e.results[i].isFinal){ finalText += (finalText && !finalText.endsWith(" ")?" ":"") + t.trim(); }
+        else interim += t;
+      }
+      renderTranscript(interim);
+    };
+    r.onerror=(e)=>{
+      // 'no-speech' e 'aborted' sono normali: lasciamo che onend riavvii
+      if(e.error==="not-allowed"||e.error==="service-not-allowed"){
+        showWarn("⚠️ Permesso microfono negato. Controlla le impostazioni del telefono per questa pagina.");
+      }
+    };
+    r.onend=()=>{
+      // se stiamo ancora registrando, riavvia (i discorsi lunghi si interrompono nelle pause)
+      if(recording && recoSupported){
+        try{ r.start(); }catch(_){ }
+      }
+    };
+    return r;
+  }
+
+  function renderTranscript(interim){
+    const safe = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    transcriptEl.innerHTML = safe(finalText) + (interim? `<span class="interim"> ${safe(interim)}</span>`:"");
+    transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  }
+
+  // ---------- registrazione ----------
+  async function startRecording(){
+    try{
+      audioStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    }catch(err){
+      showWarn("⚠️ Non riesco ad accedere al microfono. Concedi il permesso e riprova.");
+      return;
+    }
+    // audio
+    audioChunks=[];
+    try{
+      mediaRecorder=new MediaRecorder(audioStream);
+      mediaRecorder.ondataavailable=ev=>{ if(ev.data.size>0) audioChunks.push(ev.data); };
+      mediaRecorder.onstop=()=>{
+        const blob=new Blob(audioChunks,{type: mediaRecorder.mimeType || "audio/webm"});
+        if(audioUrl) URL.revokeObjectURL(audioUrl);
+        audioUrl=URL.createObjectURL(blob);
+        audioPlayer.src=audioUrl;
+        playback.classList.add("show");
+      };
+      mediaRecorder.start();
+    }catch(err){
+      showWarn("⚠️ La registrazione audio non è disponibile su questo browser, ma la trascrizione può funzionare.");
+    }
+    // riconoscimento
+    if(recoSupported){
+      recognition=buildRecognition();
+      try{ recognition.start(); }catch(_){ }
+    }
+    // UI
+    recording=true;
+    recBtn.classList.remove("idle"); recBtn.classList.add("recording");
+    statusEl.classList.add("live"); statusText.textContent="Registrazione in corso…";
+    startStamp=new Date();
+    startTimer();
+  }
+
+  function stopRecording(){
+    recording=false;
+    if(recognition){ try{ recognition.stop(); }catch(_){ } }
+    if(mediaRecorder && mediaRecorder.state!=="inactive"){ try{ mediaRecorder.stop(); }catch(_){ } }
+    if(audioStream){ audioStream.getTracks().forEach(t=>t.stop()); }
+    recBtn.classList.remove("recording"); recBtn.classList.add("idle");
+    statusEl.classList.remove("live"); statusText.textContent="Fermato";
+    stopTimer();
+    renderTranscript("");
+  }
+
+  recBtn.addEventListener("click",()=>{ recording? stopRecording() : startRecording(); });
+
+  // ---------- download audio ----------
+  downloadBtn.addEventListener("click",()=>{
+    if(!audioUrl) return;
+    const a=document.createElement("a");
+    a.href=audioUrl;
+    const t=(titoloEl.value.trim()||"discorso").replace(/[^\w\sàèéìòù-]/gi,"").replace(/\s+/g,"_");
+    a.download = t + "_" + dataFile(new Date()) + ".webm";
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  // ---------- copia ----------
+  copyBtn.addEventListener("click",async()=>{
+    const txt=finalText.trim();
+    if(!txt){ toast("Niente da copiare"); return; }
+    try{ await navigator.clipboard.writeText(txt); toast("Copiato! 📋"); }
+    catch(_){
+      const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand("copy");toast("Copiato! 📋");}catch(e){toast("Copia non riuscita");}
+      ta.remove();
+    }
+  });
+
+  // ---------- cancella ----------
+  clearBtn.addEventListener("click",()=>{
+    if(recording){ toast("Ferma prima la registrazione"); return; }
+    if(!finalText.trim()){ return; }
+    if(confirm("Cancellare il testo trascritto?")){
+      finalText=""; renderTranscript(""); toast("Testo cancellato");
+    }
+  });
+
+  // ---------- salva ----------
+  saveBtn.addEventListener("click",()=>{
+    const txt=finalText.trim();
+    if(!txt){ toast("Niente da salvare"); return; }
+    const sess={
+      id:Date.now(),
+      titolo: titoloEl.value.trim() || "Discorso senza titolo",
+      data: new Date().toISOString(),
+      durata: seconds,
+      testo: txt
+    };
+    const all=load();
+    all.unshift(sess);
+    save(all);
+    renderLista();
+    toast("Discorso salvato 💾");
+  });
+
+  // ---------- storage ----------
+  function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||"[]"); }catch(_){ return []; } }
+  function save(a){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(a)); }catch(_){ toast("Memoria piena: impossibile salvare"); } }
+
+  // ---------- date ----------
+  const GIORNI=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"];
+  const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+  function dataLeggibile(iso){
+    const d=new Date(iso);
+    return `${GIORNI[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]} ${d.getFullYear()}, ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  }
+  function dataFile(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+
+  // ---------- lista ----------
+  function renderLista(){
+    const all=load();
+    if(!all.length){ listaEl.innerHTML='<div class="empty">Ancora nessun discorso salvato.</div>'; return; }
+    listaEl.innerHTML="";
+    all.forEach(s=>{
+      const div=document.createElement("div");
+      div.className="sessione";
+      const durata = s.durata? ` · ${fmt(s.durata)}` : "";
+      div.innerHTML=`
+        <div class="top">
+          <div>
+            <div class="nome"></div>
+            <div class="meta">${dataLeggibile(s.data)}${durata}</div>
+          </div>
+          <div class="chev">⌄</div>
+        </div>
+        <div class="testo"></div>
+        <div class="row">
+          <button class="btn ghost copy">📋 Copia</button>
+          <button class="btn ghost danger del">🗑️ Elimina</button>
+        </div>`;
+      div.querySelector(".nome").textContent=s.titolo;
+      div.querySelector(".testo").textContent=s.testo;
+      const top=div.querySelector(".top");
+      top.addEventListener("click",()=>div.classList.toggle("open"));
+      div.querySelector(".copy").addEventListener("click",async(e)=>{
+        e.stopPropagation();
+        try{ await navigator.clipboard.writeText(s.testo); toast("Copiato! 📋"); }
+        catch(_){ const ta=document.createElement("textarea");ta.value=s.testo;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast("Copiato! 📋"); }
+      });
+      div.querySelector(".del").addEventListener("click",(e)=>{
+        e.stopPropagation();
+        if(confirm("Eliminare questo discorso salvato?")){
+          save(load().filter(x=>x.id!==s.id));
+          renderLista(); toast("Eliminato");
+        }
+      });
+      // i bottoni interni non devono aprire/chiudere
+      div.querySelectorAll(".row .btn").forEach(b=>b.addEventListener("click",ev=>ev.stopPropagation()));
+      listaEl.appendChild(div);
+    });
+  }
+
+  // ---------- toast ----------
+  let toastT=null;
+  function toast(msg){
+    toastEl.textContent=msg; toastEl.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove("show"),1900);
+  }
+
+  // ---------- avvio ----------
+  renderLista();
+})();
+</script>
+</body>
+</html>
