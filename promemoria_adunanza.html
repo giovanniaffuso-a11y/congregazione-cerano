@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promemoria Adunanza — WhatsApp settimanali</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{
+  --navy:#1a2744; --navy2:#243459; --teal:#0d7f8c; --teal2:#12a0b0;
+  --gold:#c9a227; --gold2:#e8be40; --cream:#f7f4ef; --cream2:#ede9e2;
+  --ink:#1a2744; --muted:#5a6a8a; --white:#fff; --ok:#1f8a4c; --okbg:#e6f5ec;
+  --shadow:0 4px 20px rgba(26,39,68,.12); --shadow2:0 10px 40px rgba(26,39,68,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 60px}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;box-shadow:var(--shadow2);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-60px;right:-40px;width:240px;height:240px;background:radial-gradient(circle,rgba(201,162,39,.20),transparent 70%);pointer-events:none}
+.hd{max-width:1080px;margin:0 auto;padding:22px 16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hd .logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:grid;place-items:center;font-size:24px;box-shadow:0 4px 14px rgba(201,162,39,.4)}
+.hd h1{font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:700;letter-spacing:.01em;line-height:1.1}
+.hd h1 span{color:var(--gold2)}
+.hd p{font-size:.85rem;color:#b8c4dd;margin-top:2px}
+.hd .wa{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:#25d366;color:#063b1e;font-weight:700;text-decoration:none;padding:11px 16px;border-radius:12px;font-size:.9rem;box-shadow:0 4px 14px rgba(37,211,102,.35);transition:transform .15s}
+.hd .wa:hover{transform:translateY(-2px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--cream2);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:15px 20px;font-family:'Crimson Pro',serif;font-size:1.15rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
+.card-h .n{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-family:'DM Sans';font-size:.8rem;font-weight:700}
+.c-form .card-h{background:linear-gradient(135deg,var(--teal),var(--teal2))}
+.card-b{padding:20px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+input[type=text],select,textarea{width:100%;font-family:inherit;font-size:.98rem;color:var(--ink);background:var(--cream);border:1.5px solid var(--cream2);border-radius:10px;padding:10px 12px;transition:border .15s,background .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);background:#fff}
+textarea{resize:vertical;min-height:48px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2 .field{margin-bottom:0}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.seg{display:flex;gap:0;border:1.5px solid var(--cream2);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:none;background:var(--cream);color:var(--muted);font-family:inherit;font-size:.88rem;font-weight:600;padding:10px 8px;cursor:pointer;transition:.15s}
+.seg button.on{background:var(--teal);color:#fff}
+.toolbar{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{font-family:inherit;font-weight:600;font-size:.9rem;border-radius:10px;padding:11px 16px;cursor:pointer;border:1.5px solid var(--cream2);background:#fff;color:var(--navy);transition:.15s}
+.btn:hover{background:var(--cream2)}
+.btn.ghost{background:transparent}
+/* messages */
+.msgs{display:flex;flex-direction:column;gap:18px;margin-top:8px}
+.msg{background:#fff;border:1px solid var(--cream2);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.msg .card-h.m1{background:linear-gradient(135deg,#1a5276,#2471a3)}
+.msg .card-h.m2{background:linear-gradient(135deg,#6c3483,#8e44ad)}
+.msg .card-h.m3{background:linear-gradient(135deg,#0e6655,#138d75)}
+.msg .card-h.m4{background:linear-gradient(135deg,#9a7d0a,#b7950b)}
+.msg .card-h .to{margin-left:auto;font-family:'DM Sans';font-size:.78rem;font-weight:600;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:20px}
+.preview{white-space:pre-wrap;font-size:.96rem;color:#222;background:var(--cream);border-radius:12px;padding:14px 16px;margin:16px 20px 0;border:1px dashed var(--cream2);line-height:1.55}
+.msg-foot{display:flex;gap:10px;padding:14px 20px 18px;align-items:center}
+.copy{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#063b1e;font-weight:700;font-size:1rem;border:none;border-radius:12px;padding:13px;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(37,211,102,.3)}
+.copy:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(37,211,102,.4)}
+.copy.done{background:var(--okbg);color:var(--ok);box-shadow:none}
+.hint{font-size:.86rem;color:var(--muted);margin:10px 4px 0}
+.section-title{font-family:'Crimson Pro',serif;font-size:1.35rem;font-weight:700;color:var(--navy);margin:36px 4px 4px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px}
+.note{background:#fff8e6;border:1px solid #f0e0a8;color:#7a5e00;border-radius:12px;padding:12px 14px;font-size:.88rem;margin-top:18px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:30px;font-weight:600;box-shadow:var(--shadow2);opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.src{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* pannello gestione nomi */
+.overlay{position:fixed;inset:0;background:rgba(26,39,68,.5);opacity:0;pointer-events:none;transition:.2s;z-index:50}
+.overlay.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:min(680px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:var(--shadow2);padding:24px;opacity:0;pointer-events:none;transition:.2s;z-index:51}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal h2{font-family:'Crimson Pro',serif;color:var(--navy);margin-bottom:6px;font-size:1.4rem}
+.modal .sub{color:var(--muted);font-size:.85rem;margin-bottom:18px}
+.gest-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:560px){.gest-grid{grid-template-columns:1fr}}
+.gest-grid h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--teal);margin-bottom:10px}
+.namelist{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.nameitem{display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--cream2);border-radius:8px;padding:7px 11px;font-size:.95rem}
+.nameitem button{border:none;background:none;color:#c0392b;font-size:1.25rem;cursor:pointer;line-height:1;padding:0 4px}
+.empty{color:var(--muted);font-style:italic;font-size:.9rem;padding:6px}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1}
+.addrow button{white-space:nowrap;border:1.5px solid var(--teal);background:var(--teal);color:#fff;border-radius:10px;padding:9px 12px;font-family:inherit;font-weight:600;cursor:pointer;font-size:.88rem}
+.modal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+
+/* sezioni del modulo */
+.fsec{font-family:'Crimson Pro',serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin:22px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--cream2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fsec:first-of-type{margin-top:0}
+.fsec .tag{font-family:'DM Sans';font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;background:var(--teal);padding:3px 8px;border-radius:20px}
+.agg{margin-top:12px;font-size:.82rem;color:var(--muted);font-style:italic;text-align:right}
+</style>
+</head><body>
+<header>
+  <div class="hd">
+    <div class="logo">📲</div>
+    <div>
+      <h1>Promemoria <span>Adunanza Pubblica</span></h1>
+      <p>Congregazione di Cerano — i 4 messaggi della settimana, pronti da copiare</p>
+    </div>
+    <a class="wa" href="https://web.whatsapp.com" target="_blank" rel="noopener">💬 Apri WhatsApp Web</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- FORM -->
+    <div class="card c-form">
+      <div class="card-h">📝 Dati della settimana</div>
+      <div class="card-b">
+        <div class="fsec">📅 Oratore in arrivo <span class="tag">vale per Presidente · Bellan · Barberi</span></div>
+        <div class="field">
+          <label>Data adunanza</label>
+          <input type="date" id="data" oninput="genera()" onchange="genera()">
+        </div>
+        <div class="field"><label>Oratore (scegli dall'elenco)</label><select id="oratoreSel" onchange="onOratore()"></select></div>
+        <div class="row2">
+          <div class="field"><label>Oratore</label><input type="text" id="oratore" placeholder="Nome Cognome" oninput="genera()"></div>
+          <div class="field"><label>Congregazione</label><input type="text" id="cong" placeholder="in automatico" oninput="genera()"></div>
+        </div>
+        <div class="field"><label>Discorso n° (tra quelli dell'oratore)</label><select id="discSel" onchange="onDisc()"><option value="">— scegli prima l'oratore —</option></select></div>
+        <div class="row2">
+          <div class="field"><label>Schema n°</label><input type="text" id="schema" placeholder="es. 67" oninput="onSchemaInput()"></div>
+          <div class="field"><label>Cantico n°</label><select id="cantico" onchange="genera()"></select></div>
+        </div>
+        <div class="field"><label>Tema del discorso</label><input type="text" id="tema" placeholder="si compila col n° del discorso" oninput="genera()"></div>
+
+        <div class="fsec">🎤 Incarichi della settimana <span class="tag">Messaggi 1 e 2</span></div>
+        <div class="row2">
+          <div class="field">
+            <label>Presidente</label>
+            <select id="presidente" onchange="onSel('presidente')"></select>
+          </div>
+          <div class="field">
+            <label>Lettore Torre di Guardia</label>
+            <select id="lettore" onchange="onSel('lettore')"></select>
+          </div>
+        </div>
+        <div class="field" id="presManualWrap" style="display:none"><label>Nome presidente (manuale)</label><input type="text" id="presManual" placeholder="Scrivi il nome" oninput="genera()"></div>
+        <div class="field" id="lettManualWrap" style="display:none"><label>Nome lettore (manuale)</label><input type="text" id="lettManual" placeholder="Scrivi il nome" oninput="genera()"></div>
+
+        <div class="fsec">📖 Solo per il Presidente</div>
+        <div class="field"><label>Discorso della prossima settimana</label><select id="proxSel" onchange="onProx()"></select></div>
+        <div class="field"><input type="text" id="prox" placeholder="oppure scrivi il titolo a mano" oninput="genera()"></div>
+
+        <div class="fsec">📱 Solo per Bellan</div>
+        <div class="field"><label>Cellulare dell'oratore</label><input type="text" id="cell" placeholder="numero dell'oratore" oninput="genera()"></div>
+
+        <div class="fsec">🖼 Solo per Barberi</div>
+        <div class="field">
+          <label>L'oratore si ferma per la Torre di Guardia?</label>
+          <div class="seg" id="segFerma">
+            <button type="button" data-ferma="si" onclick="setFerma(this)">Sì</button>
+            <button type="button" class="on" data-ferma="no" onclick="setFerma(this)">No</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Immagini</label>
+          <div class="seg" id="segImg">
+            <button type="button" class="on" data-img="drive" onclick="setImg(this)">Sul Drive</button>
+            <button type="button" data-img="no" onclick="setImg(this)">Nessuna</button>
+            <button type="button" data-img="discorso" onclick="setImg(this)">Nel discorso</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn" onclick="apriGest()">⚙️ Gestisci nomi</button>
+          <button class="btn ghost" onclick="pulisci()">🧹 Pulisci campi</button>
+        </div>
+        <p class="src">Le tendine Presidente e Lettore si riempiono dai fratelli con la spunta corrispondente nell'app <b>Incarichi</b>.</p>
+        <div class="agg" id="aggiornato"></div>
+      </div>
+    </div>
+
+    <!-- MESSAGGI -->
+    <div>
+      <div class="section-title">💬 Messaggi pronti</div>
+      <p class="hint">Premi <b>Copia</b> su un messaggio, poi incollalo nella chat WhatsApp del fratello. I numeri non servono: scegli tu il contatto.</p>
+      <div class="msgs">
+        <div class="msg">
+          <div class="card-h m1"><span class="n">1</span> Presidente <span class="to" id="to1">—</span></div>
+          <div class="preview" id="prev1"></div>
+          <div class="msg-foot"><button class="copy" id="cp1" onclick="copia(1)">📋 Copia messaggio</button></div>
+        </div>
+        <div class="msg">
+          <div class="card-h m2"><span class="n">2</span> Lettore Torre di Guardia <span class="to" id="to2">—</span></div>
+          <div class="preview" id="prev2"></div>
+          <div class="msg-foot"><button class="copy" id="cp2" onclick="copia(2)">📋 Copia messaggio</button></div>
+        </div>
+        <div class="msg">
+          <div class="card-h m3"><span class="n">3</span> Bellan <span class="to">Daniele</span></div>
+          <div class="preview" id="prev3"></div>
+          <div class="msg-foot"><button class="copy" id="cp3" onclick="copia(3)">📋 Copia messaggio</button></div>
+        </div>
+        <div class="msg">
+          <div class="card-h m4"><span class="n">4</span> Barberi <span class="to">Alessandro</span></div>
+          <div class="preview" id="prev4"></div>
+          <div class="msg-foot"><button class="copy" id="cp4" onclick="copia(4)">📋 Copia messaggio</button></div>
+        </div>
+      </div>
+      <div class="note">💡 <b>Suggerimento:</b> apri prima <b>WhatsApp Web</b> (pulsante in alto a destra). Poi, per ognuno: copia → vai sulla chat del fratello → incolla → invia.</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ovl" onclick="if(event.target===this)chiudiGest()"></div>
+<div class="modal" id="modalGest">
+  <h2>Gestisci nomi</h2>
+  <div class="sub">Aggiungi o togli i fratelli dalle tendine. Le modifiche restano salvate su questo PC.</div>
+  <div class="gest-grid">
+    <div>
+      <h3>Presidenti</h3>
+      <div id="listaPres" class="namelist"></div>
+      <div class="addrow"><input type="text" id="addPres" placeholder="Nome nuovo presidente"><button onclick="aggiungi('pres')">+ Aggiungi</button></div>
+    </div>
+    <div>
+      <h3>Lettori Torre di Guardia</h3>
+      <div id="listaLett" class="namelist"></div>
+      <div class="addrow"><input type="text" id="addLett" placeholder="Nome nuovo lettore"><button onclick="aggiungi('lett')">+ Aggiungi</button></div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn ghost" onclick="ripristina()">↺ Ripristina da Incarichi</button>
+    <button class="btn" onclick="chiudiGest()">Chiudi</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== Lista fratelli con privilegi (presa dall'app Incarichi) ===== */
+var COLS=["Preghiera","Usciere","Microf.","Tesori","Gemme","Lett. Studio Biblico","Lett. Torre di Guardia","Parti Vita Cristiana","Presid. Vita Cristiana","Condut. Studio Bibl.","Presid. Adunanza","Orat. Pubblico","Condut. Comitiva","Podio","Audio/Video"];
+var MEMBERS_DEFAULT=[{"nome": "Affuso Giovanni", "ruolo": "Servitore", "incarico": "Resp. Uscieri / Microfonisti / Disc. Pubblici", "p": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0]}, {"nome": "Catalano Rosario", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0]}, {"nome": "Mazzotta M.", "ruolo": "Servitore", "incarico": "Assistente Pulizie", "p": [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Palano G.", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Innocenti Mario", "ruolo": "Anziano", "incarico": "Sorvegliante Vita e Ministero Cristiano", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Recchia Franco", "ruolo": "Anziano", "incarico": " Responsabile KHCC", "p": [1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Orrico Giuseppe", "ruolo": "Anziano", "incarico": "Segretario / Resp. Contabilità ", "p": [1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Marinoni Daniele", "ruolo": "Anziano", "incarico": "Sorvegliante del Servizio-responsabile letteratura territori", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Bellan Daniele", "ruolo": "Anziano", "incarico": "CCA / CCG", "p": [1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Barberi Alessandro", "ruolo": "Proclamatore", "incarico": "Assistente Audio / Video / Microfonisti", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Barberi S.", "ruolo": "Proclamatore", "incarico": "Assistente Territori. Audio-Video", "p": [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bocchino Dario", "ruolo": "Proclamatore", "incarico": "Assistente Contabilità", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin Paolo", "ruolo": "Proclamatore", "incarico": "Audio-Video", "p": [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin C.", "ruolo": "Proclamatore", "incarico": "no", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Cazzolla Giovanni", "ruolo": "Proclamatore", "incarico": "Assistente Territori", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Cazzolla P.", "ruolo": "Anziano", "incarico": "Sorvegliante STG / Resp. Pulizie / Resp. GVP", "p": [1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]}, {"nome": "Circosta V.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura-Mix", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Colombo Marco", "ruolo": "Proclamatore", "incarico": "Mixer", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Condello F.", "ruolo": "Proclamatore", "incarico": "Assistente Podio-addetto podio", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Conte Dino", "ruolo": "Proclamatore", "incarico": " Audio / Video ", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Coppola F.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Coppola S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Guarnieri F.", "ruolo": "Proclamatore", "incarico": "Assistente Pulizie", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Luisi F.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura / Assistente Podio/Mix", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Perla A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula G.", "ruolo": "Proclamatore", "incarico": "Assistente Territori/AUDIO-VIDEO", "p": [0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0]}, {"nome": "Aula L.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula V.", "ruolo": "Servitore", "incarico": "Assistente Uscieri", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bruno G.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Del Grosso A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Giacalone S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}];
+var ODEF=[
+  {id:'a1',c:'Conti',n:'Giacomo',r:'Anziano',cg:'Arconate',t:'3356814563',e:'giacomoc@jwpub.org',d:[44,45,121,175,181,183,187,188,192,194]},
+  {id:'a2',c:'Deponti',n:'Angelo',r:'Anziano',cg:'Arconate',t:'3498901603',e:'depontiag@jwpub.org',d:[14,33,104,107,128]},
+  {id:'a3',c:'Muscia',n:'Dario',r:'Anziano',cg:'Arconate',t:'3493514562',e:'MDario@jwpub.org',d:[9,63,67,79,108,147,169,184,191]},
+  {id:'a4',c:'Paganini',n:'Michele',r:'Anziano',cg:'Arconate',t:'3516782266',e:'MPaganini@jwpub.org',d:[4,24,96]},
+  {id:'a5',c:'Pusceddu',n:'Christian',r:'Anziano',cg:'Arconate',t:'3486606273',e:'18cpusceddu@jwpub.org',d:[8,18,64,68,71,176]},
+  {id:'a6',c:'Savazzi',n:'Ruben',r:'Anziano',cg:'Arconate',t:'3348880978',e:'rsavazzi@jwpub.org',d:[57,110,172,179]},
+  {id:'a7',c:'Scimeca',n:'Samuele',r:'Anziano',cg:'Arconate',t:'3382053547',e:'sscimeca16@jwpub.org',d:[4,24,25,108,187]},
+  {id:'b1',c:'Costato',n:'Stefano',r:'Anziano',cg:'Bareggio',t:'3345755223',e:'11stefanoc@jwpub.org',d:[50,62,71,77,184,187]},
+  {id:'b2',c:'D\'Elia',n:'Vito',r:'Anziano',cg:'Bareggio',t:'3393353178',e:'deliavito@jwpub.org',d:[1,4,12,23,90,166]},
+  {id:'b3',c:'Di Mauro',n:'Mario',r:'Anziano',cg:'Bareggio',t:'3334273726',e:'dmario39@jwpub.org',d:[15,20,23,37,38,56,65,118,140,162]},
+  {id:'b4',c:'Murante',n:'Aldo',r:'Anziano',cg:'Bareggio',t:'3474149076',e:'pmurante@jwpub.org',d:[1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,86,88,89,90,91,93,95,96,98,99,100,101,102,103,104,107,108,110,111,113,114,115,116,118,121,122,123,125,127,128,129,130,132,133,134,135,137,138,140,142,143,146,147,150,152]},
+  {id:'b5',c:'Pedone',n:'Aurelien',r:'Anziano',cg:'Bareggio',t:'3497179968',e:'aurelienpedone1@jwpub.org',d:[5,18,19,52,72,121,143,181,184]},
+  {id:'c1',c:'Ammendola',n:'Pietro',r:'Anziano',cg:'Castano Primo Stazione',t:'3498942153',e:'PAmmendola@jwpub.org',d:[30,76,138]},
+  {id:'c2',c:'Cozzi',n:'Mario',r:'Anziano',cg:'Castano Primo Stazione',t:'3392904024',e:'mcozzi@jwpub.org',d:[6,93,115,140,169,184]},
+  {id:'c3',c:'Di Bella',n:'Gabriele',r:'Anziano',cg:'Castano Primo Stazione',t:'3459744436',e:'DiBellaG1@jwpub.org',d:[26,100]},
+  {id:'c4',c:'Dolce',n:'Michele',r:'Anziano',cg:'Castano Primo Stazione',t:'3351424844',e:'DolceM4@jwpub.org',d:[15,24,28,51,67,111,132,183]},
+  {id:'c5',c:'Ferrara',n:'Marco',r:'Anziano',cg:'Castano Primo Stazione',t:'3934366766',e:'3FerraraMarco@jwpub.org',d:[15,18,70,123]},
+  {id:'c6',c:'Silvestri',n:'Samuele',r:'Anziano',cg:'Castano Primo Stazione',t:'3477728202',e:'SilvestriS@jwpub.org',d:[11,18,36,183,189]},
+  {id:'c7',c:'Zangirolami',n:'Alessandro',r:'Anziano',cg:'Castano Primo Stazione',t:'3403235663',e:'Zangirolamia@jwpub.org',d:[3,16,68,137,179,180]},
+  {id:'ce2',c:'Bellan',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3478169498',e:'belland3@jwpub.org',d:[3,7,8,15,59,70,73,74,115,171,176,177,178,179,183,188,189]},
+  {id:'ce3',c:'Cazzolla',n:'Pablo',r:'Anziano',cg:'Cerano',t:'3469790015',e:'1cazzollapablo@jwpub.org',d:[2,33,56,153]},
+  {id:'ce6',c:'Orrico',n:'Giuseppe',r:'Anziano',cg:'Cerano',t:'3391099256',e:'gorrico@jwpub.org',d:[16,53,180]},
+  {id:'ce4',c:'Innocenti',n:'Mario',r:'Anziano',cg:'Cerano',t:'3389011086',e:'innocentim5@jwpub.org',d:[1,16,72,192]},
+  {id:'ce5',c:'Marinoni',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3381999668',e:'mdaniele@jwpub.org',d:[54,65,69,171,174,179]},
+  {id:'cs1',c:'Barbuto',n:'Alessio',r:'Anziano',cg:'Corbetta Stadio',t:'3495403040',e:'BarbutoAlessio@jwpub.org',d:[26,54,73]},
+  {id:'cs2',c:'Busacca',n:'Giuseppe',r:'Anziano',cg:'Corbetta Stadio',t:'3284280083',e:'busacca80@jwpub.org',d:[76,138,143,172]},
+  {id:'cs3',c:'Giunta',n:'Aurelio',r:'Anziano',cg:'Corbetta Stadio',t:'3403658803',e:'GAurelio5@jwpub.org',d:[62,68]},
+  {id:'cs4',c:'Napoli',n:'Riccardo',r:'Anziano',cg:'Corbetta Stadio',t:'3494235562',e:'RiccardoN@jwpub.org',d:[8,15,18,35,38,49,75,77,88,96,99,138,160,181]},
+  {id:'cs5',c:'Pagnozzi',n:'Gerardo',r:'Anziano',cg:'Corbetta Stadio',t:'3497387277',e:'PagnozziGerardo27@jwpub.org',d:[55,59,67,93,114,121,143,177,187,188,189]},
+  {id:'cs6',c:'Santoro',n:'Raffaele',r:'Anziano',cg:'Corbetta Stadio',t:'3319082157',e:'RaffaeleSantoro5@jwpub.org',d:[108]},
+  {id:'cs7',c:'Vatalaro',n:'Emanuele',r:'Anziano',cg:'Corbetta Stadio',t:'3386221851',e:'EmanueleV@jwpub.org',d:[77,100,113,175,180,187]},
+  {id:'cr1',c:'Ciminelli',n:'Umberto',r:'Anziano',cg:'Cornaredo',t:'3477658244',e:'UmbertoCiminelli27@jwpub.org',d:[52,54,55,76,187]},
+  {id:'cr2',c:'De Alteriis',n:'Tommaso',r:'Anziano',cg:'Cornaredo',t:'3926035880',e:'30DeAlteriisTommaso@jwpub.org',d:[68,86,129,175,180,181]},
+  {id:'cr3',c:'Diluzio',n:'Simone',r:'Anziano',cg:'Cornaredo',t:'3493166107',e:'DiLuzio@jwpub.org',d:[24,52,86,138,181,190]},
+  {id:'cr4',c:'Farinelli',n:'Marco',r:'Anziano',cg:'Cornaredo',t:'3938696985',e:'FarinelliMarco1@jwpub.org',d:[17,20,67,76,123,142,160,171,179,184,187,192]},
+  {id:'cr5',c:'Murante',n:'Lorenzo',r:'Servitore',cg:'Cornaredo',t:'3406207817',e:'MuranteL@jwpub.org',d:[67,76]},
+  {id:'cr7',c:'Trovato',n:'Antonio',r:'Anziano',cg:'Cornaredo',t:'3294205835',e:'ATrovato2@jwpub.org',d:[12,46]},
+  {id:'cr8',c:'Trovato',n:'Mario',r:'Anziano',cg:'Cornaredo',t:'3356417114',e:'9MarioTrovato@jwpub.org',d:[2,32,55,86,98,136,159,192]},
+  {id:'cr9',c:'Vatalaro',n:'Domenico',r:'Anziano',cg:'Cornaredo',t:'3405317702',e:'DomenicoVatalaro24@jwpub.org',d:[4,7,18,36]},
+  {id:'cu2',c:'Girardi',n:'Michele',r:'Anziano',cg:'Cuggiono',t:'3407007216',e:'MicheleGirardi1@jwpub.org',d:[3,9,15]},
+  {id:'cu3',c:'Iambrovich',n:'Federico',r:'Anziano',cg:'Cuggiono',t:'3451710445',e:'IambrovichFederico@jwpub.org',d:[15,77,177]},
+  {id:'cu4',c:'Piacenti',n:'Yuri',r:'Anziano',cg:'Cuggiono',t:'3772306378',e:'10YuriPiacenti@jwpub.org',d:[12,72,98,174]},
+  {id:'cu5',c:'Scremin',n:'Alex',r:'Anziano',cg:'Cuggiono',t:'3479190151',e:'AScremin@jwpub.org',d:[43,65,171,178,188]},
+  {id:'cu6',c:'Vezzoli',n:'Sergio',r:'Anziano',cg:'Cuggiono',t:'3406001763',e:'37VezzoliS@jwpub.org',d:[60,99,116,123,173,193]},
+  {id:'g1',c:'Cocciolo',n:'Claudio',r:'Anziano',cg:'Galliate',t:'3403606204',e:'ccocciolo22@jwpub.org',d:[1,2,3,8,9,13,18,28,29,33,63,68,73,76,79,98,100,115,138,143,159,171,177]},
+  {id:'g2',c:'Menegazzo',n:'Stefano',r:'Anziano',cg:'Galliate',t:'3386999176',e:'8StefanoM@jwpub.org',d:[24,132,160,162,171,187,188]},
+  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Galliate',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
+  {id:'g5',c:'Strafezza',n:'Antonio',r:'Anziano',cg:'Galliate',t:'3296944627',e:'StrafezzaAntonio1@jwpub.org',d:[6,49,114]},
+  {id:'mn2',c:'Giannino',n:'Gioele',r:'Anziano',cg:'Magenta Naviglio',t:'3665218208',e:'GianninoGioele@jwpub.org',d:[108,147]},
+  {id:'mn3',c:'Neri',n:'Andrea',r:'Anziano',cg:'Magenta Naviglio',t:'389536208',e:'NeriA@jwpub.org',d:[15,90]},
+  {id:'mn4',c:'Nocito',n:'Valter',r:'Anziano',cg:'Magenta Naviglio',t:'3403758126',e:'ValterNocito@jwpub.org',d:[16,62,63,90,110,169]},
+  {id:'mn5',c:'Pinna',n:'Giuseppe',r:'Anziano',cg:'Magenta Naviglio',t:'3334463176',e:'7PinnaG@jwpub.org',d:[26]},
+  {id:'mn6',c:'Semeraro',n:'Giovanni',r:'Anziano',cg:'Magenta Naviglio',t:'3386192934',e:'11GiovanniSemeraro@jwpub.org',d:[61,101,108,118]},
+  {id:'mn7',c:'Sinatra',n:'Matteo',r:'Anziano',cg:'Magenta Naviglio',t:'3338896106',e:'matteo83@jwpub.org',d:[24,81,108,138,177,183,187,192]},
+  {id:'mn8',c:'Zangirolami',n:'Paolo',r:'Anziano',cg:'Magenta Naviglio',t:'3407156290',e:'PaoloZ22@jwpub.org',d:[9,24,72,73,107]},
+  {id:'mb1',c:'Campisi',n:'Giorgio',r:'Anziano',cg:'Mortara Belvedere',t:'3922426420',e:'cgiorgio8@jwpub.org',d:[24,48,104]},
+  {id:'mb2',c:'Delrossi',n:'Luigi',r:'Anziano',cg:'Mortara Belvedere',t:'3486038435',e:'vecio51@jwpub.org',d:[16,38,125,130,142,170,183,188]},
+  {id:'mb3',c:'Guidace',n:'Marco',r:'Anziano',cg:'Mortara Belvedere',t:'3282875985',e:'marcog14@jwpub.org',d:[24,123,172,178,179,188,192]},
+  {id:'mb4',c:'Sarnacchiaro',n:'Michele',r:'Anziano',cg:'Mortara Belvedere',t:'3921499446',e:'mick3drshj@jwpub.org',d:[19,23,24,28,68,100,113,115,131,133,135,161,175]},
+  {id:'mb5',c:'Scelzi',n:'Stefano',r:'Anziano',cg:'Mortara Belvedere',t:'3392035270',e:'33scelzistefano@jwpub.org',d:[44,180]},
+  {id:'mb6',c:'Zaretti',n:'Roberto',r:'Anziano',cg:'Mortara Belvedere',t:'3333031944',e:'robertoz17@jwpub.org',d:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,53,54,60,68,69,72,75,76,80,81,90,95,100,113,123]},
+  {id:'ms1',c:'Coldesina',n:'Carlo',r:'Anziano',cg:'Mortara Stadio',t:'3383212355',e:'CarloColdesina61@jwpub.org',d:[11,35,43,45,48,73,78,79,81,118,123]},
+  {id:'ms2',c:'Colli',n:'Leonardo',r:'Anziano',cg:'Mortara Stadio',t:'3394391851',e:'ColliLeonardo1@jwpub.org',d:[1,36,50,138,170,171,178]},
+  {id:'ms3',c:'Dimasi',n:'Pasquale',r:'Anziano',cg:'Mortara Stadio',t:'3313261246',e:'pasqualedimasi@jwpub.org',d:[16,86,95,123,183]},
+  {id:'ms4',c:'Innocenzi',n:'Fabrizio',r:'Anziano',cg:'Mortara Stadio',t:'3490836901',e:'fabrizioinnocenzi@jwpub.org',d:[115]},
+  {id:'ms5',c:'Lapenna',n:'Davide',r:'Anziano',cg:'Mortara Stadio',t:'3476855042',e:'davidelapenna@jwpub.org',d:[32,78]},
+  {id:'ms6',c:'Montagna',n:'Augusto',r:'Anziano',cg:'Mortara Stadio',t:'3336972214',e:'MontagnaAugusto@jwpub.org',d:[32,71,123,177,193]},
+  {id:'ms7',c:'Rasera',n:'Claudio',r:'Anziano',cg:'Mortara Stadio',t:'3280029699',e:'claudio301056@jwpub.org',d:[18,51,65]},
+  {id:'mst1',c:'Bovolenta',n:'Gianluca',r:'Anziano',cg:'Mortara Stazione',t:'3280727820',e:'2bgianluca@jwpub.org',d:[3,57,67,103,178,183,192]},
+  {id:'mst5',c:'Fargione',n:'Luca',r:'Anziano',cg:'Mortara Stazione',t:'3398262703',e:'fargioneluca31@jwpub.org',d:[7,18,55,57,72,76,95,177]},
+  {id:'mst2',c:'Fattori Zini',n:'Alessandro',r:'Anziano',cg:'Mortara Stazione',t:'3488992682',e:'alessandrof19@jwpub.org',d:[23,31,54,68]},
+  {id:'mst4',c:'Guidace',n:'Mattia',r:'Anziano',cg:'Mortara Stazione',t:'3270717253',e:'mguidace@jwpub.org',d:[17,175,177]},
+  {id:'mst6',c:'Negrini',n:'Andrea',r:'Anziano',cg:'Mortara Stazione',t:'3332101383',e:'negrinilandrea@jwpub.org',d:[4,22,23,30,43,49,67,80,114,132,160]},
+  {id:'tr1',c:'Brunetti',n:'Angelo',r:'Anziano',cg:'Trecate',t:'3477849397',e:'BAngelo@jwpub.org',d:[70,78,138,170]},
+  {id:'tr2',c:'Correale',n:'Davide',r:'Anziano',cg:'Trecate',t:'3206471437',e:'12Correaledavide@jwpub.org',d:[62]},
+  {id:'tr3',c:'Gozzi',n:'Daniele',r:'Anziano',cg:'Trecate',t:'3486298323',e:'GozziD1@jwpub.org',d:[22,32,153,171,176,192,193]},
+  {id:'tr4',c:'Mutta',n:'Davide',r:'Anziano',cg:'Trecate',t:'3496646751',e:'MuttaDavide@jwpub.org',d:[68,70,160,179,187]},
+  {id:'tr5',c:'Laomedonte',n:'Roberto',r:'Anziano',cg:'Trecate',t:'3393999885',e:'LRoberto1@jwpub.org',d:[4,7,8,11,15,16,21,22,31,37,38,53,60,71,72,74,81,83,88,99,113,118,121,122,123,166]},
+  {id:'tr6',c:'Palego',n:'Stefano',r:'Anziano',cg:'Trecate',t:'3394292974',e:'1PalegoStefano@jwpub.org',d:[65,131]},
+  {id:'vz1',c:'Berlanda',n:'Massimiliano',r:'Anziano',cg:'Vanzaghello Ticino',t:'3497363759',e:'berlandam4@jwpub.org',d:[80,116,152,179,187]},
+  {id:'vz2',c:'Caiazza',n:'Armando',r:'Anziano',cg:'Vanzaghello Ticino',t:'3398811180',e:'Carmando40@jwpub.org',d:[29,30,65,68]},
+  {id:'vz3',c:'Daddato',n:'Samuel',r:'Anziano',cg:'Vanzaghello Ticino',t:'3464993783',e:'1DaddatoS@jwpub.org',d:[32,56,153]},
+  {id:'vz4',c:'Masucci',n:'Luca',r:'Anziano',cg:'Vanzaghello Ticino',t:'3388668579',e:'MasucciL9@jwpub.org',d:[50,71,108,181,188,192]},
+  {id:'vz5',c:'Scimeca',n:'Salvatore',r:'Anziano',cg:'Vanzaghello Ticino',t:'3490828367',e:'10SalvatoreScimeca@jwpub.org',d:[28,68,70,71,75,83,102,159,160,169,189]},
+  {id:'mn0',c:'Bellavista',n:'Gionatan',r:'Anziano',cg:'Magenta Naviglio',t:'3421698331',e:'BellavistaG9@jwpub.org',d:[103,113]},
+  {id:'vc1',c:'Benetti',n:'Daniele',r:'Anziano',cg:'Vigevano Castello',t:'3280576802',e:'DanBene@jwpub.org',d:[77,90,115,130,176,185]},
+  {id:'vc2',c:'Berta',n:'Massimiliano',r:'Anziano',cg:'Vigevano Castello',t:'3472215380',e:'massimoberta@jwpub.org',d:[1,24,40,53,118,153,161,173,190]},
+  {id:'vc3',c:'Bianchi',n:'Ciro',r:'Anziano',cg:'Vigevano Castello',t:'3392998600',e:'1cirob@jwpub.org',d:[1,9,30,67,99,116,136,142,174,178,187]},
+  {id:'vc4',c:'Cancelli',n:'Giorgio',r:'Anziano',cg:'Vigevano Castello',t:'3338820824',e:'1giorgioc@jwpub.org',d:[3,5,6,57,78,101,104,113,121,176,179,181,182,183,193]},
+  {id:'vc5',c:'Ferrati',n:'Giorgio',r:'Servitore',cg:'Vigevano Castello',t:'3293222672',e:'giorgioferrati19@jwpub.org',d:[3,4,7,9,15,32,46,80]},
+  {id:'vc6',c:'Girardi',n:'Giancarlo',r:'Anziano',cg:'Vigevano Castello',t:'3490614705',e:'girardigiancarlo9@jwpub.org',d:[8,59,77,123,132,160,161,170,172,174,190,192]},
+  {id:'vc7',c:'Lusuardi',n:'Gianni',r:'Anziano',cg:'Vigevano Castello',t:'3470816623',e:'lusuardi46@jwpub.org',d:[5,50,51,76,80,98,99,104,160,173]},
+  {id:'vc8',c:'Spano',n:'Rocco',r:'Anziano',cg:'Vigevano Castello',t:'3389750362',e:'roccospano5@jwpub.org',d:[25,66,70]},
+  {id:'vp1',c:'Baldassarre',n:'Armata',r:'Anziano',cg:'Vigevano Parco',t:'3313483437',e:'ArmataB1@jwpub.org',d:[5,7,26,51,67,74,77,114,178]},
+  {id:'vp2',c:'Correale',n:'Giovanni',r:'Anziano',cg:'Vigevano Parco',t:'3920863950',e:'CorrealeG23@jwpub.org',d:[1,132]},
+  {id:'vp3',c:'Ferrari',n:'Emanuele',r:'Anziano',cg:'Vigevano Parco',t:'3331378703',e:'FEmanuele13@jwpub.org',d:[53,169]},
+  {id:'vp4',c:'Ferrari',n:'Riccardo',r:'Anziano',cg:'Vigevano Parco',t:'3478053573',e:'RiccardoFerrari@jwpub.org',d:[101,186,188]},
+  {id:'vp5',c:'Giorgianni',n:'Mario',r:'Anziano',cg:'Vigevano Parco',t:'3481312271',e:'Mario64A@jwpub.org',d:[93,166,176]},
+  {id:'vp6',c:'Pantaleo',n:'Gianni',r:'Anziano',cg:'Vigevano Parco',t:'3294921618',e:'PGianni@jwpub.org',d:[16,24,43,72,118,170,189]},
+  {id:'vp7',c:'Rivarollo',n:'Massimo',r:'Anziano',cg:'Vigevano Ticino',t:'3200813693',e:'RMassimo@jwpub.org',d:[65,69,76,86,88,93,108,169,181]},
+  {id:'vp8',c:'Tiziano',n:'Ivan',r:'Anziano',cg:'Vigevano Parco',t:'3462177009',e:'TizianoIvan@jwpub.org',d:[9,32,44,115]},
+  {id:'vp9',c:'Toma',n:'Emanuel',r:'Anziano',cg:'Vigevano Parco',t:'3494978083',e:'TomaEmamuel@jwpub.org',d:[48,54,55,113,134]},
+  {id:'vt1',c:'Allevi',n:'Fabio',r:'Anziano',cg:'Vigevano Ticino',t:'3392094790',e:'AlleviF@jwpub.org',d:[15,24,38,77,90,146,166,177,187,190]},
+  {id:'vt2',c:'Barranco',n:'Antonello',r:'Anziano',cg:'Vigevano Ticino',t:'3482928750',e:'AntoninoBarranco@jwpub.org',d:[29,68,173,180]},
+  {id:'vt3',c:'Bascietto',n:'Stefano',r:'Anziano',cg:'Vigevano Ticino',t:'3276197260',e:'basciettostefano20@jwpub.org',d:[78]},
+  {id:'vt4',c:'Cuomo',n:'Salvatore',r:'Anziano',cg:'Vigevano Ticino',t:'3489007828',e:'scuomo3@jwpub.org',d:[14,142,170]},
+  {id:'vt5',c:'Franceschetti',n:'Umberto',r:'Anziano',cg:'Vigevano Ticino',t:'3202788289',e:'14umbertof@jwpub.org',d:[26,93,108]},
+  {id:'vt6',c:'Iozzi',n:'Valentino',r:'Anziano',cg:'Vigevano Ticino',t:'3382342557',e:'10IozziValentino@jwpub.org',d:[65,69,100,123,160,187,192]},
+  {id:'vt7',c:'Lapenna',n:'Antonio',r:'Anziano',cg:'Vigevano Ticino',t:'3880555481',e:'antoniolapenna@jwpub.org',d:[26,54]},
+  {id:'vt8',c:'Manetto',n:'Francesco',r:'Anziano',cg:'Vigevano Ticino',t:'3923539690',e:'manettof@jwpub.org',d:[15,65,76,108]},
+  {id:'vt9',c:'Mondello',n:'Marco',r:'Anziano',cg:'Vigevano Ticino',t:'3357205443',e:'mondellom@jwpub.org',d:[65,73,192]},
+  {id:'vi1',c:'Buzzoni',n:'Marco',r:'Anziano',cg:'Vittuone',t:'3498148480',e:'9BMarco@jwpub.org',d:[10,11,14,16,65,71,78,104,118,138,143,178]},
+  {id:'vi2',c:'Cocciolo',n:'Eric',r:'Anziano',cg:'Vittuone',t:'3201490783',e:'EricCocciolo26@jwpub.org',d:[16,31,46,72,172]},
+  {id:'vi3',c:'Corradin',n:'Ruben',r:'Anziano',cg:'Vittuone',t:'3464133745',e:'RubenC1@jwpub.org',d:[24,32,55,68,116,170]},
+  {id:'vi4',c:'Fagnani',n:'Pietro',r:'Anziano',cg:'Vittuone',t:'3287570874',e:'fagnanipietro@jwpub.org',d:[12,76,171,194]},
+  {id:'vi5',c:'Gallo',n:'Alfredo',r:'Anziano',cg:'Vittuone',t:'3382490543',e:'AlfredoG@jwpub.org',d:[10,13,25,39,40,43,48,77,79,99,110,115,118,121,122,123,142,150,162,174,179,190]},
+  {id:'vi6',c:'Lorenzini',n:'Pedro',r:'Anziano',cg:'Vittuone',t:'3483458340',e:'PedroL4@jwpub.org',d:[100]},
+  {id:'vi7',c:'Ruffa',n:'Domenico',r:'Anziano',cg:'Vittuone',t:'3384226857',e:'10ruffad@jwpub.org',d:[31,71,95]},
+  {id:'vi8',c:'Taverna',n:'Romel',r:'Anziano',cg:'Vittuone',t:'3397714938',e:'RomelT@jwpub.org',d:[1,12,13,16,17,22,27,29,33,35,36,53,54,56,66,86,89,98,100,113,114,123,135,142,159]}
+];
+var TITOLI={"1": "Conoscete bene Dio?", "2": "Sopravvivrete agli ultimi giorni?", "3": "Avanziamo insieme all’unita organizzazione di Geova", "4": "Prove dell’esistenza di Dio nel mondo intorno a noi", "5": "Vero aiuto per la famiglia", "6": "Impariamo dal diluvio dei giorni di Noè", "7": "Imitiamo “il Padre delle tenere misericordie”", "8": "Viviamo non per noi stessi, ma per fare la volontà di Dio", "9": "Ascoltiamo la Parola di Dio e mettiamola in pratica", "10": "Siate onesti in tutto ciò che dite e fate", "11": "“Non fate parte del mondo”, a imitazione di Cristo", "12": "Il modo in cui considerate l’autorità è importante agli occhi di Dio", "13": "Adottiamo il punto di vista di Dio sul sesso e sul matrimonio", "14": "Un popolo puro onora Geova", "15": "Fate del bene a tutti", "16": "Continuate ad accrescere la vostra relazione con Dio", "17": "Diamo gloria a Dio con tutto ciò che abbiamo", "18": "Fate di Geova la vostra fortezza", "19": "Possiamo conoscere il nostro futuro?", "20": "È vicino il tempo in cui il Regno di Dio governerà la terra?", "21": "Apprezzate il posto che avete nella disposizione del Regno", "22": "Vi state avvalendo dei doni spirituali di Geova?", "23": "La vita ha veramente uno scopo", "24": "Avete trovato la valore”?", "25": "Resistiamo allo spirito del mondo!", "26": "Sei importante per Dio?", "27": "Un buon inizio per il matrimonio", "28": "Rispetto e amore nel matrimonio", "29": "Essere genitori: responsabilità e ricompense", "30": "Come migliorare la comunicazione in famiglia", "31": "Siete consapevoli del vostro bisogno spirituale?", "32": "Come far fronte alle preoccupazioni della vita", "33": "Ci sarà mai vera giustizia?", "34": "Riceverete il salvati?", "35": "Vivremo mai per sempre?", "36": "È tutta qui la vita?", "37": "Le vie di Dio sono davvero di beneficio?", "38": "Come potete sopravvivere alla fine del mondo?", "39": "Gesù Cristo vince il mondo. Come? E quando?", "40": "Cosa accadrà nel prossimo futuro?", "41": "“State fermi e vedete la salvezza di Geova”", "42": "L’amore può sconfiggere l’odio?", "43": "Quello che Dio richiede è sempre per il nostro bene", "44": "Come possono esserci utili gli insegnamenti di Gesù?", "45": "Seguiamo la strada che porta alla vita", "46": "Manteniamo forte la nostra fiducia fino alla fine", "47": "(Non disponibile)", "48": "Rimaniamo leali a Dio quando siamo messi alla prova", "49": "Vivremo mai su una terra purificata?", "50": "Come prendere decisioni sagge", "51": "La verità sta trasformando la vostra vita?", "52": "Chi è il vostro Dio?", "53": "Il nostro modo di pensare è in armonia con quello di Dio?", "54": "Edifichiamo la nostra fede in Dio e nelle sue promesse", "55": "Come possiamo farci un buon nome presso Dio?", "56": "Di quale leader potete fidarvi?", "57": "Resistiamo nella persecuzione", "58": "Chi sono i veri seguaci di Cristo?", "59": "(Non disponibile)", "60": "Qual è lo scopo della vita?", "61": "Di quali promesse vi fidate?", "62": "Come si può avere una speranza certa?", "63": "Avete lo spirito di evangelizzazione?", "64": "Amanti dei piaceri o amanti di Dio?", "65": "Pacifici in un mondo pieno di rabbia", "66": "Parteciperai alla mietitura?", "67": "Meditiamo sulla Parola di Geova e sulle sue opere creative", "68": "‘Continuate a perdonarvi gli uni gli altri senza riserve’", "69": "Perché mostrare amore altruistico?", "70": "Perché Dio merita la nostra fiducia?", "71": "“Restiamo svegli”: perché e come?", "72": "L’amore contraddistingue la vera congregazione cristiana", "73": "Come possiamo avere \"un cuore saggio\"?", "74": "Gli occhi di Geova sono su di noi", "75": "Sosteniamo la sovranità di Geova con il nostro modo di vivere", "76": "I princìpi biblici possono aiutarci ad affrontare i problemi di oggi?", "77": "“Siate sempre ospitali”", "78": "Serviamo Geova con cuore gioioso!", "79": "Di chi volete essere amici?", "80": "Riponete le vostre speranze nella scienza o nella Bibbia?", "81": "Chi è qualificato per fare discepoli?", "82": "(Non disponibile)", "83": "I cristiani devono ubbidire ai Dieci Comandamenti?", "84": "Sfuggirete al destino di questo mondo?", "85": "Una buona notizia in un mondo violento", "86": "Preghiere che Dio ascolta", "87": "Che relazione avete con Dio?", "88": "Perché seguire le norme della Bibbia?", "89": "Venite, voi che avete sete di verità!", "90": "Sforzatevi di afferrare la vera vita!", "91": "La presenza del Messia e il suo dominio", "92": "Il ruolo della religione negli affari mondiali", "93": "Un mondo senza calamità naturali: quando?", "94": "La vera religione soddisfa i bisogni della società umana", "95": "Non facciamoci ingannare dallo spiritismo!", "96": "Quale sarà il futuro della religione?", "97": "Irriprovevoli in mezzo a una generazione perversa", "98": "“La scena di questo mondo cambia”", "99": "Perché possiamo avere fiducia nella Bibbia", "100": "Come stringere forti amicizie", "101": "Geova, il “grande Creatore”", "102": "Prestiamo attenzione alle", "103": "Come possiamo provare vera gioia?", "104": "Genitori, state costruendo con materiali resistenti al fuoco?", "105": "Conforto in tutte le nostre tribolazioni", "106": "Chi rovina la terra incorre nel giudizio di Dio", "107": "I vantaggi di una coscienza ben addestrata", "108": "Possiamo affrontare il futuro con fiducia!", "109": "Il Regno di Dio è vicino", "110": "Nella famiglia felice Dio ha il primo posto", "111": "Vera guarigione per l’umanità: in che modo?", "112": "(Non disponibile)", "113": "Ragazzi, come potete avere successo e felicità?", "114": "Apprezziamo le meraviglie della creazione di Dio", "115": "Proteggiamoci dalle insidie di Satana", "116": "Siate saggi nella scelta delle amicizie", "117": "Come vincere il male col bene", "118": "Guardiamo i giovani dal punto di vista di Geova", "119": "Benefìci che hanno i cristiani essendo separati dal mondo", "120": "Perché sottomettersi ora al dominio di Dio", "121": "Una famiglia mondiale sopravvive a una catastrofe", "122": "(Non disponibile)", "123": "(Non disponibile)", "124": "Motivi per avere fiducia che Dio è l’Autore della Bibbia", "125": "Perché l’umanità ha bisogno di un riscatto", "126": "Chi può essere salvato?", "127": "Cosa accade quando si muore?", "128": "L’inferno è davvero un luogo di tormento infuocato?", "129": "La Trinità è una dottrina basata sulla Bibbia?", "130": "La terra rimarrà per sempre", "131": "(Non disponibile)", "132": "La risurrezione: vittoria sulla morte!", "133": "L’origine dell’uomo: ha importanza ciò in cui credete?", "134": "I cristiani dovrebbero osservare il Sabato?", "135": "La santità della vita e del sangue", "136": "Dio approva l’uso delle immagini nell’adorazione?", "137": "I miracoli narrati nella Bibbia sono accaduti veramente?", "138": "Viviamo con sanità di mente in un mondo depravato", "139": "La sapienza divina in un mondo scientifico", "140": "Chi è veramente Gesù Cristo?", "141": "Fino a quando la creazione umana continuerà a gemere?", "142": "Perché rifugiarsi in Geova", "143": "Confidiamo nell’Iddio di ogni conforto", "144": "Una congregazione leale sotto la guida di Cristo x", "145": "Chi è simile a Geova nostro Dio?", "146": "Valetevi dell’istruzione per lodare Geova", "147": "Confidiamo nel potere che Geova ha di salvare le persone", "148": "Condividete il punto di vista di Dio sulla vita?", "149": "State camminando con Dio?", "150": "Questo mondo è condannato alla rovina?", "151": "Geova è “una sicura altezza” per il suo popolo", "152": "Il vero Armaghedon: Perché? Quando?", "153": "Teniamo bene a mente il “tremendo giorno”!", "154": "Il dominio umano: pesato sulla bilancia", "155": "È arrivata l’ora del giudizio di Babilonia?", "156": "Il giorno del giudizio: un tempo di timore o di speranza?", "157": "Modi in cui i veri cristiani adornano l’insegnamento divino", "158": "Siate coraggiosi e confidate in Geova", "159": "Sicurezza in un mondo pericoloso", "160": "Salvaguardate la vostra identità cristiana!", "161": "Perché Gesù dovette soffrire e morire?", "162": "Liberazione da un mondo di tenebre", "163": "Perché temere il vero Dio?", "164": "Dio ha ancora il controllo della situazione?", "165": "Quali valori considerate preziosi?", "166": "La vera fede: cos’è? Come possiamo manifestarla?", "167": "Agite con saggezza in un mondo insensato", "168": "Possiamo sentirci al sicuro in un mondo travagliato!", "169": "Perché farsi guidare dalla Bibbia?", "170": "Chi è idoneo per governare l’umanità?", "171": "Possiamo vivere in pace ora e per sempre!", "172": "Che reputazione avete agli occhi di Dio?", "173": "Dio approva tutte le religioni?", "174": "Chi sarà idoneo per entrare nel nuovo mondo di Dio?", "175": "Cosa indica che la Bibbia è degna di fiducia?", "176": "Vera pace e sicurezza: Quando?", "177": "Dove si può trovare aiuto nei momenti difficili?", "178": "Camminiamo nella via dell’integrità", "179": "Rigettate le fantasie del mondo, perseguite le realtà del Regno", "180": "Perché la speranza della risurrezione dovrebbe essere reale per voi", "181": "È più tardi di quanto pensiate?", "182": "Ciò che il Regno di Dio sta facendo per noi ora", "183": "Distogliamo lo sguardo dalle cose inutili", "184": "La morte è la fine di tutto?", "185": "La verità influisce su di voi?", "186": "Unitevi al felice popolo di Dio", "187": "Perché mai un Dio di amore permetterebbe il male?", "188": "La vostra fiducia è in Geova?", "189": "Camminare con Dio reca benedizioni ora e per sempre", "190": "Una famiglia felice: la promessa diventa realtà", "191": "Come l’amore e la fede vincono il mondo", "192": "Siete sulla strada che porta alla vita eterna?", "193": "Sopravviviamo agli sconvolgimenti mondiali", "194": "La sapienza che viene da Dio ci è utile: in che modo?"};
+var CANTICI={"1": "Le qualità di Geova", "2": "Geova è il tuo nome", "3": "Tu sei la nostra fiducia, forza e speranza", "4": "“Geova è il mio Pastore”", "5": "Le meravigliose opere di Dio", "6": "I cieli proclamano la gloria di Dio", "7": "Geova, nostra forza", "8": "Geova è il nostro rifugio", "9": "Geova è il nostro Re!", "10": "Lodiamo Geova, il nostro Dio!", "11": "La creazione loda Dio", "12": "Grande Dio, Geova", "13": "Cristo, il nostro modello", "14": "Lodiamo il nuovo Re della terra", "15": "Acclamiamo il Primogenito di Geova!", "16": "Lodiamo Dio per il suo Unto", "17": "“Lo voglio”", "18": "Grati per il riscatto", "19": "La Cena del Signore", "20": "Hai dato il tuo prezioso Figlio", "21": "Continuiamo a cercare prima il Regno", "22": "Il Regno è realtà, preghiamo che venga", "23": "Geova comincia a regnare", "24": "Venite al monte di Geova", "25": "Una speciale proprietà", "26": "L’hai fatto a me", "27": "“La rivelazione dei figli di Dio”", "28": "Vogliamo essere amici di Geova", "29": "Degni del nome che portiamo", "30": "Mio Dio, mio Padre e Amico", "31": "Cammina con Dio", "32": "Schieràti per Geova", "33": "Getta su Geova il tuo peso", "34": "“Camminerò nella mia integrità”", "35": "Accertatevi delle cose più importanti", "36": "Salvaguardiamo il nostro cuore", "37": "Serviamo Geova con tutta l’anima", "38": "Dio ti renderà forte", "39": "Facciamoci un buon nome presso Dio", "40": "A chi appartengo?", "41": "O Dio, ascolta la mia preghiera", "42": "La preghiera del servitore di Dio", "43": "Preghiera di ringraziamento", "44": "La preghiera di chi è afflitto", "45": "La meditazione del mio cuore", "46": "Ti ringraziamo, Geova", "47": "Preghiamo Geova ogni giorno", "48": "Camminiamo con Geova ogni giorno", "49": "Rallegriamo il cuore di Geova", "50": "Preghiera di dedicazione", "51": "Siamo dedicati a Dio!", "52": "Dedicazione cristiana", "53": "Prepariamoci per predicare", "54": "“Questa è la via”", "55": "Non temete!", "56": "Facciamo nostra la verità", "57": "Predichiamo a tutti", "58": "Cerchiamo gli amici della pace", "59": "Insieme a noi lodate Iah!", "60": "Vuol dire vita", "61": "Testimoni, avanti!", "62": "Il nuovo canto", "63": "Siamo testimoni di Geova!", "64": "Partecipiamo con gioia alla mietitura", "65": "Avanziamo!", "66": "Dichiariamo la buona notizia", "67": "“Predica la parola”", "68": "Seminiamo il seme del Regno", "69": "Continuiamo a predicare il Regno", "70": "Cerchiamo i meritevoli", "71": "Siamo le schiere di Geova!", "72": "Facciamo conoscere la verità del Regno", "73": "Dio, concedi più coraggio", "74": "Cantiamo in coro il cantico del Regno", "75": "“Eccomi! Manda me!”", "76": "Che cosa provi?", "77": "Luce nell’oscurità", "78": "Insegnando la parola di Dio", "79": "Siano resi fermi nella verità", "80": "“Gustate e vedete che Geova è buono”", "81": "La vita del pioniere", "82": "“Risplenda la vostra luce”", "83": "“Di casa in casa”", "84": "Mete per lodare Dio", "85": "Accogliamoci l’un l’altro", "86": "Lasciamoci istruire da Geova", "87": "Venite, e sarete ristorati!", "88": "Fammi conoscere le tue vie", "89": "Felice chi mette in pratica ciò che ode", "90": "Incoraggiamoci l’un l’altro", "91": "Ti offriamo il frutto delle nostre fatiche", "92": "Un luogo che porta il tuo nome", "93": "Riuniti per adorare Dio", "94": "Grati per la Parola di Dio", "95": "La luce risplende sempre più", "96": "Il Libro di Dio è un tesoro", "97": "La Parola di Dio è vita", "98": "Le Scritture, ispirate da Dio", "99": "Milioni di fratelli", "100": "Mostriamo ospitalità", "101": "Collaboriamo in unità", "102": "Assistiamo i deboli", "103": "I pastori, doni negli uomini", "104": "Lo spirito santo, un dono di Dio", "105": "“Dio è amore”", "106": "Coltiviamo la qualità dell’amore", "107": "Imitiamo l’amore di Dio", "108": "L’amore leale di Dio", "109": "Amiamoci di cuore intensamente", "110": "“La gioia di Geova”", "111": "I nostri motivi di gioia", "112": "Geova, l’Iddio della pace", "113": "La nostra pace", "114": "Esercitiamo pazienza", "115": "Grati per la pazienza di Dio", "116": "Il potere della benignità", "117": "La qualità della bontà", "118": "“Dacci più fede”", "119": "Dobbiamo avere fede", "120": "Imitiamo la mitezza di Cristo", "121": "Abbiamo bisogno di autocontrollo", "122": "Saldi, incrollabili", "123": "Lealtà e sottomissione nella teocrazia", "124": "Dimostriamo lealtà", "125": "“Felici i misericordiosi”", "126": "Svegli, saldi e potenti", "127": "Che tipo di persona sono?", "128": "Perseveriamo sino alla fine", "129": "Continueremo a perseverare", "130": "Impariamo a perdonare", "131": "“Quello che Dio ha unito”", "132": "Uno io e te", "133": "Adorate Geova nella giovinezza", "134": "I figli, un tesoro affidato da Dio", "135": "Il caloroso invito di Geova: “Sii saggio, figlio mio”", "136": "Un “perfetto salario” da Geova", "137": "Donne fedeli, sorelle cristiane", "138": "La bellezza dei capelli bianchi", "139": "Ti vedi già nel nuovo mondo?", "140": "La vita eterna che ci attende", "141": "Il miracolo della vita", "142": "Manteniamo salda la nostra speranza", "143": "Continuiamo a essere attivi mentre aspettiamo", "144": "Rivolgi lo sguardo al premio", "145": "Dio promette il Paradiso", "146": "“Faccio nuova ogni cosa”", "147": "La promessa della vita eterna", "148": "Geova è il nostro liberatore", "149": "Un canto di vittoria", "150": "Cercate Geova per essere salvati", "151": "Chiamerà", "152": "Un luogo che ti dà lode", "153": "Dammi più coraggio", "154": "Amore senza fine", "155": "La gioia più grande", "156": "Con gli occhi della fede", "157": "Finalmente pace!", "158": "“Non tarderà!”", "159": "Gloria a Geova!", "160": "“La buona notizia”", "161": "Fare la tua volontà è la mia gioia", "162": "Il mio bisogno spirituale", "163": "I miei occhi ora vedono"};
+var STORAGE_KEY_INCARICHI="cerano_members_v2";   // stessa chiave dell'app Incarichi
+var STORAGE_KEY_SETT="promemoria_settimana_v1";  // dati della settimana
+var STORAGE_KEY_AGG="promemoria_agg_v1";
+var avviato=false;
+function timestampOra(){
+  var d=new Date();function z(n){return ("0"+n).slice(-2);}
+  return d.getDate()+" "+MESI[d.getMonth()]+" "+d.getFullYear()+", ore "+z(d.getHours())+":"+z(d.getMinutes());
+}
+function mostraAgg(s){var el=document.getElementById("aggiornato");if(el)el.textContent=s?("Aggiornato: "+s):"";}
+function segnaAgg(){var s=timestampOra();try{localStorage.setItem(STORAGE_KEY_AGG,s);}catch(e){}mostraAgg(s);}
+
+/* Prova a leggere i dati aggiornati dall'app Incarichi (se sullo stesso dominio), altrimenti usa la lista incorporata */
+function caricaMembri(){
+  return MEMBERS_DEFAULT;
+}
+
+var STORAGE_KEY_ELENCHI="promemoria_elenchi_v3";
+var elenchi={pres:[],lett:[]};
+function listeBase(){
+  var membri=caricaMembri();
+  var iPres=COLS.indexOf("Presid. Adunanza");
+  var iLett=COLS.indexOf("Lett. Torre di Guardia");
+  return {
+    pres:membri.filter(function(m){return m.p&&m.p[iPres]===1;}).map(function(m){return m.nome;}),
+    lett:membri.filter(function(m){return m.p&&m.p[iLett]===1;}).map(function(m){return m.nome;})
+  };
+}
+function caricaElenchi(){
+  try{
+    var s=localStorage.getItem(STORAGE_KEY_ELENCHI);
+    if(s){var o=JSON.parse(s); if(o&&Array.isArray(o.pres)&&Array.isArray(o.lett)) return o;}
+  }catch(e){}
+  return listeBase();
+}
+function salvaElenchi(){try{localStorage.setItem(STORAGE_KEY_ELENCHI,JSON.stringify(elenchi));}catch(e){}}
+function popolaTendine(){
+  riempiSelect("presidente",elenchi.pres);
+  riempiSelect("lettore",elenchi.lett);
+}
+function apriGest(){renderGest();document.getElementById("ovl").classList.add("show");document.getElementById("modalGest").classList.add("show");}
+function chiudiGest(){document.getElementById("ovl").classList.remove("show");document.getElementById("modalGest").classList.remove("show");}
+function renderGest(){renderLista("listaPres","pres");renderLista("listaLett","lett");}
+function renderLista(elId,tipo){
+  var lista=elenchi[tipo];var html="";
+  for(var i=0;i<lista.length;i++){
+    var n=lista[i].replace(/</g,"&lt;").replace(/"/g,"&quot;");
+    html+='<div class="nameitem"><span>'+n+'</span><button onclick="rimuovi(\''+tipo+'\','+i+')" title="Rimuovi">\u00d7</button></div>';
+  }
+  if(!lista.length)html='<div class="empty">Nessun nome</div>';
+  document.getElementById(elId).innerHTML=html;
+}
+function rimuovi(tipo,idx){elenchi[tipo].splice(idx,1);salvaElenchi();popolaTendine();renderGest();}
+function aggiungi(tipo){
+  var inp=document.getElementById(tipo==="pres"?"addPres":"addLett");
+  var v=inp.value.trim();if(!v)return;
+  if(elenchi[tipo].indexOf(v)<0)elenchi[tipo].push(v);
+  inp.value="";salvaElenchi();popolaTendine();renderGest();
+}
+function ripristina(){
+  if(!confirm("Ripristinare le liste dai privilegi dell'app Incarichi? Le modifiche manuali andranno perse."))return;
+  elenchi=listeBase();salvaElenchi();popolaTendine();renderGest();
+}
+function popolaOratori(){
+  var sel=document.getElementById("oratoreSel");
+  if(!sel)return;
+  var ord=ODEF.slice().sort(function(a,b){return (a.c+a.n).localeCompare(b.c+b.n,"it");});
+  var html='<option value="">— scegli oratore —</option>';
+  for(var i=0;i<ord.length;i++){
+    var o=ord[i];
+    var et=(o.c+" "+o.n+" ("+o.cg+")").replace(/</g,"&lt;");
+    html+='<option value="'+o.id+'">'+et+'</option>';
+  }
+  html+='<option value="__manual__">✎ Altro (digito a mano)…</option>';
+  sel.innerHTML=html;
+}
+function trovaOratore(id){for(var i=0;i<ODEF.length;i++){if(ODEF[i].id===id)return ODEF[i];}return null;}
+function onOratore(){
+  var id=document.getElementById("oratoreSel").value;
+  var ds=document.getElementById("discSel");
+  if(id===""||id==="__manual__"){
+    ds.innerHTML='<option value="">— scegli prima l\'oratore —</option>';
+    genera();return;
+  }
+  var o=trovaOratore(id);
+  if(!o){genera();return;}
+  document.getElementById("oratore").value=o.n+" "+o.c;
+  document.getElementById("cong").value=o.cg;
+  var h='<option value="">— n° discorso —</option>';
+  if(o.d&&o.d.length){for(var j=0;j<o.d.length;j++){h+='<option value="'+o.d[j]+'">'+o.d[j]+'</option>';}}
+  ds.innerHTML=h;
+  genera();
+}
+function titoloDi(num){
+  var n=parseInt((""+(num||"")).trim(),10);
+  if(isNaN(n))return "";
+  return TITOLI[n]||"";
+}
+function onDisc(){
+  var v=document.getElementById("discSel").value;
+  if(v){
+    document.getElementById("schema").value=v;
+    var t=titoloDi(v);
+    if(t)document.getElementById("tema").value=t;
+  }
+  genera();
+}
+function popolaProx(){
+  var sel=document.getElementById("proxSel");
+  if(!sel)return;
+  var html='<option value="">— scegli discorso —</option>';
+  for(var n=1;n<=194;n++){ if(TITOLI[n]){ var et=(n+" — "+TITOLI[n]).replace(/</g,"&lt;"); html+='<option value="'+n+'">'+et+'</option>'; } }
+  sel.innerHTML=html;
+}
+function onProx(){
+  var v=document.getElementById("proxSel").value;
+  if(v){var t=TITOLI[parseInt(v,10)]; if(t)document.getElementById("prox").value=t;}
+  genera();
+}
+function onSchemaInput(){
+  var t=titoloDi(document.getElementById("schema").value);
+  if(t)document.getElementById("tema").value=t;
+  genera();
+}
+function riempiSelect(id,lista){
+  var sel=document.getElementById(id);
+  var html='<option value="">— scegli —</option>';
+  for(var i=0;i<lista.length;i++){var n=lista[i].replace(/</g,"&lt;");html+='<option value="'+n+'">'+n+'</option>';}
+  html+='<option value="__manual__">\u270e Altro (digita)\u2026</option>';
+  sel.innerHTML=html;
+}
+
+function onSel(id){
+  var sel=document.getElementById(id);
+  var wrap=document.getElementById(id==="presidente"?"presManualWrap":"lettManualWrap");
+  wrap.style.display=(sel.value==="__manual__")?"block":"none";
+  genera();
+}
+
+var imgMode="drive";
+function setImg(btn){
+  imgMode=btn.getAttribute("data-img");
+  var btns=document.querySelectorAll("#segImg button");
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove("on");
+  btn.classList.add("on");
+  genera();
+}
+var fermaMode="no";
+function setFerma(btn){
+  fermaMode=btn.getAttribute("data-ferma");
+  var btns=document.querySelectorAll("#segFerma button");
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove("on");
+  btn.classList.add("on");
+  genera();
+}
+
+function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
+function nomeSel(id){
+  var sel=document.getElementById(id);
+  if(!sel)return "";
+  if(sel.value==="__manual__")return val(id==="presidente"?"presManual":"lettManual");
+  return sel.value;
+}
+
+function riga(etichetta,valore){return valore?(etichetta+valore+"\n"):"";}
+
+function nomeProprio(full){if(!full)return "";var p=full.trim().split(/\s+/);return p[p.length-1];}
+function primaParola(s){if(!s)return "";return s.trim().split(/\s+/)[0];}
+function nomeIntero(full){
+  if(!full)return "";
+  var p=full.trim().split(/\s+/);
+  if(p.length<2)return full.trim();
+  return p[p.length-1]+" "+p.slice(0,p.length-1).join(" ");
+}
+function popolaCantici(){
+  var sel=document.getElementById("cantico");
+  if(!sel||sel.tagName!=="SELECT")return;
+  var html='<option value="">— n\u00b0 —</option>';
+  for(var i=1;i<=163;i++){if(CANTICI[i]){var et=(i+" \u2014 "+CANTICI[i]).replace(/</g,"&lt;");html+='<option value="'+i+'">'+et+'</option>';}}
+  sel.innerHTML=html;
+}
+var GIORNI=["domenica","luned\u00ec","marted\u00ec","mercoled\u00ec","gioved\u00ec","venerd\u00ec","sabato"];
+var MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+function formattaData(){
+  var v=document.getElementById("data").value;
+  if(!v)return "(data)";
+  var pz=v.split("-");
+  if(pz.length!==3)return "(data)";
+  var dt=new Date(parseInt(pz[0],10),parseInt(pz[1],10)-1,parseInt(pz[2],10));
+  if(isNaN(dt.getTime()))return "(data)";
+  return GIORNI[dt.getDay()]+" "+dt.getDate()+" "+MESI[dt.getMonth()];
+}
+
+function genera(){
+  var data=formattaData();
+  var oratore=val("oratore");
+  var cong=val("cong");
+  var schema=val("schema");
+  var cantico=val("cantico");
+  var tema=val("tema");
+  var prox=val("prox");
+  var cell=val("cell");
+  var pres=nomeSel("presidente");
+  var lett=nomeSel("lettore");
+
+  document.getElementById("to1").textContent=pres||"—";
+  document.getElementById("to2").textContent=lett||"—";
+
+  /* 1 - Presidente */
+  var schemaTema=(schema?("Schema "+schema):"")+(schema&&tema?" \u2014 ":"")+(tema||"");
+  var m1="Ciao "+(nomeProprio(pres)||"")+",\n";
+  m1+="per l'Adunanza Pubblica di "+data+" il presidente sei tu.\n\n";
+  m1+=riga("Oratore: ",oratore);
+  m1+=riga("Congregazione: ",cong);
+  m1+=riga("Schema n. ",schema);
+  m1+=riga("Tema: ",tema);
+  m1+=riga("Cantico n. ",cantico);
+  m1+=riga("Discorso per la prossima settimana: ",prox);
+  m1+="\nPer qualsiasi impossibilit\u00e0 a fare il Presidente chiamami pure, cos\u00ec provvedo alla sostituzione. Grazie.";
+
+  /* 2 - Lettore TdG */
+  var m2="Ciao "+(nomeProprio(lett)||"")+",\n";
+  m2+="per la Torre di Guardia di "+data+" il lettore sei tu.\n\n";
+  m2+="Per qualsiasi impossibilit\u00e0 a fare il lettore della Torre di Guardia chiamami pure, cos\u00ec provvedo alla sostituzione. Grazie.";
+
+  /* 3 - Bellan */
+  var m3="Ciao Daniele,\npromemoria oratore di "+data+":\n\n";
+  m3+=riga("Oratore: ",oratore);
+  m3+=(schemaTema?(schemaTema.replace("Schema ","Schema n. ")+"\n"):"");
+  m3+=riga("Cellulare oratore: ",cell);
+  m3+=riga("Presidente: ",nomeIntero(pres));
+  m3+=riga("Lettore: ",nomeIntero(lett));
+  m3=m3.replace(/\n+$/,"");
+
+  /* 4 - Barberi */
+  var m4="Ciao Alessandro,\npromemoria oratore di "+data+":\n\n";
+  m4+=riga("Oratore: ",oratore);
+  m4+=riga("Cantico n. ",cantico);
+  m4+="Si ferma per la Torre di Guardia: "+(fermaMode==="si"?"S\u00ec":"No")+"\n";
+  if(imgMode==="no"){
+    m4+="\nNon ci sono immagini.";
+  }else if(imgMode==="discorso"){
+    m4+="\nLe immagini sono quelle del discorso"+(schema?(" n. "+schema):"")+": le scarichi tu.";
+  }else{
+    m4+="\nLe immagini sono sul Drive: puoi scaricarle tu.";
+  }
+  m4=m4.replace(/\n+$/,"");
+
+  document.getElementById("prev1").textContent=m1;
+  document.getElementById("prev2").textContent=m2;
+  document.getElementById("prev3").textContent=m3;
+  document.getElementById("prev4").textContent=m4;
+
+  salvaSettimana();
+  if(avviato)segnaAgg();
+}
+
+function copia(n){
+  var txt=document.getElementById("prev"+n).textContent;
+  var btn=document.getElementById("cp"+n);
+  function ok(){btn.classList.add("done");btn.textContent="\u2713 Copiato!";toast("Messaggio "+n+" copiato \u2014 incollalo in WhatsApp");setTimeout(function(){btn.classList.remove("done");btn.textContent="\ud83d\udccb Copia messaggio";},2200);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok,function(){fallbackCopy(txt,ok);});
+  }else{fallbackCopy(txt,ok);}
+}
+function fallbackCopy(txt,ok){
+  var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");ok();}catch(e){}
+  document.body.removeChild(ta);
+}
+
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2400);}
+
+function salvaSettimana(){
+  try{
+    var d={data:val("data"),oratore:val("oratore"),cong:val("cong"),schema:val("schema"),cantico:val("cantico"),tema:val("tema"),prox:val("prox"),cell:val("cell"),pres:document.getElementById("presidente").value,lett:document.getElementById("lettore").value,presManual:val("presManual"),lettManual:val("lettManual"),imgMode:imgMode,fermaMode:fermaMode};
+    localStorage.setItem(STORAGE_KEY_SETT,JSON.stringify(d));
+  }catch(e){}
+}
+function caricaSettimana(){
+  try{
+    var s=localStorage.getItem(STORAGE_KEY_SETT);if(!s)return;
+    var d=JSON.parse(s);
+    ["data","oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
+    if(d.pres)document.getElementById("presidente").value=d.pres;
+    if(d.lett)document.getElementById("lettore").value=d.lett;
+    if(d.imgMode){var b=document.querySelector('#segImg button[data-img="'+d.imgMode+'"]');if(b)setImg(b);}
+    if(d.fermaMode){var bf=document.querySelector('#segFerma button[data-ferma="'+d.fermaMode+'"]');if(bf)setFerma(bf);}
+    onSel("presidente");onSel("lettore");
+  }catch(e){}
+}
+
+function pulisci(){
+  ["oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){var el=document.getElementById(k);if(el)el.value="";});
+  document.getElementById("presidente").value="";
+  document.getElementById("lettore").value="";
+  document.getElementById("presManualWrap").style.display="none";
+  document.getElementById("lettManualWrap").style.display="none";
+  var b=document.querySelector('#segImg button[data-img="drive"]');if(b)setImg(b);
+  var bf=document.querySelector('#segFerma button[data-ferma="no"]');if(bf)setFerma(bf);
+  genera();
+  segnaAgg();
+  toast("Campi puliti (la data resta)");
+}
+
+window.onload=function(){
+  popolaOratori();
+  popolaProx();
+  popolaCantici();
+  elenchi=caricaElenchi();
+  popolaTendine();
+  caricaSettimana();
+  genera();
+  try{var a=localStorage.getItem(STORAGE_KEY_AGG);if(a)mostraAgg(a);}catch(e){}
+  avviato=true;
+};
+</script>
+</body></html>
