@@ -14,7 +14,6 @@
     --line:#e2dccf;
     --accent:#4f46e5; --accent-soft:#eef0fe;
     --danger:#e11d48;
-    --shelf:#cdb693;
     --shadow:0 1px 2px rgba(40,30,15,.05), 0 10px 26px rgba(40,30,15,.12);
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -87,51 +86,32 @@
     gap:26px 22px; align-content:start;
   }
 
-  /* QUADERNO */
+  /* QUADERNO (solo titolo + data) */
   .book{
     position:relative; text-align:left; height:212px; border-radius:5px 12px 12px 5px;
     overflow:hidden; box-shadow:var(--shadow);
-    transition:transform .14s ease, box-shadow .14s ease;
-    isolation:isolate;
+    transition:transform .14s ease, box-shadow .14s ease; isolation:isolate;
   }
-  .book::before{ /* ombra-ripiano sotto il quaderno */
-    content:""; position:absolute; left:6%; right:6%; bottom:-13px; height:14px; z-index:-1;
-    background:radial-gradient(ellipse at center, rgba(60,40,15,.28), transparent 72%);
-  }
+  .book::before{ content:""; position:absolute; left:6%; right:6%; bottom:-13px; height:14px; z-index:-1;
+    background:radial-gradient(ellipse at center, rgba(60,40,15,.28), transparent 72%); }
   .book:active{ transform:translateY(-2px) scale(.99); }
   .cover{ position:absolute; inset:0; }
   .cover .gloss{ position:absolute; inset:0; background:linear-gradient(125deg, rgba(255,255,255,.28), transparent 42%); }
-  .spiral{
-    position:absolute; left:0; top:0; bottom:0; width:22px;
-    background:rgba(0,0,0,.16);
-    box-shadow:inset -2px 0 4px rgba(0,0,0,.18);
-  }
-  .spiral::after{
-    content:""; position:absolute; left:6px; top:10px; bottom:10px; width:9px; border-radius:6px;
+  .spiral{ position:absolute; left:0; top:0; bottom:0; width:22px; background:rgba(0,0,0,.16); box-shadow:inset -2px 0 4px rgba(0,0,0,.18); }
+  .spiral::after{ content:""; position:absolute; left:6px; top:10px; bottom:10px; width:9px; border-radius:6px;
     background:repeating-linear-gradient(to bottom,
       rgba(255,255,255,.55) 0, rgba(255,255,255,.55) 3px,
       rgba(0,0,0,.22) 3px, rgba(0,0,0,.22) 6px,
-      transparent 6px, transparent 13px);
-  }
-  .book .content{ position:absolute; left:30px; right:13px; top:14px; bottom:13px; display:flex; flex-direction:column; }
-  .label{
-    background:rgba(255,255,255,.93); border-radius:7px; padding:9px 10px;
-    box-shadow:0 2px 6px rgba(0,0,0,.16); transform:rotate(-.6deg);
-  }
-  .label .ttl{
-    font-family:"Fraunces",serif; font-weight:600; font-size:15px; line-height:1.18; color:#2a2622;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-  }
-  .label .lbl-date{ margin-top:4px; font-size:10.5px; font-weight:700; letter-spacing:.02em; color:#9a8f7e; text-transform:uppercase; }
-  .book .preview{
-    margin-top:11px; flex:1; font-size:11.5px; line-height:1.5; color:rgba(255,255,255,.92);
-    text-shadow:0 1px 2px rgba(0,0,0,.18);
-    display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;
-  }
-  .book .preview.empty{ font-style:italic; opacity:.75; }
+      transparent 6px, transparent 13px); }
+  .book .content{ position:absolute; left:30px; right:14px; top:16px; bottom:16px; display:flex; align-items:center; justify-content:center; }
+  .label{ width:100%; background:rgba(255,255,255,.95); border-radius:8px; padding:14px 12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.18); transform:rotate(-.6deg); text-align:center; }
+  .label .ttl{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; line-height:1.22; color:#2a2622;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .label .lbl-date{ margin-top:9px; padding-top:8px; border-top:1px solid rgba(0,0,0,.09);
+    font-size:11px; font-weight:700; letter-spacing:.03em; color:#9a8f7e; text-transform:uppercase; }
   .book .pin{ position:absolute; top:9px; right:10px; font-size:15px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
 
-  /* stato vuoto */
   .empty-state{ grid-column:1/-1; text-align:center; padding:70px 24px; color:var(--ink-soft); }
   .empty-state .big{ font-size:50px; margin-bottom:14px; }
   .empty-state h2{ color:var(--ink); font-family:"Fraunces",serif; font-size:21px; margin:0 0 6px; }
@@ -145,10 +125,9 @@
     transform:translateY(100%); transition:transform .28s cubic-bezier(.22,1,.36,1);
   }
   .editor.open{ transform:translateY(0); }
-  .ed-top{ display:flex; align-items:center; gap:10px; padding:13px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .ed-top{ display:flex; align-items:center; gap:8px; padding:13px 14px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .ed-top .grow{ flex:1; }
   .ed-top .pinbtn.on{ color:#d97706; background:#fff7ed; border-color:#fed7aa; }
-  .ed-top .save-state{ margin-left:auto; font-size:13px; font-weight:700; color:#16a34a; opacity:0; transition:.2s; white-space:nowrap; }
-  .ed-top .save-state.show{ opacity:1; }
 
   .ed-meta{ padding:18px 22px 6px; background:var(--panel); border-bottom:1px solid var(--line); }
   #ed-title{ width:100%; border:none; outline:none; background:transparent;
@@ -163,18 +142,27 @@
   .swatch.sel{ border-color:var(--ink); transform:scale(1.14); }
   .swatch:active{ transform:scale(.9); }
 
+  /* barra strumenti di scrittura */
+  .write-tools{ display:flex; align-items:center; gap:8px; padding:9px 16px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .wt{ height:36px; padding:0 13px; border-radius:10px; background:var(--bg1); border:1px solid var(--line);
+    font-size:14px; font-weight:700; color:var(--ink-soft); display:flex; align-items:center; gap:6px; }
+  .wt:active{ transform:scale(.95); }
+  .wt-sep{ width:1px; height:24px; background:var(--line); margin:0 3px; }
+
   #ed-text{ flex:1; width:100%; border:none; outline:none; resize:none;
     padding:22px; font-size:17px; line-height:1.7; color:var(--ink); background:transparent; }
   #ed-text::placeholder{ color:#c0b9aa; }
-  .ed-foot{ padding:9px 22px; background:var(--panel); border-top:1px solid var(--line);
-    font-size:12.5px; font-weight:600; color:var(--ink-soft); text-align:right; }
+
+  .ed-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:9px 18px; background:var(--panel); border-top:1px solid var(--line);
+    font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  #save-state{ color:#16a34a; opacity:0; transition:.2s; }
+  #save-state.show{ opacity:1; }
 
   /* ---------- MODALE / TOAST ---------- */
-  .overlay{ position:fixed; inset:0; z-index:80; background:rgba(30,24,12,.5);
-    display:none; align-items:center; justify-content:center; padding:24px; }
+  .overlay{ position:fixed; inset:0; z-index:80; background:rgba(30,24,12,.5); display:none; align-items:center; justify-content:center; padding:24px; }
   .overlay.show{ display:flex; }
-  .dialog{ background:var(--panel); border-radius:18px; padding:24px; max-width:340px; width:100%;
-    box-shadow:0 24px 60px rgba(0,0,0,.32); text-align:center; }
+  .dialog{ background:var(--panel); border-radius:18px; padding:24px; max-width:340px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,.32); text-align:center; }
   .dialog .ic{ font-size:38px; }
   .dialog h3{ margin:10px 0 6px; font-family:"Fraunces",serif; font-size:19px; }
   .dialog p{ margin:0 0 20px; color:var(--ink-soft); font-size:14.5px; line-height:1.5; }
@@ -188,6 +176,17 @@
     z-index:100; transition:.3s; box-shadow:0 8px 30px rgba(0,0,0,.3); max-width:90%; }
   .toast.show{ transform:translateX(-50%) translateY(0); }
   input[type=file]{ display:none; }
+
+  /* ---------- STAMPA ---------- */
+  .print-area{ display:none; }
+  @media print{
+    body *{ visibility:hidden; }
+    .print-area, .print-area *{ visibility:visible; }
+    .print-area{ display:block; position:absolute; left:0; top:0; width:100%; padding:24px; color:#000; }
+    #print-title{ font-family:"Fraunces",serif; font-size:26px; margin:0 0 4px; }
+    #print-date{ font-size:13px; color:#555; margin-bottom:20px; }
+    #print-text{ font-size:15px; line-height:1.65; white-space:pre-wrap; }
+  }
 </style>
 </head>
 <body>
@@ -227,8 +226,11 @@
   <div class="ed-top">
     <button class="icon-btn" id="ed-back" title="Indietro">←</button>
     <button class="icon-btn pinbtn" id="ed-pin" title="Fissa in alto">📌</button>
+    <span class="grow"></span>
+    <button class="icon-btn" id="ed-dup" title="Duplica quaderno">⧉</button>
+    <button class="icon-btn" id="ed-share" title="Condividi (WhatsApp, email…)">📤</button>
+    <button class="icon-btn" id="ed-print" title="Stampa">🖨</button>
     <button class="icon-btn" id="ed-delete" title="Elimina quaderno" style="color:var(--danger)">🗑</button>
-    <span class="save-state" id="save-state">Salvato ✓</span>
   </div>
   <div class="ed-meta">
     <input id="ed-title" type="text" placeholder="Titolo del quaderno">
@@ -237,8 +239,17 @@
       <div class="colors" id="colors"></div>
     </div>
   </div>
+  <div class="write-tools">
+    <button class="wt" id="font-dec" title="Testo più piccolo">A−</button>
+    <button class="wt" id="font-inc" title="Testo più grande">A+</button>
+    <span class="wt-sep"></span>
+    <button class="wt" id="ins-date">📅 Inserisci data</button>
+  </div>
   <textarea id="ed-text" placeholder="Scrivi qui i tuoi appunti…"></textarea>
-  <div class="ed-foot" id="ed-foot">0 parole · 0 caratteri</div>
+  <div class="ed-foot">
+    <span id="save-state">Salvato ✓</span>
+    <span id="word-count">0 parole · 0 caratteri</span>
+  </div>
 </div>
 
 <!-- MODALE ELIMINA -->
@@ -254,6 +265,13 @@
   </div>
 </div>
 
+<!-- AREA DI STAMPA -->
+<div class="print-area" id="print-area">
+  <h1 id="print-title"></h1>
+  <div id="print-date"></div>
+  <div id="print-text"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 <input type="file" id="file-input" accept="application/json,.json">
 
@@ -261,6 +279,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "cerano_appunti_v1";
+  const FONT_KEY = "cerano_appunti_fontsize";
   const COLORS = ["#4f46e5","#0ea5e9","#10b981","#f59e0b","#ef4444","#ec4899","#8b5cf6","#14b8a6"];
   const GRAD = {
     "#4f46e5":["#6d63f0","#3f37c9"], "#0ea5e9":["#38bdf8","#0284c7"],
@@ -272,6 +291,7 @@
   let notes = [];
   let currentId = null;
   let saveTimer = null;
+  let fontSize = parseInt(localStorage.getItem(FONT_KEY)||"17",10);
 
   const $ = id => document.getElementById(id);
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -289,22 +309,18 @@
   function persist(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(notes)); }catch(e){ toast("Memoria piena: non riesco a salvare"); } }
 
   function sortedNotes(){
-    const mode=$("sort").value;
-    let list=notes.slice();
+    const mode=$("sort").value; let list=notes.slice();
     if(mode==="title") list.sort((a,b)=>(a.title||"").localeCompare(b.title||"","it"));
     else if(mode==="date") list.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     else list.sort((a,b)=>(b.updated||0)-(a.updated||0));
-    // i fissati sempre in cima, mantenendo l'ordine scelto
     list.sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
     return list;
   }
 
   function render(){
-    const grid=$("grid");
-    const q=$("search").value.trim().toLowerCase();
+    const grid=$("grid"); const q=$("search").value.trim().toLowerCase();
     let list=sortedNotes();
     if(q) list=list.filter(n=>(n.title||"").toLowerCase().includes(q)||(n.text||"").toLowerCase().includes(q));
-
     $("count").textContent=notes.length+(notes.length===1?" quaderno":" quaderni");
 
     if(list.length===0){
@@ -315,27 +331,21 @@
     }
 
     grid.innerHTML=list.map(n=>{
-      const base=COLORS[n.color||0]||COLORS[0];
-      const g=GRAD[base]||[base,base];
-      const hasText=(n.text||"").trim().length>0;
-      const preview=hasText?esc(n.text.trim().slice(0,200)):"Quaderno vuoto";
+      const base=COLORS[n.color||0]||COLORS[0]; const g=GRAD[base]||[base,base];
       return '<button class="book" data-id="'+n.id+'">'+
         '<div class="cover" style="background:linear-gradient(150deg,'+g[0]+','+g[1]+')"><div class="gloss"></div></div>'+
         '<div class="spiral"></div>'+
         (n.pinned?'<span class="pin">📌</span>':'')+
-        '<div class="content">'+
-          '<div class="label"><div class="ttl">'+(esc(n.title)||"Senza titolo")+'</div>'+
-            '<div class="lbl-date">'+fmtDate(n.date)+'</div></div>'+
-          '<div class="preview '+(hasText?"":"empty")+'">'+preview+'</div>'+
-        '</div></button>';
+        '<div class="content"><div class="label">'+
+          '<div class="ttl">'+(esc(n.title)||"Senza titolo")+'</div>'+
+          '<div class="lbl-date">'+fmtDate(n.date)+'</div>'+
+        '</div></div></button>';
     }).join("");
-
     grid.querySelectorAll(".book").forEach(c=>c.addEventListener("click",()=>openEditor(c.dataset.id)));
   }
 
   function createNote(){
-    const used=notes.map(n=>n.color);
-    let color=notes.length%COLORS.length;
+    const used=notes.map(n=>n.color); let color=notes.length%COLORS.length;
     for(let i=0;i<COLORS.length;i++){ if(!used.includes(i)){ color=i; break; } }
     const n={ id:uid(), title:"", date:todayISO(), text:"", color:color, pinned:false, updated:Date.now() };
     notes.push(n); persist(); openEditor(n.id);
@@ -350,24 +360,21 @@
   }
   function markSwatch(i){ $("colors").querySelectorAll(".swatch").forEach(s=>s.classList.toggle("sel",parseInt(s.dataset.c,10)===i)); }
 
+  function applyFont(){ $("ed-text").style.fontSize=fontSize+"px"; }
+  function changeFont(d){ fontSize=Math.max(14,Math.min(28,fontSize+d)); localStorage.setItem(FONT_KEY,fontSize); applyFont(); }
+
   function updateFoot(){
-    const t=$("ed-text").value;
-    const words=t.trim()?t.trim().split(/\s+/).length:0;
-    $("ed-foot").textContent=words+(words===1?" parola":" parole")+" · "+t.length+" caratteri";
+    const t=$("ed-text").value; const w=t.trim()?t.trim().split(/\s+/).length:0;
+    $("word-count").textContent=w+(w===1?" parola":" parole")+" · "+t.length+" caratteri";
   }
 
   function openEditor(id){
     const n=notes.find(x=>x.id===id); if(!n) return;
     currentId=id;
-    $("ed-title").value=n.title||"";
-    $("ed-date").value=n.date||todayISO();
-    $("ed-text").value=n.text||"";
-    markSwatch(n.color||0);
-    $("ed-pin").classList.toggle("on",!!n.pinned);
-    updateFoot();
-    $("save-state").classList.remove("show");
-    $("editor").classList.add("open");
-    document.body.style.overflow="hidden";
+    $("ed-title").value=n.title||""; $("ed-date").value=n.date||todayISO(); $("ed-text").value=n.text||"";
+    markSwatch(n.color||0); $("ed-pin").classList.toggle("on",!!n.pinned);
+    applyFont(); updateFoot(); $("save-state").classList.remove("show");
+    $("editor").classList.add("open"); document.body.style.overflow="hidden";
   }
   function closeEditor(){ flushSave(); $("editor").classList.remove("open"); document.body.style.overflow=""; currentId=null; render(); }
 
@@ -378,8 +385,7 @@
     saveTimer=setTimeout(()=>{ persist(); const s=$("save-state"); s.classList.add("show"); setTimeout(()=>s.classList.remove("show"),1200); },350);
   }
   function flushSave(){
-    if(!currentId) return;
-    const n=notes.find(x=>x.id===currentId); if(!n) return;
+    if(!currentId) return; const n=notes.find(x=>x.id===currentId); if(!n) return;
     n.title=$("ed-title").value; n.date=$("ed-date").value; n.text=$("ed-text").value; n.updated=Date.now();
     clearTimeout(saveTimer); persist();
   }
@@ -387,6 +393,33 @@
     const n=notes.find(x=>x.id===currentId); if(!n) return;
     n.pinned=!n.pinned; $("ed-pin").classList.toggle("on",n.pinned); scheduleSave();
     toast(n.pinned?"Fissato in alto":"Non più fissato");
+  }
+  function insertDate(){
+    const ta=$("ed-text"); const d=fmtDate(todayISO());
+    const s=ta.selectionStart, e=ta.selectionEnd;
+    ta.value=ta.value.slice(0,s)+d+ta.value.slice(e);
+    ta.selectionStart=ta.selectionEnd=s+d.length; ta.focus();
+    scheduleSave(); updateFoot();
+  }
+  function duplicate(){
+    const n=notes.find(x=>x.id===currentId); if(!n) return;
+    flushSave();
+    const copy={ id:uid(), title:(n.title||"Senza titolo")+" (copia)", date:n.date, text:n.text, color:n.color, pinned:false, updated:Date.now() };
+    notes.push(copy); persist(); openEditor(copy.id); toast("Quaderno duplicato");
+  }
+  function shareNote(){
+    const n=notes.find(x=>x.id===currentId); if(!n) return; flushSave();
+    const txt=(n.title?n.title+"\n\n":"")+(n.text||"");
+    if(navigator.share){ navigator.share({title:n.title||"Appunto", text:txt}).catch(()=>{}); }
+    else if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast("Testo copiato")).catch(()=>toast("Impossibile copiare")); }
+    else toast("Condivisione non disponibile");
+  }
+  function printNote(){
+    const n=notes.find(x=>x.id===currentId); if(!n) return; flushSave();
+    $("print-title").textContent=n.title||"Senza titolo";
+    $("print-date").textContent=fmtDate(n.date);
+    $("print-text").textContent=n.text||"";
+    window.print();
   }
 
   function askDelete(){
@@ -416,12 +449,18 @@
   $("btn-new").addEventListener("click",createNote);
   $("ed-back").addEventListener("click",closeEditor);
   $("ed-pin").addEventListener("click",togglePin);
+  $("ed-dup").addEventListener("click",duplicate);
+  $("ed-share").addEventListener("click",shareNote);
+  $("ed-print").addEventListener("click",printNote);
   $("ed-delete").addEventListener("click",askDelete);
   $("del-cancel").addEventListener("click",()=>$("overlay").classList.remove("show"));
   $("del-confirm").addEventListener("click",doDelete);
   $("overlay").addEventListener("click",e=>{ if(e.target.id==="overlay") $("overlay").classList.remove("show"); });
   ["ed-title","ed-date","ed-text"].forEach(id=>$(id).addEventListener("input",scheduleSave));
   $("ed-text").addEventListener("input",updateFoot);
+  $("font-dec").addEventListener("click",()=>changeFont(-1));
+  $("font-inc").addEventListener("click",()=>changeFont(1));
+  $("ins-date").addEventListener("click",insertDate);
   $("search").addEventListener("input",render);
   $("sort").addEventListener("change",render);
   $("btn-export").addEventListener("click",exportData);
