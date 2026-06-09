@@ -171,6 +171,22 @@
   .btn-ghost{ background:var(--bg1); color:var(--ink); }
   .btn-danger{ background:var(--danger); color:#fff; }
 
+  /* riepilogo giornata */
+  .summary-dialog{ max-width:540px; text-align:left; }
+  .summary-dialog h3{ text-align:center; }
+  .sum-row{ display:flex; align-items:center; gap:10px; margin-bottom:13px; font-size:14px; font-weight:600; color:var(--ink-soft); }
+  #sum-date{ border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:14px; color:var(--ink); background:var(--bg1); outline:none; }
+  #sum-count{ margin-left:auto; }
+  #sum-preview{ width:100%; height:165px; resize:none; border:1px solid var(--line); border-radius:12px;
+    padding:12px; font-size:13.5px; line-height:1.55; color:var(--ink); background:var(--bg1); outline:none; }
+  .sum-acts{ display:flex; gap:9px; margin-top:15px; flex-wrap:wrap; }
+  .sum-acts button{ height:47px; border-radius:12px; font-weight:700; font-size:14.5px; }
+  .btn-claude{ flex:1; min-width:160px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; gap:7px;
+    box-shadow:0 5px 16px rgba(79,70,229,.34); }
+  .btn-soft{ flex:1; min-width:88px; background:var(--bg1); color:var(--ink); border:1px solid var(--line); }
+  .sum-acts button:active{ transform:scale(.97); }
+  .sum-acts button:disabled{ opacity:.4; box-shadow:none; }
+
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(120%);
     background:var(--ink); color:#fff; padding:13px 20px; border-radius:13px; font-size:14.5px; font-weight:600;
     z-index:100; transition:.3s; box-shadow:0 8px 30px rgba(0,0,0,.3); max-width:90%; }
@@ -203,6 +219,7 @@
       </div>
       <button class="icon-btn" id="btn-export" title="Backup su file">⬇</button>
       <button class="icon-btn" id="btn-import" title="Ripristina da file">⬆</button>
+      <button class="icon-btn" id="btn-summary" title="Riepilogo giornata">✨</button>
       <button class="new-btn" id="btn-new"><span class="plus">+</span> Nuovo</button>
     </div>
     <div class="tools">
@@ -261,6 +278,28 @@
     <div class="acts">
       <button class="btn-ghost" id="del-cancel">Annulla</button>
       <button class="btn-danger" id="del-confirm">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- RIEPILOGO GIORNATA -->
+<div class="overlay" id="sum-overlay">
+  <div class="dialog summary-dialog">
+    <div class="ic" style="text-align:center">✨</div>
+    <h3>Riepilogo della giornata</h3>
+    <div class="sum-row">
+      <span>📅 Giorno:</span>
+      <input id="sum-date" type="date">
+      <span id="sum-count">0 quaderni</span>
+    </div>
+    <textarea id="sum-preview" readonly placeholder="Nessun quaderno scritto in questa data."></textarea>
+    <div class="sum-acts">
+      <button class="btn-claude" id="sum-claude">🤖 Manda a Claude</button>
+      <button class="btn-soft" id="sum-copy">Copia</button>
+      <button class="btn-soft" id="sum-share">📤 Condividi</button>
+    </div>
+    <div class="sum-acts" style="margin-top:9px">
+      <button class="btn-soft" id="sum-close" style="flex:1">Chiudi</button>
     </div>
   </div>
 </div>
@@ -422,6 +461,39 @@
     window.print();
   }
 
+  function dayNotes(date){ return notes.filter(n=>n.date===date).sort((a,b)=>(a.updated||0)-(b.updated||0)); }
+  function summaryText(){
+    const date=$("sum-date").value; const list=dayNotes(date);
+    if(list.length===0) return "";
+    let out="RIEPILOGO DEL "+fmtDate(date).toUpperCase()+"\n\n";
+    list.forEach(n=>{ out+="— "+(n.title||"Senza titolo")+" —\n"+(n.text||"").trim()+"\n\n"; });
+    return out.trim();
+  }
+  function buildSummary(){
+    const list=dayNotes($("sum-date").value);
+    $("sum-count").textContent=list.length+(list.length===1?" quaderno":" quaderni");
+    $("sum-preview").value=summaryText();
+    const empty=list.length===0;
+    ["sum-claude","sum-copy","sum-share"].forEach(id=>$(id).disabled=empty);
+  }
+  function openSummary(){ $("sum-date").value=todayISO(); buildSummary(); $("sum-overlay").classList.add("show"); }
+  function sendToClaude(){
+    const txt=summaryText(); if(!txt) return;
+    const prompt="Questi sono i miei appunti della giornata. Estraimi i punti piu significativi in un elenco chiaro e ordinato.\n\n"+txt;
+    if(navigator.clipboard) navigator.clipboard.writeText(prompt).catch(()=>{});
+    window.open("https://claude.ai/new?q="+encodeURIComponent(prompt),"_blank");
+    toast("Apro Claude. Se la casella e vuota, incolla con un tocco lungo: il testo e copiato.");
+  }
+  function copySummary(){
+    const txt=summaryText(); if(!txt) return;
+    if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast("Riepilogo copiato")).catch(()=>toast("Impossibile copiare"));
+  }
+  function shareSummary(){
+    const txt=summaryText(); if(!txt) return;
+    if(navigator.share) navigator.share({title:"Riepilogo della giornata", text:txt}).catch(()=>{});
+    else copySummary();
+  }
+
   function askDelete(){
     const n=notes.find(x=>x.id===currentId); if(!n) return;
     $("del-name").textContent="«"+(n.title||"Senza titolo")+"» verrà eliminato. L'azione non si può annullare.";
@@ -466,6 +538,13 @@
   $("btn-export").addEventListener("click",exportData);
   $("btn-import").addEventListener("click",()=>$("file-input").click());
   $("file-input").addEventListener("change",e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=""; });
+  $("btn-summary").addEventListener("click",openSummary);
+  $("sum-date").addEventListener("change",buildSummary);
+  $("sum-claude").addEventListener("click",sendToClaude);
+  $("sum-copy").addEventListener("click",copySummary);
+  $("sum-share").addEventListener("click",shareSummary);
+  $("sum-close").addEventListener("click",()=>$("sum-overlay").classList.remove("show"));
+  $("sum-overlay").addEventListener("click",e=>{ if(e.target.id==="sum-overlay") $("sum-overlay").classList.remove("show"); });
   window.addEventListener("beforeunload",flushSave);
 
   load(); buildSwatches(); render();
