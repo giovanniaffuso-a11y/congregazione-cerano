@@ -261,6 +261,7 @@
     <button class="wt" id="font-inc" title="Testo più grande">A+</button>
     <span class="wt-sep"></span>
     <button class="wt" id="ins-date">📅 Inserisci data</button>
+    <button class="wt" id="ins-paste">📋 Incolla qui</button>
   </div>
   <textarea id="ed-text" placeholder="Scrivi qui i tuoi appunti…"></textarea>
   <div class="ed-foot">
@@ -440,6 +441,18 @@
     ta.selectionStart=ta.selectionEnd=s+d.length; ta.focus();
     scheduleSave(); updateFoot();
   }
+  function pasteHere(){
+    const ta=$("ed-text");
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(txt=>{
+        if(!txt){ toast("Negli appunti non c'e testo da incollare"); return; }
+        const s=ta.selectionStart, e=ta.selectionEnd;
+        ta.value=ta.value.slice(0,s)+txt+ta.value.slice(e);
+        ta.selectionStart=ta.selectionEnd=s+txt.length; ta.focus();
+        scheduleSave(); updateFoot(); toast("Testo incollato");
+      }).catch(()=>toast("Tieni premuto sul testo e tocca «Incolla»"));
+    } else toast("Tieni premuto sul testo e tocca «Incolla»");
+  }
   function duplicate(){
     const n=notes.find(x=>x.id===currentId); if(!n) return;
     flushSave();
@@ -533,6 +546,7 @@
   $("font-dec").addEventListener("click",()=>changeFont(-1));
   $("font-inc").addEventListener("click",()=>changeFont(1));
   $("ins-date").addEventListener("click",insertDate);
+  $("ins-paste").addEventListener("click",pasteHere);
   $("search").addEventListener("input",render);
   $("sort").addEventListener("change",render);
   $("btn-export").addEventListener("click",exportData);
