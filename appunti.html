@@ -187,6 +187,9 @@
   .sum-acts button:active{ transform:scale(.97); }
   .sum-acts button:disabled{ opacity:.4; box-shadow:none; }
 
+  #paste-area{ width:100%; height:150px; resize:none; border:1px solid var(--line); border-radius:12px;
+    padding:12px; font-size:13px; line-height:1.5; color:var(--ink); background:var(--bg1); outline:none; }
+
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(120%);
     background:var(--ink); color:#fff; padding:13px 20px; border-radius:13px; font-size:14.5px; font-weight:600;
     z-index:100; transition:.3s; box-shadow:0 8px 30px rgba(0,0,0,.3); max-width:90%; }
@@ -219,6 +222,7 @@
       </div>
       <button class="icon-btn" id="btn-export" title="Backup su file">⬇</button>
       <button class="icon-btn" id="btn-import" title="Ripristina da file">⬆</button>
+      <button class="icon-btn" id="btn-paste" title="Incolla quaderni da Claude">📥</button>
       <button class="icon-btn" id="btn-summary" title="Riepilogo giornata">✨</button>
       <button class="new-btn" id="btn-new"><span class="plus">+</span> Nuovo</button>
     </div>
@@ -301,6 +305,23 @@
     </div>
     <div class="sum-acts" style="margin-top:9px">
       <button class="btn-soft" id="sum-close" style="flex:1">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- INCOLLA QUADERNI DA CLAUDE -->
+<div class="overlay" id="paste-overlay">
+  <div class="dialog summary-dialog">
+    <div class="ic" style="text-align:center">📥</div>
+    <h3>Incolla quaderni da Claude</h3>
+    <p style="text-align:left">Incolla qui il testo che ti ho dato e tocca <b>Aggiungi</b>. I quaderni che hai già <b>restano</b>.</p>
+    <textarea id="paste-area" placeholder="Tieni premuto qui e tocca «Incolla», oppure usa il pulsante qui sotto…"></textarea>
+    <div class="sum-acts">
+      <button class="btn-soft" id="paste-auto" style="flex:1">📋 Incolla</button>
+    </div>
+    <div class="sum-acts" style="margin-top:9px">
+      <button class="btn-soft" id="paste-cancel" style="flex:1">Annulla</button>
+      <button class="btn-claude" id="paste-add" style="flex:1; min-width:auto">Aggiungi</button>
     </div>
   </div>
 </div>
@@ -531,6 +552,33 @@
     r.readAsText(file);
   }
 
+  function openPaste(){ $("paste-area").value=""; $("paste-overlay").classList.add("show"); }
+  function pasteAuto(){
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(t=>{ $("paste-area").value=t; if(!t) toast("Negli appunti non c'e niente"); })
+        .catch(()=>toast("Tieni premuto nel riquadro e tocca «Incolla»"));
+    } else toast("Tieni premuto nel riquadro e tocca «Incolla»");
+  }
+  function importPasted(){
+    const raw=$("paste-area").value.trim();
+    if(!raw){ toast("Prima incolla il testo che ti ho dato"); return; }
+    let data;
+    try{ data=JSON.parse(raw); }catch(e){ toast("Testo non valido: copialo di nuovo per intero"); return; }
+    if(!Array.isArray(data)){
+      if(data && typeof data==="object" && "title" in data) data=[data];
+      else { toast("Formato non riconosciuto"); return; }
+    }
+    let added=0;
+    data.forEach(n=>{
+      if(!n || typeof n!=="object") return;
+      notes.push({ id:uid(), title:n.title||"", date:n.date||todayISO(), text:n.text||"",
+        color:typeof n.color==="number"?n.color:(notes.length%COLORS.length), pinned:!!n.pinned, updated:n.updated||Date.now() });
+      added++;
+    });
+    persist(); $("paste-overlay").classList.remove("show"); $("paste-area").value=""; render();
+    toast(added+(added===1?" quaderno aggiunto":" quaderni aggiunti"));
+  }
+
   $("btn-new").addEventListener("click",createNote);
   $("ed-back").addEventListener("click",closeEditor);
   $("ed-pin").addEventListener("click",togglePin);
@@ -559,6 +607,11 @@
   $("sum-share").addEventListener("click",shareSummary);
   $("sum-close").addEventListener("click",()=>$("sum-overlay").classList.remove("show"));
   $("sum-overlay").addEventListener("click",e=>{ if(e.target.id==="sum-overlay") $("sum-overlay").classList.remove("show"); });
+  $("btn-paste").addEventListener("click",openPaste);
+  $("paste-auto").addEventListener("click",pasteAuto);
+  $("paste-add").addEventListener("click",importPasted);
+  $("paste-cancel").addEventListener("click",()=>$("paste-overlay").classList.remove("show"));
+  $("paste-overlay").addEventListener("click",e=>{ if(e.target.id==="paste-overlay") $("paste-overlay").classList.remove("show"); });
   window.addEventListener("beforeunload",flushSave);
 
   load(); buildSwatches(); render();
