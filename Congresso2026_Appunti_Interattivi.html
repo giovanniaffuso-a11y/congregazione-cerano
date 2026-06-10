@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Felici Per Sempre — Congresso 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&family=Dancing+Script:wght@500;700&display=swap');
+
+  :root {
+    --verde-scuro: #3a5a40;
+    --verde-medio: #588157;
+    --verde-chiaro: #a3b18a;
+    --crema: #f5f0e8;
+    --crema-scuro: #ede5d0;
+    --oro: #c9a84c;
+    --testo: #2c2c2c;
+    --bordo: #c8b99a;
+    --ombra: rgba(88,129,87,0.12);
+    --link-bibbia: #1a6b3c;
+    --link-bibbia-bg: #e8f4ed;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--crema);
+    font-family: 'Lato', sans-serif;
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ===== LINK BIBBIA ===== */
+  a.bibbia {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--link-bibbia);
+    background: var(--link-bibbia-bg);
+    border: 1px solid #b2d8c0;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.82em;
+    font-weight: 700;
+    font-style: normal;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.18s, transform 0.12s;
+    cursor: pointer;
+  }
+  a.bibbia::before { content: '📖'; font-size: 0.9em; }
+  a.bibbia:hover, a.bibbia:active {
+    background: #c2e8d2;
+    transform: scale(1.05);
+  }
+
+  /* ===== COPERTINA ===== */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    position: relative;
+    background: linear-gradient(160deg, #eef3e8 0%, var(--crema) 50%, #f0ebe0 100%);
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(ellipse at 10% 10%, rgba(163,177,138,0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 85%, rgba(201,168,76,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .cover-border {
+    border: 2.5px solid #c0392b55;
+    border-radius: 4px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    background: rgba(255,255,255,0.4);
+  }
+
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
+    font-weight: 600;
+    color: var(--verde-scuro);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+
+  .cover-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0;
+  }
+  .cover-divider::before,
+  .cover-divider::after {
+    content: '';
+    height: 1px;
+    width: 60px;
+    background: var(--verde-medio);
+  }
+  .cover-divider span { color: var(--verde-medio); font-size: 1.1rem; }
+
+  .cover-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--verde-scuro);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .cover-handwritten {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: var(--verde-medio);
+    margin: 18px 0 24px;
+  }
+
+  .cover-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    border-top: 1px solid var(--bordo);
+    padding-top: 18px;
+  }
+  .cover-name-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--verde-scuro);
+    white-space: nowrap;
+  }
+  .cover-name-value {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #8b4513;
+    flex: 1;
+    border-bottom: 1px solid var(--bordo);
+    padding-bottom: 2px;
+  }
+
+  .nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 20px 16px 0;
+    background: var(--verde-scuro);
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  .nav-tab {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+  }
+  .nav-tab:hover { background: rgba(255,255,255,0.22); color: #fff; }
+  .nav-tab.active {
+    background: var(--crema);
+    color: var(--verde-scuro);
+  }
+
+  .day-section { display: none; padding: 24px 16px 80px; max-width: 800px; margin: 0 auto; }
+  .day-section.visible { display: block; }
+
+  .day-header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 28px 24px 20px;
+    background: linear-gradient(135deg, var(--verde-scuro), var(--verde-medio));
+    border-radius: 10px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .day-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .day-header .day-verse {
+    font-style: italic;
+    font-size: 0.95rem;
+    opacity: 0.88;
+    line-height: 1.5;
+  }
+  .day-header .day-ref {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+  }
+  .day-header .day-ref a.bibbia {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+    color: white;
+    font-size: 0.85em;
+  }
+  .day-header .day-ref a.bibbia:hover { background: rgba(255,255,255,0.35); }
+
+  .session-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 14px;
+  }
+  .session-label::before, .session-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--verde-chiaro);
+  }
+  .session-label span {
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--verde-medio);
+  }
+
+  .item {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    border-left: 4px solid var(--verde-chiaro);
+    box-shadow: 0 2px 8px var(--ombra);
+    transition: border-color 0.2s;
+  }
+  .item:hover { border-left-color: var(--verde-medio); }
+  .item.battesimo { border-left-color: var(--oro); }
+  .item.discorso { border-left-color: var(--verde-scuro); }
+  .item.simposio { border-left-color: #5b8fb9; }
+  .item.cantico { border-left-color: var(--bordo); background: var(--crema); }
+  .item.finale { border-left-color: #c0392b; }
+
+  .item-time {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--verde-medio);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .item-type {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 6px;
+  }
+  .item-type.disc { background: #e8f0e8; color: var(--verde-scuro); }
+  .item-type.video { background: #e8eef5; color: #2c5f8a; }
+  .item-type.simp { background: #eef0f8; color: #3d4f8a; }
+  .item-type.batt { background: #fdf5e0; color: #8a6a00; }
+  .item-type.studio { background: #f5e8f0; color: #6a2060; }
+
+  .item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--testo);
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+  .item-refs {
+    font-size: 0.82rem;
+    color: #666;
+    font-style: italic;
+    line-height: 1.8;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .sub-items { margin: 8px 0 10px 0; }
+  .sub-item {
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: var(--crema);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .sub-item::before { content: '●'; color: var(--verde-chiaro); font-size: 0.6rem; margin-top: 5px; flex-shrink: 0; }
+  .sub-item-inner { flex: 1; }
+  .sub-item-text { margin-bottom: 5px; }
+  .sub-item-refs {
+    font-size: 0.78rem;
+    color: #888;
+    font-style: italic;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .note-area {
+    width: 100%;
+    min-height: 80px;
+    border: 1.5px dashed var(--verde-chiaro);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    color: var(--testo);
+    background: #fafdf8;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.7;
+  }
+  .note-area:focus {
+    border-color: var(--verde-medio);
+    box-shadow: 0 0 0 3px rgba(88,129,87,0.15);
+    background: white;
+  }
+  .note-area::placeholder { color: #b5c9b0; font-style: italic; }
+
+  .note-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--verde-chiaro);
+    margin-bottom: 5px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .note-label::before { content: '✏️'; font-size: 0.85rem; }
+
+  .day-notes-box {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 28px;
+    border: 1.5px solid var(--bordo);
+    box-shadow: 0 2px 8px var(--ombra);
+  }
+  .day-notes-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--verde-scuro);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--crema-scuro);
+  }
+
+  .save-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--verde-scuro);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    z-index: 200;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
+  }
+  .btn-save, .btn-clear {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-save { background: var(--oro); color: #1a1a1a; }
+  .btn-save:hover { background: #d4b25c; transform: translateY(-1px); }
+  .btn-clear { background: rgba(255,255,255,0.15); color: white; }
+  .btn-clear:hover { background: rgba(255,255,255,0.25); }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--verde-scuro);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== BOTTONE MODIFICA NOME ===== */
+  .btn-edit-name {
+    background: none;
+    border: 1.5px solid var(--bordo);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: var(--verde-medio);
+    transition: background 0.18s, transform 0.12s;
+    flex-shrink: 0;
+  }
+  .btn-edit-name:hover { background: var(--crema-scuro); transform: scale(1.1); }
+
+  /* ===== MODAL MODIFICA NOME ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: 14px;
+    padding: 32px 28px 24px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    text-align: center;
+    animation: popIn 0.22s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .modal-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--verde-scuro);
+    margin-bottom: 20px;
+  }
+  .modal-input {
+    width: 100%;
+    border: 2px solid var(--verde-chiaro);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #8b4513;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+    margin-bottom: 20px;
+  }
+  .modal-input:focus { border-color: var(--verde-medio); }
+  .modal-btns { display: flex; gap: 10px; justify-content: center; }
+  .modal-btns .btn-ok {
+    background: var(--verde-scuro);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 28px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .modal-btns .btn-ok:hover { background: var(--verde-medio); }
+  .modal-btns .btn-cancel {
+    background: var(--crema-scuro);
+    color: var(--testo);
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 480px) {
+    .nav-tab { padding: 9px 12px; font-size: 0.75rem; }
+    .day-section { padding: 16px 12px 80px; }
+    .item { padding: 14px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== COPERTINA ========== -->
+<div id="coverPage">
+  <div class="cover">
+    <div class="cover-border">
+      <h1>FELICI<br>PER SEMPRE</h1>
+      <div class="cover-divider"><span>🌿</span></div>
+      <div class="cover-subtitle">Congresso del 2026</div>
+      <div class="cover-subtitle" style="font-weight:300;margin-top:2px;">dei Testimoni di Geova</div>
+      <div class="cover-handwritten">Quaderno degli appunti</div>
+      <div style="font-size:2.5rem;margin:10px 0;">📓</div>
+      <div class="cover-name-row">
+        <span class="cover-name-label">Appunti di</span>
+        <span class="cover-name-value" id="displayName">Giovanni Affuso</span>
+        <button class="btn-edit-name" onclick="openEditName()" title="Modifica nome">✏️</button>
+      </div>
+      <div style="margin-top:24px;">
+        <button class="btn-save" onclick="openProgram()" style="font-size:1rem;padding:14px 32px;border-radius:8px;">
+          📖 Apri il Programma
+        </button>
+      </div>
+      <p style="font-size:0.72rem;color:#999;margin-top:14px;font-style:italic;">
+        Le scritture si aprono in JW Library
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROGRAMMA ========== -->
+<div id="programPage" style="display:none;">
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showDay('venerdi',this)">🌅 Venerdì</button>
+  <button class="nav-tab" onclick="showDay('sabato',this)">☀️ Sabato</button>
+  <button class="nav-tab" onclick="showDay('domenica',this)">🌟 Domenica</button>
+</div>
+
+<!-- ==================== VENERDÌ ==================== -->
+<div class="day-section visible" id="venerdi">
+  <div class="day-header">
+    <h2>Venerdì</h2>
+    <div class="day-verse">"Felici quelli che sono consapevoli del loro bisogno spirituale"</div>
+    <div class="day-ref" id="ref-ven-header"></div>
+  </div>
+
+  <div class="session-label"><span>Mattina</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">9:20</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">9:30</div>
+    <div class="item-title">Cantico 160 e preghiera</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">9:40</div>
+    <span class="item-type disc">Discorso del Presidente</span>
+    <div class="item-title">Essere felici per sempre: è realistico?</div>
+    <div class="item-refs" id="refs-ven-presidente">Salmo 16:11; 100:2</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="ven_disc_presidente"></textarea>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">10:10</div>
+    <span class="item-type video">Videoracconto</span>
+    <div class="item-title">La buona notizia secondo Gesù — Episodio 4</div>
+    <div class="item-refs" id="refs-ven-ep4">Matteo 4:23-25; 8:1-4, 14-17; 9:1-17; 12:1-21; Marco 1:21; 3:19; Luca 4:31-44; 5:12; 6:16; Giovanni 5:1-47</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="ven_video_ep4"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">11:05</div>
+    <div class="item-title">Cantico 17 e annunci</div>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">11:15</div>
+    <span class="item-type simp">Simposio</span>
+    <div class="item-title">Le profezie messianiche e il loro adempimento</div>
+    <div class="sub-items">
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"Lui stesso ha preso su di sé le nostre malattie"</div>
+          <div class="sub-item-refs" id="refs-ven-s1a">Matteo 8:16-17; Salmo 32:1-2; Isaia 53:4-5</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="ven_simp1_malattie"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"Non discuterà"</div>
+          <div class="sub-item-refs" id="refs-ven-s1b">Matteo 12:15-21; Isaia 42:1-4</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="ven_simp1_discutera"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"Senza parabole non parlava loro"</div>
+          <div class="sub-item-refs" id="refs-ven-s1c">Matteo 13:34-35; Salmo 78:2</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="ven_simp1_parabole"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">12:10</div>
+    <div class="item-title">Cantico 14 e intervallo</div>
+  </div>
+
+  <div class="session-label"><span>Pomeriggio</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">13:35</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">13:45</div>
+    <div class="item-title">Cantico 23</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">13:50</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Cosa insegnò Gesù sul sabato?</div>
+    <div class="item-refs" id="refs-ven-sabato">Matteo 12:1-14; Giovanni 5:1-17</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="ven_sabato_ges"></textarea>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">14:10</div>
+    <span class="item-type simp">Simposio</span>
+    <div class="item-title">Imitiamo coloro che servirono Gesù</div>
+    <div class="sub-items">
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Gli apostoli</div>
+          <div class="sub-item-refs" id="refs-ven-s2a">Luca 6:13, 15-16</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="ven_simp2_apostoli"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"Molte donne"</div>
+          <div class="sub-item-refs" id="refs-ven-s2b">Matteo 27:55; Marco 15:40; Luca 8:1-3</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="ven_simp2_donne"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">14:50</div>
+    <div class="item-title">Cantico 76 e annunci</div>
+  </div>
+
+  <div class="item finale">
+    <div class="item-time">15:00</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">"Felici quelli che lavano le loro vesti"</div>
+    <div class="item-refs" id="refs-ven-vesti">Rivelazione 7:9-10, 13-15; 22:14; Giovanni 5:24-29</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="ven_lavano_vesti"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">15:30</div>
+    <div class="item-title">Cantico 155 e preghiera conclusiva</div>
+  </div>
+
+  <div class="day-notes-box">
+    <h3>📋 Note del giorno — Venerdì</h3>
+    <p style="font-size:0.8rem;color:#999;margin-bottom:10px;">(presenti, annunci, promemoria ecc.)</p>
+    <div class="note-label">Note generali</div>
+    <textarea class="note-area" style="min-height:150px;" placeholder="Scrivi qui le note del giorno..." data-key="ven_note_giorno"></textarea>
+  </div>
+</div>
+
+<!-- ==================== SABATO ==================== -->
+<div class="day-section" id="sabato">
+  <div class="day-header">
+    <h2>Sabato</h2>
+    <div class="day-verse">"C'è più felicità nel dare che nel ricevere"</div>
+    <div class="day-ref" id="ref-sab-header"></div>
+  </div>
+
+  <div class="session-label"><span>Mattina</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">9:20</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">9:30</div>
+    <div class="item-title">Cantico 111 e preghiera</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">9:40</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">"Iniziò a parlare e a insegnare loro"</div>
+    <div class="item-refs" id="refs-sab-insegnare">Matteo 5:1-2</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_inizio_insegnare"></textarea>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">9:50</div>
+    <span class="item-type video">Videoracconto</span>
+    <div class="item-title">La buona notizia secondo Gesù — Episodio 5</div>
+    <div class="item-refs" id="refs-sab-ep5">Matteo 5:3; 7:29; Luca 6:17-49</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_video_ep5"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">10:25</div>
+    <div class="item-title">Cantico 89 e annunci</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">10:35</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Quali ostacoli possono impedirci di essere felici?</div>
+    <div class="item-refs" id="refs-sab-ostacoli">Luca 6:24-26</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_ostacoli_felici"></textarea>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">10:50</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Riusciamo a riconoscere i princìpi che stanno alla base delle leggi?</div>
+    <div class="item-refs" id="refs-sab-principi">Matteo 5:17-48</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_principi_leggi"></textarea>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">11:15</div>
+    <span class="item-type simp">Simposio</span>
+    <div class="item-title">Lezioni dal paese in cui visse Gesù</div>
+    <div class="sub-items">
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Il sale e la luce</div>
+          <div class="sub-item-refs" id="refs-sab-s1a">Matteo 5:13-16</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_simp_sale_luce"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Le piante e gli animali</div>
+          <div class="sub-item-refs" id="refs-sab-s1b">Genesi 1:28-29; Matteo 6:19, 26, 28; 7:6, 10, 15-16</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_simp_piante_animali"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item battesimo">
+    <div class="item-time">11:40</div>
+    <span class="item-type batt">✦ Battesimo</span>
+    <div class="item-title">"Il Padre tuo che vede in segreto ti ricompenserà"</div>
+    <div class="item-refs" id="refs-sab-batt">Matteo 6:6</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Nomi dei battezzandi, appunti..." data-key="sab_battesimo"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">12:10</div>
+    <div class="item-title">Cantico 51 e intervallo</div>
+  </div>
+
+  <div class="session-label"><span>Pomeriggio</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">13:35</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">13:45</div>
+    <div class="item-title">Cantico 125</div>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">13:50</div>
+    <span class="item-type simp">Simposio</span>
+    <div class="item-title">"Felici..."</div>
+    <div class="sub-items">
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...quelli che sono consapevoli del loro bisogno spirituale"</div>
+          <div class="sub-item-refs" id="refs-sab-bea1">Matteo 5:3</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea1"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...quelli che sono afflitti"</div>
+          <div class="sub-item-refs" id="refs-sab-bea2">Matteo 5:4</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea2"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...i miti"</div>
+          <div class="sub-item-refs" id="refs-sab-bea3">Matteo 5:5</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea3"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...quelli che hanno fame e sete di giustizia"</div>
+          <div class="sub-item-refs" id="refs-sab-bea4">Matteo 5:6</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea4"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...i misericordiosi"</div>
+          <div class="sub-item-refs" id="refs-sab-bea5">Matteo 5:7</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea5"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...i puri di cuore"</div>
+          <div class="sub-item-refs" id="refs-sab-bea6">Matteo 5:8</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea6"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...quelli che promuovono la pace"</div>
+          <div class="sub-item-refs" id="refs-sab-bea7">Matteo 5:9</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea7"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...quelli che vengono perseguitati a motivo della giustizia"</div>
+          <div class="sub-item-refs" id="refs-sab-bea8">Matteo 5:10</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea8"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">"...voi quando vi insulteranno"</div>
+          <div class="sub-item-refs" id="refs-sab-bea9">Matteo 5:11-12</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="sab_bea9"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">15:20</div>
+    <div class="item-title">Cantico 81 e annunci</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">15:30</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">"Perché siete ansiosi?"</div>
+    <div class="item-refs" id="refs-sab-ansiosi">Matteo 6:19-33</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_ansiosi"></textarea>
+  </div>
+
+  <div class="item finale">
+    <div class="item-time">15:55</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">"Entrate per la porta stretta"</div>
+    <div class="item-refs" id="refs-sab-porta">Matteo 7:1-5, 12-14, 16-18, 24-27</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="sab_porta_stretta"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">16:30</div>
+    <div class="item-title">Cantico 21 e preghiera conclusiva</div>
+  </div>
+
+  <div class="day-notes-box">
+    <h3>📋 Note del giorno — Sabato</h3>
+    <p style="font-size:0.8rem;color:#999;margin-bottom:10px;">(presenti, annunci, promemoria ecc.)</p>
+    <div class="note-label">Note generali</div>
+    <textarea class="note-area" style="min-height:150px;" placeholder="Scrivi qui le note del giorno..." data-key="sab_note_giorno"></textarea>
+  </div>
+</div>
+
+<!-- ==================== DOMENICA ==================== -->
+<div class="day-section" id="domenica">
+  <div class="day-header">
+    <h2>Domenica</h2>
+    <div class="day-verse">"Felici i vostri occhi perché vedono e i vostri orecchi perché odono!"</div>
+    <div class="day-ref" id="ref-dom-header"></div>
+  </div>
+
+  <div class="session-label"><span>Mattina</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">9:20</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">9:30</div>
+    <div class="item-title">Cantico 68 e preghiera</div>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">9:40</div>
+    <span class="item-type simp">Simposio</span>
+    <div class="item-title">Lezioni dalle parabole di Gesù</div>
+    <div class="sub-items">
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">I quattro tipi di terreno</div>
+          <div class="sub-item-refs" id="refs-dom-p1">Matteo 13:18-23</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="dom_par1_terreno"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Il grano e la zizzania</div>
+          <div class="sub-item-refs" id="refs-dom-p2">Matteo 13:24-30</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="dom_par2_zizzania"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Il granello di senape</div>
+          <div class="sub-item-refs" id="refs-dom-p3">Matteo 13:31-32</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="dom_par3_senape"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">Il lievito</div>
+          <div class="sub-item-refs" id="refs-dom-p4">Matteo 13:33</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="dom_par4_lievito"></textarea>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-item-inner">
+          <div class="sub-item-text">La rete a strascico</div>
+          <div class="sub-item-refs" id="refs-dom-p5">Matteo 13:47-50</div>
+          <div class="note-label">I miei appunti</div>
+          <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="dom_par5_rete"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">11:00</div>
+    <div class="item-title">Cantico 64 e annunci</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">11:10</div>
+    <span class="item-type disc">Discorso Pubblico</span>
+    <div class="item-title">Cosa farai con il tesoro che hai trovato?</div>
+    <div class="item-refs" id="refs-dom-tesoro">Matteo 13:44-46</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="dom_tesoro"></textarea>
+  </div>
+
+  <div class="item">
+    <div class="item-time">11:40</div>
+    <span class="item-type studio">Studio Torre di Guardia</span>
+    <div class="item-title">Studio Torre di Guardia</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="dom_tdg"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">12:10</div>
+    <div class="item-title">Cantico 140 e intervallo</div>
+  </div>
+
+  <div class="session-label"><span>Pomeriggio</span></div>
+
+  <div class="item cantico">
+    <div class="item-time">13:35</div>
+    <div class="item-title">Video musicale</div>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">13:45</div>
+    <div class="item-title">Cantico 108</div>
+  </div>
+
+  <div class="item simposio">
+    <div class="item-time">13:50</div>
+    <span class="item-type video">Videoracconto</span>
+    <div class="item-title">La buona notizia secondo Gesù — Episodio 6</div>
+    <div class="item-refs" id="refs-dom-ep6">Matteo 8:5-13; 11:2; 13:53; Marco 3:19; 4:34; Luca 7:1; 8:21</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="dom_video_ep6"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">14:35</div>
+    <div class="item-title">Cantico 120 e annunci</div>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time">14:45</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Cosa abbiamo imparato?</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="dom_cosa_imparato"></textarea>
+  </div>
+
+  <div class="item finale">
+    <div class="item-time">14:55</div>
+    <span class="item-type disc">Discorso Finale</span>
+    <div class="item-title">"Felici i vostri occhi perché vedono"</div>
+    <div class="item-refs" id="refs-dom-finale">Matteo 7:1-5; 13:16-17; Luca 6:46-49; 10:21; Giovanni 17:6; Giacomo 1:22-25</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="dom_occhi_vedono"></textarea>
+  </div>
+
+  <div class="item cantico">
+    <div class="item-time">15:45</div>
+    <div class="item-title">Cantico 163 e preghiera conclusiva</div>
+  </div>
+
+  <div class="day-notes-box">
+    <h3>📋 Note del giorno — Domenica</h3>
+    <p style="font-size:0.8rem;color:#999;margin-bottom:10px;">(presenti, annunci, promemoria ecc.)</p>
+    <div class="note-label">Note generali</div>
+    <textarea class="note-area" style="min-height:150px;" placeholder="Scrivi qui le note del giorno..." data-key="dom_note_giorno"></textarea>
+  </div>
+</div>
+
+<!-- BARRA SALVATAGGIO -->
+<div class="save-bar">
+  <button class="btn-save" onclick="saveNotes()">💾 Salva Appunti</button>
+  <button class="btn-clear" onclick="goToCover()">🏠 Copertina</button>
+</div>
+
+</div><!-- fine programPage -->
+
+<div class="toast" id="toast">✅ Appunti salvati!</div>
+<!-- ===== MODAL MODIFICA NOME ===== -->
+<div class="modal-overlay" id="modalNome">
+  <div class="modal-box">
+    <h3>✏️ Modifica nome e cognome</h3>
+    <input class="modal-input" id="inputNome" type="text" placeholder="Nome e Cognome" maxlength="60"
+           onkeydown="if(event.key==='Enter') saveEditName()">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEditName()">Annulla</button>
+      <button class="btn-ok" onclick="saveEditName()">✅ Salva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MAPPATURA LIBRI BIBLICI → numero e slug JW.org
+// ============================================================
+const BOOKS = {
+  'Genesi':      { n: 1,  s: 'genesi' },
+  'Salmo':       { n: 19, s: 'salmi' },
+  'Salmi':       { n: 19, s: 'salmi' },
+  'Isaia':       { n: 23, s: 'isaia' },
+  'Matteo':      { n: 40, s: 'matteo' },
+  'Marco':       { n: 41, s: 'marco' },
+  'Luca':        { n: 42, s: 'luca' },
+  'Giovanni':    { n: 43, s: 'giovanni' },
+  'Atti':        { n: 44, s: 'atti-degli-apostoli' },
+  'Romani':      { n: 45, s: 'romani' },
+  'Giacomo':     { n: 59, s: 'giacomo' },
+  'Rivelazione': { n: 66, s: 'rivelazione' }
+};
+
+// Costruisce URL finder JW.org (apre JW Library se installata)
+function jwUrl(bookName, chapter, verse) {
+  const b = BOOKS[bookName];
+  if (!b) return null;
+  const bk  = String(b.n).padStart(2, '0');
+  const ch  = String(chapter).padStart(3, '0');
+  const vs  = String(verse || 1).padStart(3, '0');
+  const ref = bk + ch + vs;
+  return 'https://www.jw.org/finder?srcid=share&wtlocale=I&prefer=lang&bible=' + ref;
+}
+
+// Crea elemento <a class="bibbia">
+function makeLink(label, url) {
+  const a = document.createElement('a');
+  a.className = 'bibbia';
+  a.textContent = label;
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  return a;
+}
+
+// ============================================================
+// PARSER AVANZATO: converte scritture in link cliccabili
+// Gestisce:
+//   "Matteo 4:23-25; 8:1-4; 9:1-17" → tutti linkati come Matteo
+//   "Salmo 16:11; 100:2"             → entrambi linkati come Salmo
+//   "Marco 1:21; 3:19; Luca 4:31"   → cambio libro automatico
+// ============================================================
+function parseRefs(container) {
+  if (!container) return;
+  const text = container.textContent.trim();
+  if (!text) return;
+
+  const BOOK_NAMES = Object.keys(BOOKS).join('|');
+
+  // Regex che cattura OPZIONALMENTE il nome del libro prima di cap:vers
+  // Questo permette di matchare sia "Matteo 5:3" che il successivo "8:1-4"
+  const RE = new RegExp(
+    '(?:(' + BOOK_NAMES + ')\\s+)?(\\d+):(\\d+)(?:[-\u2013]\\d+)?',
+    'g'
+  );
+
+  container.innerHTML = '';
+  let lastIndex = 0;
+  let currentBook = null;  // ricorda l'ultimo libro visto
+  let match;
+  RE.lastIndex = 0;
+
+  while ((match = RE.exec(text)) !== null) {
+    // Testo prima del match (separatori: ; , spazi ecc.)
+    if (match.index > lastIndex) {
+      container.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+    }
+
+    if (match[1]) currentBook = match[1]; // aggiorna libro corrente se presente
+
+    if (currentBook) {
+      const chapter = parseInt(match[2]);
+      const verse   = parseInt(match[3]);
+      const url     = jwUrl(currentBook, chapter, verse);
+      if (url) {
+        container.appendChild(makeLink(match[0], url));
+      } else {
+        container.appendChild(document.createTextNode(match[0]));
+      }
+    } else {
+      // Nessun libro noto ancora: lascia come testo
+      container.appendChild(document.createTextNode(match[0]));
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Eventuale testo finale (es. punteggiatura)
+  if (lastIndex < text.length) {
+    container.appendChild(document.createTextNode(text.slice(lastIndex)));
+  }
+}
+
+// ============================================================
+// Applica i link a tutti i contenitori refs nella pagina
+// ============================================================
+function applyAllLinks() {
+  // Tutti gli elementi con class item-refs o sub-item-refs e day-ref
+  document.querySelectorAll('.item-refs, .sub-item-refs, .day-ref').forEach(el => {
+    parseRefs(el);
+  });
+}
+
+// ============================================================
+// NAVIGAZIONE E STORAGE
+// ============================================================
+const STORAGE_KEY = 'congresso2026_appunti';
+
+function openProgram() {
+  document.getElementById('coverPage').style.display = 'none';
+  document.getElementById('programPage').style.display = 'block';
+  loadNotes();
+}
+
+function goToCover() {
+  saveNotes();
+  document.getElementById('programPage').style.display = 'none';
+  document.getElementById('coverPage').style.display = 'block';
+}
+
+function showDay(dayId, btn) {
+  document.querySelectorAll('.day-section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(dayId).classList.add('visible');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveNotes() {
+  const data = {};
+  document.querySelectorAll('.note-area').forEach(ta => {
+    if (ta.dataset.key) data[ta.dataset.key] = ta.value;
+  });
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showToast('✅ Appunti salvati!');
+  } catch(e) {
+    showToast('⚠️ Errore nel salvataggio');
+  }
+}
+
+function loadNotes() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    document.querySelectorAll('.note-area').forEach(ta => {
+      if (ta.dataset.key && data[ta.dataset.key]) ta.value = data[ta.dataset.key];
+    });
+  } catch(e) {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Auto-salva ogni 60 secondi
+setInterval(() => {
+  if (document.getElementById('programPage').style.display !== 'none') saveNotes();
+}, 60000);
+
+// Avvio: converte tutte le scritture in link
+window.addEventListener('DOMContentLoaded', function() {
+  applyAllLinks();
+  loadName();
+});
+// ============================================================
+// GESTIONE NOME PERSONALIZZATO
+// ============================================================
+const NAME_KEY = 'congresso2026_nome';
+
+function loadName() {
+  const saved = localStorage.getItem(NAME_KEY);
+  if (saved) document.getElementById('displayName').textContent = saved;
+}
+
+function openEditName() {
+  const current = document.getElementById('displayName').textContent;
+  document.getElementById('inputNome').value = current;
+  document.getElementById('modalNome').classList.add('open');
+  setTimeout(() => document.getElementById('inputNome').focus(), 80);
+}
+
+function closeEditName() {
+  document.getElementById('modalNome').classList.remove('open');
+}
+
+function saveEditName() {
+  const val = document.getElementById('inputNome').value.trim();
+  if (!val) return;
+  document.getElementById('displayName').textContent = val;
+  localStorage.setItem(NAME_KEY, val);
+  closeEditName();
+  showToast('✅ Nome aggiornato!');
+}
+
+// Chiudi modal cliccando fuori
+document.getElementById('modalNome').addEventListener('click', function(e) {
+  if (e.target === this) closeEditName();
+});
+
+</script>
+</body>
+</html>
