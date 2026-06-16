@@ -46,6 +46,10 @@ body{
 .btn-stampa:hover{background:var(--blu-scuro);}
 .btn-pulisci{background:#fff;color:var(--tenue);border:1.5px solid var(--bordo);}
 .btn-pulisci:hover{border-color:#cfc6b4;color:var(--inchiostro);}
+.btn-wa{background:#25d366;color:#fff;box-shadow:0 3px 10px rgba(37,211,102,.3);}
+.btn-wa:hover{background:#1da851;}
+.btn-gmail{background:#ea4335;color:#fff;box-shadow:0 3px 10px rgba(234,67,53,.3);}
+.btn-gmail:hover{background:#c5392e;}
 
 /* ───── Il foglio ───── */
 .foglio{
@@ -206,6 +210,8 @@ body{
   <h1>Promemoria Presidente · Adunanza Pubblica</h1>
   <button class="btn btn-orat" onclick="apriOratore()">＋ Oratore</button>
   <button class="btn btn-pulisci" onclick="pulisci()">↺ Pulisci</button>
+  <button class="btn btn-wa" onclick="inviaWhatsApp()">💬 WhatsApp</button>
+  <button class="btn btn-gmail" onclick="inviaGmail()">✉️ Gmail</button>
   <button class="btn btn-stampa" onclick="window.print()">🖨 Stampa</button>
 </div>
 
@@ -547,6 +553,86 @@ function renderListaExtra(){
   else{for(var i=0;i<oratoriExtra.length;i++){var o=oratoriExtra[i];
     h+='<div class="voce"><span>'+esc(o.c+" "+o.n)+' — '+esc(o.cg)+'</span><button onclick="rimuoviOratore(\''+o.id+'\')" title="Rimuovi">\u00d7</button></div>';}}
   gid("listaExtra").innerHTML=h;
+}
+
+function testoOpz(id){
+  var s=gid(id);
+  if(!s||!s.value)return "";
+  return s.options[s.selectedIndex].text;
+}
+function componiTesto(grassetto){
+  var b=grassetto?"*":"";
+  var L=[];
+  L.push(b+"PROMEMORIA PRESIDENTE — ADUNANZA PUBBLICA"+b);
+  L.push("Congregazione di Cerano");
+  L.push("");
+  if(gid("selData").value)L.push("📅 Data: "+gid("dataGiorno").textContent);
+  var cant=testoOpz("selCantico");
+  var rif=gid("rifCantico").value.trim();
+  if(cant){var r="🎵 Cantico iniziale: "+cant;if(rif)r+=" — "+rif;L.push(r);}
+  L.push("");
+  var tema=testoOpz("selSchema");
+  if(tema)L.push("📖 Tema del discorso: "+tema);
+  var orId=gid("selOratore").value;
+  if(orId){var o=trovaOratore(orId);if(o){L.push("🎤 Oratore: fratello "+o.n+" "+o.c);L.push("📍 Congregazione: "+o.cg);}}
+  L.push("");
+  var prox=testoOpz("selProx");
+  if(prox)L.push("➡️ Prossima settimana: "+prox);
+  var cond=testoOpz("selConduttore");
+  if(cond)L.push("📚 Studio Torre di Guardia condotto da: fratello "+cond);
+  return L.join("\n").replace(/\n{3,}/g,"\n\n");
+}
+function inviaWhatsApp(){
+  var t=componiTesto(true);
+  window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
+}
+function valOpzCompleto(id){
+  var s=gid(id);
+  return (s&&s.value)?s.options[s.selectedIndex].text:"________";
+}
+function componiCopione(){
+  var L=[];
+  L.push("PROMEMORIA PRESIDENTE — ADUNANZA PUBBLICA");
+  L.push("Congregazione di Cerano");
+  if(gid("selData").value)L.push("Data: "+gid("dataGiorno").textContent);
+  L.push("");
+  L.push("▸ Preghiera iniziale a cura del Presidente.");
+  L.push("");
+  L.push("Cari fratelli e amici, intervenuti a questa Adunanza Pubblica, sono lieto di darvi tutti un caloroso benvenuto. Diamo inizio in modo appropriato, alzandoci in piedi, per chi lo può, con un cantico e una preghiera.");
+  L.push("");
+  var cant=valOpzCompleto("selCantico");
+  var rif=gid("rifCantico").value.trim();
+  L.push("Il cantico è il "+cant+(rif?(" tratto da "+rif):"")+".");
+  L.push("");
+  L.push("» Ora verrà fatta una preghiera");
+  L.push("» Potete accomodarvi");
+  L.push("");
+  L.push("Tutti noi siamo stati invitati per ascoltare un interessante discorso biblico dal tema:");
+  L.push("");
+  L.push(valOpzCompleto("selSchema"));
+  var orId=gid("selOratore").value;
+  var nomeOrat="________",cong="________",soloNome="________";
+  if(orId){var o=trovaOratore(orId);if(o){nomeOrat=o.n+" "+o.c;cong=o.cg;soloNome=o.n;}}
+  L.push("A trattarlo per noi sarà il fratello "+nomeOrat+", della congregazione di "+cong+".");
+  L.push("");
+  L.push("» Auguro a tutti voi un buon ascolto");
+  L.push("");
+  L.push("Grazie fratello "+soloNome+", e grazie a tutti voi per l'attento ascolto. Abbiamo molto gradito le informazioni che ci sono state trasmesse attraverso questa trattazione: per questo siamo tutti grati a Geova e alla sua organizzazione per il ristoro e l'incoraggiamento che possiamo trarre da adunanze come queste.");
+  L.push("");
+  L.push("▸ Anche la prossima settimana, alla stessa ora, siamo tutti invitati per ascoltare un altro interessante soggetto biblico dal tema:");
+  L.push(valOpzCompleto("selProx"));
+  L.push("");
+  L.push("──────────");
+  L.push("");
+  L.push("Ora l'adunanza prosegue con la considerazione dello studio Torre di Guardia. A condurla per noi sarà il fratello "+valOpzCompleto("selConduttore")+" …prego.");
+  return L.join("\n");
+}
+function inviaGmail(){
+  var t=componiCopione();
+  var sub="Promemoria Presidente — Adunanza Pubblica";
+  if(gid("selData").value)sub+=" del "+gid("dataGiorno").textContent;
+  var url="https://mail.google.com/mail/?view=cm&fs=1&su="+encodeURIComponent(sub)+"&body="+encodeURIComponent(t);
+  window.open(url,"_blank");
 }
 
 function init(){
