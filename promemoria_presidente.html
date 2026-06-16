@@ -50,6 +50,8 @@ body{
 .btn-wa:hover{background:#1da851;}
 .btn-gmail{background:#ea4335;color:#fff;box-shadow:0 3px 10px rgba(234,67,53,.3);}
 .btn-gmail:hover{background:#c5392e;}
+.btn-pdf{background:var(--c-cant);color:#fff;box-shadow:0 3px 10px rgba(169,101,26,.3);}
+.btn-pdf:hover{background:#8c5315;}
 
 /* ───── Il foglio ───── */
 .foglio{
@@ -172,35 +174,23 @@ body{
 
 /* ───── STAMPA ───── */
 @media print{
+  /* forza la stampa degli sfondi colorati, come a schermo */
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
   @page{margin:14mm;}
   body{background:#fff;padding:0;}
+  /* nascondo solo gli elementi interattivi: non servono sul foglio */
   .topbar,.legenda{display:none !important;}
-  .foglio{box-shadow:none;border:none;border-radius:0;max-width:100%;}
-  .foglio-head{background:#fff !important;color:#000 !important;padding:0 0 10px;border-bottom:2px solid #000;}
-  .foglio-head::after{display:none;}
-  .foglio-head .kick{color:#000;opacity:1;}
-  .foglio-head h2{color:#000;}
-  .foglio-head .sub{color:#333;opacity:1;}
-  .data-box{margin-top:8px;}
-  .data-label{color:#000;opacity:1;}
-  .data-input{display:none !important;}
-  .data-giorno{color:#000 !important;background:transparent !important;border:1px solid #000;border-radius:6px;padding:2px 10px;font-size:12pt;}
-  .data-giorno.vuoto{display:none !important;}
-  .foglio-body{padding:18px 0 0;font-size:13pt;}
-  .regia{background:#f0f0f0;color:#000;border:1px solid #999;}
-  .auto{color:#000;}
-  .sel{
-    appearance:none;-webkit-appearance:none;background-image:none;
-    color:#000 !important;background:transparent !important;
-    border:none;border-bottom:1.2px solid #000;border-radius:0;
-    padding:0 2px 1px;font-weight:600;
-  }
-  .btn{display:none;}
-  .btn-jw{display:none !important;}
+  .btn,.btn-jw{display:none !important;}
   .ovl,.modale{display:none !important;}
-  .rif{color:#000 !important;background:transparent !important;border:none;border-bottom:1.2px solid #000;border-radius:0;padding:0 2px 1px;font-weight:600;max-width:none;width:auto;}
+  /* il foglio mantiene i colori dell'app: tolgo solo l'ombra */
+  .foglio{box-shadow:none;max-width:100%;}
+  .foglio-body{font-size:13pt;}
+  /* la data resta bianca nella testata blu; nascondo il selettore nativo */
+  .data-input{display:none !important;}
+  .data-giorno.vuoto{display:none !important;}
+  /* le tendine restano pill colorate: tolgo solo la freccina del menu */
+  .sel{background-image:none !important;padding-right:12px;}
   .rif::placeholder{color:transparent;}
-  .nota{color:#000 !important;}
 }
 </style>
 </head>
@@ -212,6 +202,7 @@ body{
   <button class="btn btn-pulisci" onclick="pulisci()">↺ Pulisci</button>
   <button class="btn btn-wa" onclick="inviaWhatsApp()">💬 WhatsApp</button>
   <button class="btn btn-gmail" onclick="inviaGmail()">✉️ Gmail</button>
+  <button class="btn btn-pdf" onclick="pdfPerEmail()">📎 PDF per email</button>
   <button class="btn btn-stampa" onclick="window.print()">🖨 Stampa</button>
 </div>
 
@@ -633,6 +624,43 @@ function inviaGmail(){
   if(gid("selData").value)sub+=" del "+gid("dataGiorno").textContent;
   var url="https://mail.google.com/mail/?view=cm&fs=1&su="+encodeURIComponent(sub)+"&body="+encodeURIComponent(t);
   window.open(url,"_blank");
+}
+function pdfPerEmail(){
+  var ok=confirm(
+    "Per inviare il promemoria CON la grafica serve allegarlo come PDF.\n\n"+
+    "Ecco cosa succede ora:\n"+
+    "1) si apre una scheda Gmail (vuota per un attimo)\n"+
+    "2) parte la finestra di stampa: scegli «Salva come PDF» e salva il file\n"+
+    "3) appena chiudi la stampa, quella scheda mostra Gmail gia pronto: ALLEGA il PDF e invia\n\n"+
+    "Vuoi procedere?"
+  );
+  if(!ok)return;
+  /* 1) Pre-apro la scheda Gmail subito (consentito perche siamo nel gesto del click) */
+  var gWin=window.open("about:blank","_blank");
+  if(gWin&&gWin.document){
+    gWin.document.write(
+      "<title>Gmail in arrivo...</title>"+
+      "<div style=\"font-family:sans-serif;padding:40px;color:#333;line-height:1.6;max-width:520px;margin:0 auto\">"+
+      "<h2 style=\"color:#1d4e89\">Un attimo...</h2>"+
+      "<p>Prima <b>salva il PDF</b> dalla finestra di stampa.</p>"+
+      "<p>Appena chiudi la stampa, qui si apre <b>Gmail</b> gia pronto: ti bastera <b>allegare il PDF</b> salvato e inviare.</p>"+
+      "</div>"
+    );
+  }
+  /* 2) Preparo l'URL di Gmail (oggetto + riga breve) */
+  var sub="Promemoria Presidente \u2014 Adunanza Pubblica";
+  if(gid("selData").value)sub+=" del "+gid("dataGiorno").textContent;
+  var body="In allegato il promemoria dell'Adunanza Pubblica in formato PDF.";
+  var gmailUrl="https://mail.google.com/mail/?view=cm&fs=1&su="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);
+  /* 3) Alla chiusura della stampa faccio navigare la scheda gia aperta su Gmail */
+  function dopoStampa(){
+    window.removeEventListener("afterprint",dopoStampa);
+    if(gWin&&!gWin.closed){gWin.location.href=gmailUrl;}
+    else{window.open(gmailUrl,"_blank");}
+  }
+  window.addEventListener("afterprint",dopoStampa);
+  /* 4) Avvio la stampa */
+  window.print();
 }
 
 function init(){
