@@ -688,6 +688,7 @@ window.onload=async()=>{
   try{
     await apriDB();
   precaricaStorico();
+    caricaSchemiUtente();
     await migraVecchiDB();
     await aggiornaLista('miei','l1','c1');
     await aggiornaLista('archivio','l2','c2');
@@ -1518,6 +1519,26 @@ function precaricaStorico(){
   PREP.forEach(function(n){localStorage.setItem('s99_'+n,'[{"data":"preparato","luogo":""}]');});
   FATTI.forEach(function(x){localStorage.setItem('s99_'+x.n,'[{"data":"'+x.d+'","luogo":""}]');});
   localStorage.setItem('s99_v5','1');
+}
+
+// ── Rende permanenti gli schemi aggiornati dall'utente col pulsante "Aggiorna Schema" ──
+function caricaSchemiUtente(){
+  try{
+    // Pulizia una-tantum: rimuove la vecchia versione personalizzata del 67,
+    // così prevale lo schema aggiornato già presente nel codice.
+    if(!localStorage.getItem('schema_fix_v1')){
+      localStorage.removeItem('user_schema_67');
+      localStorage.setItem('schema_fix_v1','1');
+    }
+    if(typeof DISC_SCHEMI==='undefined') return;
+    Object.keys(localStorage).forEach(function(k){
+      if(k.indexOf('user_schema_')===0){
+        var n=parseInt(k.substring(12));
+        var html=localStorage.getItem(k);
+        if(n>=1 && n<=194 && html && html.length>100){ DISC_SCHEMI[n]=html; }
+      }
+    });
+  }catch(e){}
 }
 
 function aggiornaInfoBox(nome) {
