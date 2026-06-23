@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0bc1e0">
+<title>Inviti Oratori — Cong. Cerano</title>
+<style>
+  :root{
+    --bg:#0bc1e0;--bg2:#0a8fd4;--card:#ffffff;--ink:#13354a;--ink-soft:#5b7889;
+    --accent:#0e87c9;--accent-dk:#0a6aa3;--accent-soft:#e2f4fb;--line:#d3e7f0;
+    --ok:#1f9d55;--danger:#c0392b;--shadow:0 8px 24px rgba(11,80,120,.18);--radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);min-height:100vh;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);-webkit-text-size-adjust:100%;}
+  .wrap{max-width:620px;margin:0 auto;padding:18px 14px 60px;}
+  header.app{text-align:center;color:#fff;padding:10px 6px 16px;}
+  header.app h1{margin:0;font-size:1.45rem;letter-spacing:.3px;font-weight:700;}
+  header.app p{margin:6px 0 0;font-size:.86rem;color:#e3f6fd;}
+
+  .tabs{display:flex;gap:6px;background:rgba(255,255,255,.08);padding:6px;border-radius:14px;margin-bottom:16px;}
+  .tab{flex:1;border:none;cursor:pointer;font-size:.9rem;font-weight:600;padding:11px 6px;border-radius:10px;
+    background:transparent;color:#cfe0f0;transition:.18s;touch-action:manipulation;}
+  .tab.active{background:#fff;color:var(--accent-dk);box-shadow:var(--shadow);}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 16px;margin-bottom:16px;}
+  .card h2{margin:0 0 14px;font-size:1.05rem;color:var(--accent-dk);display:flex;align-items:center;gap:8px;}
+  label{display:block;font-size:.8rem;font-weight:600;color:var(--ink-soft);margin:0 0 5px;text-transform:uppercase;letter-spacing:.4px;}
+  .field{margin-bottom:14px;}
+  input,select,textarea{width:100%;font-size:1rem;font-family:inherit;color:var(--ink);padding:12px 13px;
+    border:1.5px solid var(--line);border-radius:11px;background:#fbfdff;transition:.15s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft);}
+  textarea{resize:vertical;min-height:130px;line-height:1.5;}
+  .row{display:flex;gap:10px;}
+  .row .field{flex:1;}
+
+  .seg{display:flex;gap:8px;}
+  .seg button{flex:1;border:1.5px solid var(--line);background:#fbfdff;color:var(--ink-soft);padding:12px;
+    border-radius:11px;font-size:1rem;font-weight:600;cursor:pointer;transition:.15s;touch-action:manipulation;}
+  .seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(14,135,201,.35);}
+
+  .btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border:none;cursor:pointer;
+    font-size:1.02rem;font-weight:700;padding:14px;border-radius:13px;transition:.16s;touch-action:manipulation;margin-top:6px;}
+  .btn:active{transform:scale(.985);}
+  .btn-main{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(14,135,201,.4);}
+  .btn-wa{background:#25d366;color:#0a3d22;}
+  .btn-ghost{background:var(--accent-soft);color:var(--accent-dk);}
+  .btn-sm{padding:9px 12px;font-size:.86rem;border-radius:10px;width:auto;margin:0;}
+  .btn-grp{display:flex;gap:10px;margin-top:10px;}
+  .btn-grp .btn{margin-top:0;}
+
+  .preview{background:#f4f9fd;border:1.5px dashed var(--accent);border-radius:12px;padding:14px;
+    font-size:.98rem;line-height:1.55;white-space:pre-wrap;color:var(--ink);}
+  .hint{font-size:.8rem;color:var(--ink-soft);margin:8px 2px 0;line-height:1.45;}
+
+  /* CALENDARIO */
+  .cal-card{border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:11px;
+    background:#fbfdff;border-left:4px solid var(--accent);}
+  .cal-date{font-size:.95rem;font-weight:700;color:var(--accent-dk);text-transform:capitalize;}
+  .cal-or{font-size:1.1rem;font-weight:700;color:var(--ink);margin-top:3px;}
+  .cal-meta{font-size:.86rem;color:var(--ink-soft);margin-top:4px;line-height:1.55;}
+  .cal-meta b{color:var(--ink);}
+  .cal-acts{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
+  .cal-btn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:.83rem;
+    font-weight:700;cursor:pointer;color:var(--ink-soft);touch-action:manipulation;}
+  .cal-btn.wa{background:#25d366;color:#0a3d22;border-color:#25d366;}
+  .cal-btn.del{background:#fdecea;color:var(--danger);border-color:#f3c6c0;}
+  .cal-empty{text-align:center;color:var(--ink-soft);font-size:.9rem;padding:24px 6px;line-height:1.6;}
+  .stato-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+  .stato-btn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:.83rem;
+    font-weight:700;cursor:pointer;color:var(--ink-soft);touch-action:manipulation;}
+  .stato-btn.ok{background:#e6f7ee;border-color:#a8e0c2;color:#1f7a47;}
+  .stato-btn.todo{background:#fff6e0;border-color:#f0d79a;color:#9a6a12;}
+  .cal-card.completa{border-left-color:var(--ok);}
+  .cal-card.passata{opacity:.6;border-left-color:#c5d2db;}
+  .cal-card.prossima{border-left-width:5px;box-shadow:0 6px 18px rgba(14,135,201,.20);}
+  .cal-tag{display:inline-block;background:var(--accent);color:#fff;font-size:.68rem;font-weight:800;
+    text-transform:uppercase;letter-spacing:.6px;padding:3px 10px;border-radius:20px;margin-bottom:7px;}
+  .cal-sep{text-align:center;color:var(--ink-soft);font-size:.78rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.6px;margin:20px 0 12px;padding-top:14px;border-top:1.5px dashed var(--line);}
+
+  /* ORATORI */
+  .speaker{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--line);
+    border-radius:12px;margin-bottom:10px;background:#fbfdff;}
+  .speaker .info{flex:1;min-width:0;}
+  .speaker .nm{font-weight:700;font-size:1rem;color:var(--ink);}
+  .speaker .meta{font-size:.83rem;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .speaker .acts{display:flex;gap:6px;flex-shrink:0;}
+  .icbtn{border:none;background:var(--accent-soft);color:var(--accent-dk);padding:9px 13px;border-radius:10px;
+    font-size:.82rem;font-weight:700;cursor:pointer;touch-action:manipulation;white-space:nowrap;}
+  .icbtn.del{background:#fdecea;color:var(--danger);}
+  .or-count{font-size:.82rem;color:var(--ink-soft);margin:0 2px 12px;}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(80px);background:var(--ink);
+    color:#fff;padding:13px 20px;border-radius:30px;font-size:.92rem;font-weight:600;box-shadow:var(--shadow);
+    opacity:0;transition:.3s;z-index:99;pointer-events:none;}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+  .hide{display:none !important;}
+  footer{text-align:center;color:#e8f7fc;font-size:.74rem;margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <h1>Inviti Oratori</h1>
+    <p>Congregazione di Cerano</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-cal" onclick="mostra('cal')">Calendario</button>
+    <button class="tab" id="tab-rapido" onclick="mostra('rapido')">Invito rapido</button>
+    <button class="tab" id="tab-oratori" onclick="mostra('oratori')">Oratori</button>
+  </div>
+
+  <!-- ================= CALENDARIO ================= -->
+  <section id="sez-cal">
+    <div class="card">
+      <h2 id="cal-formTitolo">Programma oratore</h2>
+      <div class="row">
+        <div class="field"><label>Data</label><input type="date" id="cData"></div>
+        <div class="field"><label>Orario</label><input type="time" id="cOra" value="20:00"></div>
+      </div>
+      <div class="field">
+        <label>Oratore</label>
+        <select id="cOr" onchange="cOrSel()"></select>
+      </div>
+      <div class="row">
+        <div class="field"><label>Schema (dai suoi)</label><select id="cSch"></select></div>
+        <div class="field"><label>…o scrivilo</label><input type="text" id="cSchMan" placeholder="Es. 001" inputmode="numeric"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Cantico</label><input type="text" id="cCant" placeholder="Es. 2" inputmode="numeric"></div>
+        <div class="field"><label>Si ferma?</label>
+          <select id="cFerma"><option value="">—</option><option value="si">Sì</option><option value="no">No</option></select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Note</label><input type="text" id="cNote"></div>
+      <button class="btn btn-main" id="cBtnSalva" onclick="salvaCal()">Salva nel calendario</button>
+      <button class="btn btn-ghost hide" id="cBtnAnnulla" onclick="annullaCal()">Annulla modifica</button>
+    </div>
+
+    <div class="card">
+      <h2>Oratori in arrivo a Cerano</h2>
+      <div id="calList"></div>
+    </div>
+  </section>
+
+  <!-- ================= INVITO RAPIDO ================= -->
+  <section id="sez-rapido" class="hide">
+    <div class="card">
+      <h2>Oratore</h2>
+      <div class="field">
+        <label>Scegli dall'elenco</label>
+        <select id="rOr" onchange="rOrSel()"></select>
+      </div>
+      <div class="row">
+        <div class="field"><label>Nome (saluto)</label><input type="text" id="rNome" placeholder="Es. Marco" oninput="rAgg()"></div>
+        <div class="field"><label>Congregazione</label><input type="text" id="rCong" placeholder="Es. Trecate" oninput="rAgg()"></div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Telefono (per WhatsApp)</label><input type="tel" id="rTel" inputmode="tel" oninput="rAgg()">
+      </div>
+    </div>
+    <div class="card">
+      <h2>Quando</h2>
+      <div class="field"><label>Giorno</label>
+        <div class="seg">
+          <button type="button" id="rgSab" class="on" onclick="rSetGiorno('Sabato')">Sabato</button>
+          <button type="button" id="rgDom" onclick="rSetGiorno('Domenica')">Domenica</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Orario</label><input type="time" id="rOra" value="20:00" onchange="rAgg()"></div>
+        <div class="field"><label>Cantico (facolt.)</label><input type="text" id="rCant" placeholder="Es. 2" inputmode="numeric" oninput="rAgg()"></div>
+      </div>
+      <div class="row">
+        <div class="field" style="margin-bottom:0"><label>Schema (dai suoi)</label><select id="rSchSel" onchange="rSchPick()"></select></div>
+        <div class="field" style="margin-bottom:0"><label>…o scrivilo</label><input type="text" id="rSchema" placeholder="Es. 001" inputmode="numeric" oninput="rAgg()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Messaggio</h2>
+      <textarea id="rTxt" oninput="rMsgMod=true"></textarea>
+      <div class="btn-grp"><button class="btn btn-ghost btn-sm" onclick="rRigenera()">Rigenera</button></div>
+      <button class="btn btn-main" onclick="rCopia()">Copia messaggio</button>
+      <button class="btn btn-wa" onclick="rWhatsApp()">Apri in WhatsApp</button>
+      <button class="btn btn-ghost" onclick="notaRapido()">Nota a me su WhatsApp</button>
+    </div>
+  </section>
+
+  <!-- ================= ORATORI ================= -->
+  <section id="sez-oratori" class="hide">
+    <div class="card">
+      <h2 id="oFormTitolo">Aggiungi oratore</h2>
+      <div class="row">
+        <div class="field"><label>Cognome</label><input type="text" id="oC"></div>
+        <div class="field"><label>Nome</label><input type="text" id="oN"></div>
+      </div>
+      <div class="field"><label>Congregazione</label><input type="text" id="oCg" placeholder="Es. Trecate"></div>
+      <div class="field"><label>Telefono</label><input type="tel" id="oT" inputmode="tel"></div>
+      <div class="field" style="margin-bottom:0"><label>Schemi che tiene (numeri separati da spazio)</label>
+        <input type="text" id="oD" placeholder="Es. 1 5 12 34"></div>
+      <button class="btn btn-main" id="oBtnSalva" onclick="salvaOr()">Salva oratore</button>
+      <button class="btn btn-ghost hide" id="oBtnAnnulla" onclick="annullaOr()">Annulla modifica</button>
+    </div>
+    <div class="card">
+      <h2>Elenco oratori</h2>
+      <div class="field" style="margin-bottom:12px">
+        <input type="text" id="oCerca" placeholder="Cerca nome o congregazione…" oninput="renderOr()">
+      </div>
+      <div class="or-count" id="oCount"></div>
+      <div id="orList"></div>
+    </div>
+    <div class="card">
+      <h2>Il mio numero WhatsApp</h2>
+      <p class="hint" style="margin-top:0;margin-bottom:12px">Serve per il pulsante «Nota a me»: ti invii su WhatsApp un promemoria di cosa hai mandato e a chi. Va inserito una volta sola.</p>
+      <div class="field" style="margin-bottom:0"><input type="tel" id="mioNumInput" inputmode="tel" placeholder="Es. 333 1234567"></div>
+      <button class="btn btn-main" onclick="salvaMioNum()">Salva il mio numero</button>
+    </div>
+    <div class="card">
+      <h2>Backup dei dati</h2>
+      <p class="hint" style="margin-top:0;margin-bottom:12px">Salva una copia di tutti i dati (oratori e calendario) in un file, da tenere al sicuro o spostare su un altro dispositivo. Se serve, lo ricarichi da qui.</p>
+      <button class="btn btn-main" onclick="esportaBackup()">Salva backup su file</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('fileBackup').click()">Ripristina da file</button>
+      <input type="file" id="fileBackup" accept=".json,application/json" style="display:none" onchange="importaBackup(this)">
+    </div>
+  </section>
+
+  <footer>App congregazione di Cerano · dati salvati su questo dispositivo</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======= DATI REALI (estratti dall'Elenco Oratori Lombardia 4) ======= */
+var ORATORI_DEFAULT = [
+  {id:'a1',c:'Conti',n:'Giacomo',r:'Anziano',cg:'Arconate',t:'3356814563',e:'giacomoc@jwpub.org',d:[44,45,121,175,181,183,187,188,192,194]},
+  {id:'a2',c:'Deponti',n:'Angelo',r:'Anziano',cg:'Arconate',t:'3498901603',e:'depontiag@jwpub.org',d:[14,33,104,105,107,128]},
+  {id:'a3',c:'Muscia',n:'Dario',r:'Anziano',cg:'Arconate',t:'3493514562',e:'MDario@jwpub.org',d:[9,63,67,79,108,147,169,184,191]},
+  {id:'a4',c:'Paganini',n:'Michele',r:'Anziano',cg:'Arconate',t:'3516782266',e:'MPaganini@jwpub.org',d:[4,24,96]},
+  {id:'a5',c:'Pusceddu',n:'Christian',r:'Anziano',cg:'Arconate',t:'3486606273',e:'18cpusceddu@jwpub.org',d:[8,18,64,68,71,158,165,176]},
+  {id:'a6',c:'Savazzi',n:'Ruben',r:'Anziano',cg:'Arconate',t:'3348880978',e:'rsavazzi@jwpub.org',d:[57,110,172,179]},
+  {id:'a7',c:'Scimeca',n:'Samuele',r:'Anziano',cg:'Arconate',t:'3382053547',e:'sscimeca16@jwpub.org',d:[4,24,25,108,145,187]},
+  {id:'b1',c:'Costato',n:'Stefano',r:'Anziano',cg:'Bareggio',t:'3345755223',e:'11stefanoc@jwpub.org',d:[50,62,71,77,184,187]},
+  {id:'b2',c:'D\'Elia',n:'Vito',r:'Anziano',cg:'Bareggio',t:'3393353178',e:'deliavito@jwpub.org',d:[1,4,12,23,85,90,166]},
+  {id:'b3',c:'Di Mauro',n:'Mario',r:'Anziano',cg:'Bareggio',t:'3334273726',e:'dmario39@jwpub.org',d:[15,20,23,37,38,56,65,118,140,162]},
+  {id:'b4',c:'Murante',n:'Aldo',r:'Anziano',cg:'Bareggio',t:'3474149076',e:'pmurante@jwpub.org',d:[1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152]},
+  {id:'b5',c:'Pedone',n:'Aurelien',r:'Anziano',cg:'Bareggio',t:'3497179968',e:'aurelienpedone1@jwpub.org',d:[5,18,19,52,72,121,143,181,184]},
+  {id:'c1',c:'Ammendola',n:'Pietro',r:'Anziano',cg:'Castano Primo Stazione',t:'3498942153',e:'PAmmendola@jwpub.org',d:[30,76,138]},
+  {id:'c2',c:'Cozzi',n:'Mario',r:'Anziano',cg:'Castano Primo Stazione',t:'3392904024',e:'mcozzi@jwpub.org',d:[6,93,115,140,141,169,184]},
+  {id:'c3',c:'Di Bella',n:'Gabriele',r:'Anziano',cg:'Castano Primo Stazione',t:'3459744436',e:'DiBellaG1@jwpub.org',d:[26,100]},
+  {id:'c4',c:'Dolce',n:'Michele',r:'Anziano',cg:'Castano Primo Stazione',t:'3351424844',e:'DolceM4@jwpub.org',d:[15,24,28,51,67,111,132,183]},
+  {id:'c5',c:'Ferrara',n:'Marco',r:'Anziano',cg:'Castano Primo Stazione',t:'3934366766',e:'3FerraraMarco@jwpub.org',d:[15,18,70,123]},
+  {id:'c6',c:'Silvestri',n:'Samuele',r:'Anziano',cg:'Castano Primo Stazione',t:'3477728202',e:'SilvestriS@jwpub.org',d:[11,18,36,183,189]},
+  {id:'c7',c:'Zangirolami',n:'Alessandro',r:'Anziano',cg:'Castano Primo Stazione',t:'3403235663',e:'Zangirolamia@jwpub.org',d:[3,16,68,137,179,180]},
+  {id:'ce2',c:'Bellan',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3478169498',e:'belland3@jwpub.org',d:[3,7,8,15,59,70,73,74,105,115,117,165,167,171,176,177,178,179,183,188,189]},
+  {id:'ce3',c:'Cazzolla',n:'Pablo',r:'Anziano',cg:'Cerano',t:'3469790015',e:'1cazzollapablo@jwpub.org',d:[2,33,56,153,164]},
+  {id:'ce6',c:'Orrico',n:'Giuseppe',r:'Anziano',cg:'Cerano',t:'3391099256',e:'gorrico@jwpub.org',d:[16,53,180]},
+  {id:'ce4',c:'Innocenti',n:'Mario',r:'Anziano',cg:'Cerano',t:'3389011086',e:'innocentim5@jwpub.org',d:[1,16,72,145,192]},
+  {id:'ce5',c:'Marinoni',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3381999668',e:'mdaniele@jwpub.org',d:[54,65,69,84,171,174,179]},
+  {id:'cs1',c:'Barbuto',n:'Alessio',r:'Anziano',cg:'Corbetta Stadio',t:'3495403040',e:'BarbutoAlessio@jwpub.org',d:[26,54,73]},
+  {id:'cs2',c:'Busacca',n:'Giuseppe',r:'Anziano',cg:'Corbetta Stadio',t:'3284280083',e:'busacca80@jwpub.org',d:[76,138,143,172]},
+  {id:'cs3',c:'Giunta',n:'Aurelio',r:'Anziano',cg:'Corbetta Stadio',t:'3403658803',e:'GAurelio5@jwpub.org',d:[62,68,157]},
+  {id:'cs4',c:'Napoli',n:'Riccardo',r:'Anziano',cg:'Corbetta Stadio',t:'3494235562',e:'RiccardoN@jwpub.org',d:[8,15,18,35,38,49,75,77,88,96,97,99,138,144,149,160,164,181]},
+  {id:'cs5',c:'Pagnozzi',n:'Gerardo',r:'Anziano',cg:'Corbetta Stadio',t:'3497387277',e:'PagnozziGerardo27@jwpub.org',d:[55,59,67,93,114,121,143,177,187,188,189]},
+  {id:'cs6',c:'Santoro',n:'Raffaele',r:'Anziano',cg:'Corbetta Stadio',t:'3319082157',e:'RaffaeleSantoro5@jwpub.org',d:[108]},
+  {id:'cs7',c:'Vatalaro',n:'Emanuele',r:'Anziano',cg:'Corbetta Stadio',t:'3386221851',e:'EmanueleV@jwpub.org',d:[77,100,113,175,180,187]},
+  {id:'cr1',c:'Ciminelli',n:'Umberto',r:'Anziano',cg:'Cornaredo',t:'3477658244',e:'UmbertoCiminelli27@jwpub.org',d:[52,54,55,76,187]},
+  {id:'cr2',c:'De Alteriis',n:'Tommaso',r:'Anziano',cg:'Cornaredo',t:'3926035880',e:'30DeAlteriisTommaso@jwpub.org',d:[68,86,105,129,165,175,180,181]},
+  {id:'cr3',c:'Diluzio',n:'Simone',r:'Anziano',cg:'Cornaredo',t:'3493166107',e:'DiLuzio@jwpub.org',d:[24,52,86,117,138,163,181,190]},
+  {id:'cr4',c:'Farinelli',n:'Marco',r:'Anziano',cg:'Cornaredo',t:'3938696985',e:'FarinelliMarco1@jwpub.org',d:[17,20,67,76,123,142,149,160,165,171,179,184,187,192]},
+  {id:'cr5',c:'Murante',n:'Lorenzo',r:'Servitore',cg:'Cornaredo',t:'3406207817',e:'MuranteL@jwpub.org',d:[67,76]},
+  {id:'cr7',c:'Trovato',n:'Antonio',r:'Anziano',cg:'Cornaredo',t:'3294205835',e:'ATrovato2@jwpub.org',d:[12,46]},
+  {id:'cr8',c:'Trovato',n:'Mario',r:'Anziano',cg:'Cornaredo',t:'3356417114',e:'9MarioTrovato@jwpub.org',d:[2,32,55,86,98,136,154,159,192]},
+  {id:'cr9',c:'Vatalaro',n:'Domenico',r:'Anziano',cg:'Cornaredo',t:'3405317702',e:'DomenicoVatalaro24@jwpub.org',d:[4,7,18,36]},
+  {id:'cu2',c:'Girardi',n:'Michele',r:'Anziano',cg:'Cuggiono',t:'3407007216',e:'MicheleGirardi1@jwpub.org',d:[3,9,15]},
+  {id:'cu3',c:'Iambrovich',n:'Federico',r:'Anziano',cg:'Cuggiono',t:'3451710445',e:'IambrovichFederico@jwpub.org',d:[15,77,177]},
+  {id:'cu4',c:'Piacenti',n:'Yuri',r:'Anziano',cg:'Cuggiono',t:'3772306378',e:'10YuriPiacenti@jwpub.org',d:[12,72,98,174]},
+  {id:'cu5',c:'Scremin',n:'Alex',r:'Anziano',cg:'Cuggiono',t:'3479190151',e:'AScremin@jwpub.org',d:[43,65,171,178,188]},
+  {id:'cu6',c:'Vezzoli',n:'Sergio',r:'Anziano',cg:'Cuggiono',t:'3406001763',e:'37VezzoliS@jwpub.org',d:[60,99,116,123,173,193]},
+  {id:'g1',c:'Cocciolo',n:'Claudio',r:'Anziano',cg:'Galliate',t:'3403606204',e:'ccocciolo22@jwpub.org',d:[1,2,3,8,9,13,18,28,29,33,63,68,73,76,79,87,98,100,115,117,119,138,143,149,157,159,164,165,171,177]},
+  {id:'g2',c:'Menegazzo',n:'Stefano',r:'Anziano',cg:'Galliate',t:'3386999176',e:'8StefanoM@jwpub.org',d:[24,132,160,162,165,171,187,188]},
+  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Galliate',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
+  {id:'g5',c:'Strafezza',n:'Antonio',r:'Anziano',cg:'Galliate',t:'3296944627',e:'StrafezzaAntonio1@jwpub.org',d:[6,49,114]},
+  {id:'mn2',c:'Giannino',n:'Gioele',r:'Anziano',cg:'Magenta Naviglio',t:'3665218208',e:'GianninoGioele@jwpub.org',d:[108,147]},
+  {id:'mn3',c:'Neri',n:'Andrea',r:'Anziano',cg:'Magenta Naviglio',t:'389536208',e:'NeriA@jwpub.org',d:[15,90]},
+  {id:'mn4',c:'Nocito',n:'Valter',r:'Anziano',cg:'Magenta Naviglio',t:'3403758126',e:'ValterNocito@jwpub.org',d:[16,62,63,90,110,169]},
+  {id:'mn5',c:'Pinna',n:'Giuseppe',r:'Anziano',cg:'Magenta Naviglio',t:'3334463176',e:'7PinnaG@jwpub.org',d:[26,158,164]},
+  {id:'mn6',c:'Semeraro',n:'Giovanni',r:'Anziano',cg:'Magenta Naviglio',t:'3386192934',e:'11GiovanniSemeraro@jwpub.org',d:[61,101,108,118,145]},
+  {id:'mn7',c:'Sinatra',n:'Matteo',r:'Anziano',cg:'Magenta Naviglio',t:'3338896106',e:'matteo83@jwpub.org',d:[24,81,87,108,138,149,165,177,183,187,192]},
+  {id:'mn8',c:'Zangirolami',n:'Paolo',r:'Anziano',cg:'Magenta Naviglio',t:'3407156290',e:'PaoloZ22@jwpub.org',d:[9,24,72,73,107]},
+  {id:'mb1',c:'Campisi',n:'Giorgio',r:'Anziano',cg:'Mortara Belvedere',t:'3922426420',e:'cgiorgio8@jwpub.org',d:[24,48,104,117,158]},
+  {id:'mb2',c:'Delrossi',n:'Luigi',r:'Anziano',cg:'Mortara Belvedere',t:'3486038435',e:'vecio51@jwpub.org',d:[16,38,125,130,142,170,183,188]},
+  {id:'mb3',c:'Guidace',n:'Marco',r:'Anziano',cg:'Mortara Belvedere',t:'3282875985',e:'marcog14@jwpub.org',d:[24,123,172,178,179,188,192]},
+  {id:'mb4',c:'Sarnacchiaro',n:'Michele',r:'Anziano',cg:'Mortara Belvedere',t:'3921499446',e:'mick3drshj@jwpub.org',d:[19,23,24,28,68,100,106,113,115,131,133,135,161,175]},
+  {id:'mb5',c:'Scelzi',n:'Stefano',r:'Anziano',cg:'Mortara Belvedere',t:'3392035270',e:'33scelzistefano@jwpub.org',d:[44,180]},
+  {id:'mb6',c:'Zaretti',n:'Roberto',r:'Anziano',cg:'Mortara Belvedere',t:'3333031944',e:'robertoz17@jwpub.org',d:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,53,54,60,68,69,72,75,76,80,81,90,95,100,109,113,123]},
+  {id:'ms1',c:'Coldesina',n:'Carlo',r:'Anziano',cg:'Mortara Stadio',t:'3383212355',e:'CarloColdesina61@jwpub.org',d:[11,35,43,45,48,73,78,79,81,118,123]},
+  {id:'ms2',c:'Colli',n:'Leonardo',r:'Anziano',cg:'Mortara Stadio',t:'3394391851',e:'ColliLeonardo1@jwpub.org',d:[1,36,50,87,138,170,171,178]},
+  {id:'ms3',c:'Dimasi',n:'Pasquale',r:'Anziano',cg:'Mortara Stadio',t:'3313261246',e:'pasqualedimasi@jwpub.org',d:[16,86,95,123,163,183]},
+  {id:'ms4',c:'Innocenzi',n:'Fabrizio',r:'Anziano',cg:'Mortara Stadio',t:'3490836901',e:'fabrizioinnocenzi@jwpub.org',d:[115,151,168]},
+  {id:'ms5',c:'Lapenna',n:'Davide',r:'Anziano',cg:'Mortara Stadio',t:'3476855042',e:'davidelapenna@jwpub.org',d:[32,78]},
+  {id:'ms6',c:'Montagna',n:'Augusto',r:'Anziano',cg:'Mortara Stadio',t:'3336972214',e:'MontagnaAugusto@jwpub.org',d:[32,71,123,149,177,193]},
+  {id:'ms7',c:'Rasera',n:'Claudio',r:'Anziano',cg:'Mortara Stadio',t:'3280029699',e:'claudio301056@jwpub.org',d:[18,51,65]},
+  {id:'mst1',c:'Bovolenta',n:'Gianluca',r:'Anziano',cg:'Mortara Stazione',t:'3280727820',e:'2bgianluca@jwpub.org',d:[3,57,67,103,165,178,183,192]},
+  {id:'mst5',c:'Fargione',n:'Luca',r:'Anziano',cg:'Mortara Stazione',t:'3398262703',e:'fargioneluca31@jwpub.org',d:[7,18,55,57,72,76,95,124,177]},
+  {id:'mst2',c:'Fattori Zini',n:'Alessandro',r:'Anziano',cg:'Mortara Stazione',t:'3488992682',e:'alessandrof19@jwpub.org',d:[23,31,54,68]},
+  {id:'mst4',c:'Guidace',n:'Mattia',r:'Anziano',cg:'Mortara Stazione',t:'3270717253',e:'mguidace@jwpub.org',d:[17,175,177]},
+  {id:'mst6',c:'Negrini',n:'Andrea',r:'Anziano',cg:'Mortara Stazione',t:'3332101383',e:'negrinilandrea@jwpub.org',d:[4,22,23,30,43,49,67,80,114,119,132,160]},
+  {id:'tr1',c:'Brunetti',n:'Angelo',r:'Anziano',cg:'Trecate',t:'3477849397',e:'BAngelo@jwpub.org',d:[70,78,138,154,158,170]},
+  {id:'tr2',c:'Correale',n:'Davide',r:'Anziano',cg:'Trecate',t:'3206471437',e:'12Correaledavide@jwpub.org',d:[62,144,165]},
+  {id:'tr3',c:'Gozzi',n:'Daniele',r:'Anziano',cg:'Trecate',t:'3486298323',e:'GozziD1@jwpub.org',d:[22,32,117,153,171,176,192,193]},
+  {id:'tr4',c:'Mutta',n:'Davide',r:'Anziano',cg:'Trecate',t:'3496646751',e:'MuttaDavide@jwpub.org',d:[68,70,149,160,179,187]},
+  {id:'tr5',c:'Laomedonte',n:'Roberto',r:'Anziano',cg:'Trecate',t:'3393999885',e:'LRoberto1@jwpub.org',d:[4,7,8,11,15,16,21,22,31,37,38,53,60,71,72,74,81,83,88,97,99,106,113,118,121,122,123,166]},
+  {id:'tr6',c:'Palego',n:'Stefano',r:'Anziano',cg:'Trecate',t:'3394292974',e:'1PalegoStefano@jwpub.org',d:[65,131]},
+  {id:'vz1',c:'Berlanda',n:'Massimiliano',r:'Anziano',cg:'Vanzaghello Ticino',t:'3497363759',e:'berlandam4@jwpub.org',d:[80,116,152,179,187]},
+  {id:'vz2',c:'Caiazza',n:'Armando',r:'Anziano',cg:'Vanzaghello Ticino',t:'3398811180',e:'Carmando40@jwpub.org',d:[29,30,65,68]},
+  {id:'vz3',c:'Daddato',n:'Samuel',r:'Anziano',cg:'Vanzaghello Ticino',t:'3464993783',e:'1DaddatoS@jwpub.org',d:[32,56,153]},
+  {id:'vz4',c:'Masucci',n:'Luca',r:'Anziano',cg:'Vanzaghello Ticino',t:'3388668579',e:'MasucciL9@jwpub.org',d:[50,71,108,151,181,188,192]},
+  {id:'vz5',c:'Scimeca',n:'Salvatore',r:'Anziano',cg:'Vanzaghello Ticino',t:'3490828367',e:'10SalvatoreScimeca@jwpub.org',d:[28,68,70,71,75,83,102,124,144,159,160,169,189]},
+  {id:'mn0',c:'Bellavista',n:'Gionatan',r:'Anziano',cg:'Magenta Naviglio',t:'3421698331',e:'BellavistaG9@jwpub.org',d:[103,113]},
+  {id:'vc1',c:'Benetti',n:'Daniele',r:'Anziano',cg:'Vigevano Castello',t:'3280576802',e:'DanBene@jwpub.org',d:[77,90,115,130,176,185]},
+  {id:'vc2',c:'Berta',n:'Massimiliano',r:'Anziano',cg:'Vigevano Castello',t:'3472215380',e:'massimoberta@jwpub.org',d:[1,24,40,53,118,145,153,158,161,164,173,190]},
+  {id:'vc3',c:'Bianchi',n:'Ciro',r:'Anziano',cg:'Vigevano Castello',t:'3392998600',e:'1cirob@jwpub.org',d:[1,9,30,67,99,116,136,142,174,178,187]},
+  {id:'vc4',c:'Cancelli',n:'Giorgio',r:'Anziano',cg:'Vigevano Castello',t:'3338820824',e:'1giorgioc@jwpub.org',d:[3,5,6,57,78,101,104,113,121,176,179,181,182,183,193]},
+  {id:'vc5',c:'Ferrati',n:'Giorgio',r:'Servitore',cg:'Vigevano Castello',t:'3293222672',e:'giorgioferrati19@jwpub.org',d:[3,4,7,9,15,32,46,80,167]},
+  {id:'vc6',c:'Girardi',n:'Giancarlo',r:'Anziano',cg:'Vigevano Castello',t:'3490614705',e:'girardigiancarlo9@jwpub.org',d:[8,59,77,97,123,132,160,161,170,172,174,190,192]},
+  {id:'vc7',c:'Lusuardi',n:'Gianni',r:'Anziano',cg:'Vigevano Castello',t:'3470816623',e:'lusuardi46@jwpub.org',d:[5,50,51,76,80,98,99,104,160,173]},
+  {id:'vc8',c:'Spano',n:'Rocco',r:'Anziano',cg:'Vigevano Castello',t:'3389750362',e:'roccospano5@jwpub.org',d:[25,66,70]},
+  {id:'vp1',c:'Baldassarre',n:'Armata',r:'Anziano',cg:'Vigevano Parco',t:'3313483437',e:'ArmataB1@jwpub.org',d:[5,7,26,51,67,74,77,105,114,178]},
+  {id:'vp2',c:'Correale',n:'Giovanni',r:'Anziano',cg:'Vigevano Parco',t:'3920863950',e:'CorrealeG23@jwpub.org',d:[1,132,149]},
+  {id:'vp3',c:'Ferrari',n:'Emanuele',r:'Anziano',cg:'Vigevano Parco',t:'3331378703',e:'FEmanuele13@jwpub.org',d:[53,169]},
+  {id:'vp4',c:'Ferrari',n:'Riccardo',r:'Anziano',cg:'Vigevano Parco',t:'3478053573',e:'RiccardoFerrari@jwpub.org',d:[101,186,188]},
+  {id:'vp5',c:'Giorgianni',n:'Mario',r:'Anziano',cg:'Vigevano Parco',t:'3481312271',e:'Mario64A@jwpub.org',d:[93,165,166,176]},
+  {id:'vp6',c:'Pantaleo',n:'Gianni',r:'Anziano',cg:'Vigevano Parco',t:'3294921618',e:'PGianni@jwpub.org',d:[16,24,43,72,117,118,170,189]},
+  {id:'vp7',c:'Rivarollo',n:'Massimo',r:'Anziano',cg:'Vigevano Ticino',t:'3200813693',e:'RMassimo@jwpub.org',d:[65,69,76,86,88,93,105,108,158,167,169,181]},
+  {id:'vp8',c:'Tiziano',n:'Ivan',r:'Anziano',cg:'Vigevano Parco',t:'3462177009',e:'TizianoIvan@jwpub.org',d:[9,32,44,115,145]},
+  {id:'vp9',c:'Toma',n:'Emanuel',r:'Anziano',cg:'Vigevano Parco',t:'3494978083',e:'TomaEmamuel@jwpub.org',d:[48,54,55,113,134]},
+  {id:'vt1',c:'Allevi',n:'Fabio',r:'Anziano',cg:'Vigevano Ticino',t:'3392094790',e:'AlleviF@jwpub.org',d:[15,24,38,77,90,139,146,154,166,177,187,190]},
+  {id:'vt2',c:'Barranco',n:'Antonello',r:'Anziano',cg:'Vigevano Ticino',t:'3482928750',e:'AntoninoBarranco@jwpub.org',d:[29,68,173,180]},
+  {id:'vt3',c:'Bascietto',n:'Stefano',r:'Anziano',cg:'Vigevano Ticino',t:'3276197260',e:'basciettostefano20@jwpub.org',d:[78]},
+  {id:'vt4',c:'Cuomo',n:'Salvatore',r:'Anziano',cg:'Vigevano Ticino',t:'3489007828',e:'scuomo3@jwpub.org',d:[14,142,149,170]},
+  {id:'vt5',c:'Franceschetti',n:'Umberto',r:'Anziano',cg:'Vigevano Ticino',t:'3202788289',e:'14umbertof@jwpub.org',d:[26,93,108]},
+  {id:'vt6',c:'Iozzi',n:'Valentino',r:'Anziano',cg:'Vigevano Ticino',t:'3382342557',e:'10IozziValentino@jwpub.org',d:[65,69,100,105,123,149,160,165,187,192]},
+  {id:'vt7',c:'Lapenna',n:'Antonio',r:'Anziano',cg:'Vigevano Ticino',t:'3880555481',e:'antoniolapenna@jwpub.org',d:[26,54]},
+  {id:'vt8',c:'Manetto',n:'Francesco',r:'Anziano',cg:'Vigevano Ticino',t:'3923539690',e:'manettof@jwpub.org',d:[15,65,76,108]},
+  {id:'vt9',c:'Mondello',n:'Marco',r:'Anziano',cg:'Vigevano Ticino',t:'3357205443',e:'mondellom@jwpub.org',d:[65,73,192]},
+  {id:'vi1',c:'Buzzoni',n:'Marco',r:'Anziano',cg:'Vittuone',t:'3498148480',e:'9BMarco@jwpub.org',d:[10,11,14,16,65,71,78,104,118,138,143,144,158,178]},
+  {id:'vi2',c:'Cocciolo',n:'Eric',r:'Anziano',cg:'Vittuone',t:'3201490783',e:'EricCocciolo26@jwpub.org',d:[16,31,46,72,172]},
+  {id:'vi3',c:'Corradin',n:'Ruben',r:'Anziano',cg:'Vittuone',t:'3464133745',e:'RubenC1@jwpub.org',d:[24,32,55,68,116,145,170]},
+  {id:'vi4',c:'Fagnani',n:'Pietro',r:'Anziano',cg:'Vittuone',t:'3287570874',e:'fagnanipietro@jwpub.org',d:[12,76,139,163,171,194]},
+  {id:'vi5',c:'Gallo',n:'Alfredo',r:'Anziano',cg:'Vittuone',t:'3382490543',e:'AlfredoG@jwpub.org',d:[10,13,25,39,40,43,48,77,79,99,110,115,117,118,119,120,121,122,123,124,142,150,158,162,168,174,179,190]},
+  {id:'vi6',c:'Lorenzini',n:'Pedro',r:'Anziano',cg:'Vittuone',t:'3483458340',e:'PedroL4@jwpub.org',d:[100]},
+  {id:'vi7',c:'Ruffa',n:'Domenico',r:'Anziano',cg:'Vittuone',t:'3384226857',e:'10ruffad@jwpub.org',d:[31,71,95]},
+  {id:'vi8',c:'Taverna',n:'Romel',r:'Anziano',cg:'Vittuone',t:'3397714938',e:'RomelT@jwpub.org',d:[1,12,13,16,17,22,27,29,33,35,36,53,54,56,66,86,89,94,97,98,100,113,114,117,123,126,135,142,155,159]}
+];
+
+var CHIAVE = "inviti_oratori_v2";
+var GIORNI=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+var MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+
+var oratori = [];
+var cal = [];
+var mioNum = '';
+var oEditId=null, calEditId=null;
+var rGiorno="Sabato", rMsgMod=false;
+
+/* ======= PERSISTENZA ======= */
+function carica(){
+  try{
+    var raw=localStorage.getItem(CHIAVE);
+    if(raw){
+      var d=JSON.parse(raw);
+      oratori=Array.isArray(d.oratori)?d.oratori:[];
+      cal=Array.isArray(d.cal)?d.cal:[];
+      mioNum=d.mioNum||'';
+    }else{
+      oratori=ORATORI_DEFAULT.map(function(o){return Object.assign({},o);});
+      cal=[];
+      salva();
+    }
+  }catch(e){ oratori=ORATORI_DEFAULT.slice(); cal=[]; }
+}
+function salva(){ try{ localStorage.setItem(CHIAVE, JSON.stringify({oratori:oratori,cal:cal,mioNum:mioNum})); }catch(e){} }
+
+/* ======= UTIL ======= */
+function eh(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function nomeIntero(o){return ((o.c||'')+' '+(o.n||'')).trim();}
+function dObj(iso){ if(!iso) return null; var p=String(iso).split('-'); return new Date(+p[0],(+p[1])-1,+p[2]); }
+function fmtData(iso){ var d=dObj(iso); if(!d||isNaN(d)) return iso||''; return GIORNI[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()]+' '+d.getFullYear(); }
+function normTel(raw){
+  var n=String(raw||'').replace(/[^\d+]/g,'');
+  if(n.charAt(0)==='+') n=n.slice(1);
+  else if(n.indexOf('00')===0) n=n.slice(2);
+  else if(n.charAt(0)==='3') n='39'+n;
+  return n;
+}
+function optgroupOratori(selId, val){
+  var byCg={};
+  oratori.forEach(function(o){ var k=o.cg||'(senza congregazione)'; if(!byCg[k])byCg[k]=[]; byCg[k].push(o); });
+  var cgs=Object.keys(byCg).sort(function(a,b){return a.localeCompare(b);});
+  var h='<option value="">— scegli —</option>';
+  cgs.forEach(function(cg){
+    h+='<optgroup label="'+eh(cg)+'">';
+    byCg[cg].sort(function(a,b){return nomeIntero(a).localeCompare(nomeIntero(b));}).forEach(function(o){
+      h+='<option value="'+eh(o.id)+'"'+(o.id===val?' selected':'')+'>'+eh(nomeIntero(o))+'</option>';
+    });
+    h+='</optgroup>';
+  });
+  document.getElementById(selId).innerHTML=h;
+}
+
+/* ======= NAVIGAZIONE ======= */
+function mostra(q){
+  document.getElementById('sez-cal').classList.toggle('hide', q!=='cal');
+  document.getElementById('sez-rapido').classList.toggle('hide', q!=='rapido');
+  document.getElementById('sez-oratori').classList.toggle('hide', q!=='oratori');
+  document.getElementById('tab-cal').classList.toggle('active', q==='cal');
+  document.getElementById('tab-rapido').classList.toggle('active', q==='rapido');
+  document.getElementById('tab-oratori').classList.toggle('active', q==='oratori');
+  if(q==='cal'){ optgroupOratori('cOr', document.getElementById('cOr').value); renderCal(); }
+  if(q==='rapido'){ optgroupOratori('rOr', document.getElementById('rOr').value); }
+  if(q==='oratori'){ renderOr(); }
+}
+
+/* ======= CALENDARIO ======= */
+function schemiOption(selId, orId, val){
+  var o=oratori.find(function(x){return x.id===orId;});
+  var h='<option value="">— scegli —</option>';
+  if(o&&o.d&&o.d.length){ o.d.forEach(function(n){ h+='<option value="'+n+'"'+(String(n)===String(val)?' selected':'')+'>'+n+'</option>'; }); }
+  document.getElementById(selId).innerHTML=h;
+}
+function cOrSel(){ schemiOption('cSch', document.getElementById('cOr').value); }
+
+function salvaCal(){
+  var data=document.getElementById('cData').value;
+  var orId=document.getElementById('cOr').value;
+  if(!data){ toast('Inserisci la data'); return; }
+  if(!orId){ toast('Scegli l\'oratore'); return; }
+  var o=oratori.find(function(x){return x.id===orId;})||{};
+  var sch=document.getElementById('cSchMan').value.trim()||document.getElementById('cSch').value||'';
+  var prec = calEditId ? cal.find(function(x){return x.id===calEditId;}) : null;
+  var obj={
+    id: calEditId||('cal'+Date.now()),
+    data:data, ora:document.getElementById('cOra').value||'20:00',
+    orId:orId, nome:o.n||'', cogn:o.c||'', cg:o.cg||'', tel:o.t||'',
+    sch:sch, cant:document.getElementById('cCant').value.trim(),
+    ferma:document.getElementById('cFerma').value, note:document.getElementById('cNote').value.trim(),
+    inv: prec?!!prec.inv:false, mat: prec?!!prec.mat:false
+  };
+  if(calEditId){ var i=cal.findIndex(function(x){return x.id===calEditId;}); if(i>=0) cal[i]=obj; }
+  else cal.push(obj);
+  salva(); annullaCal(); renderCal();
+  toast('Programmazione salvata');
+}
+function annullaCal(){
+  calEditId=null;
+  document.getElementById('cal-formTitolo').textContent='Programma oratore';
+  document.getElementById('cBtnSalva').textContent='Salva nel calendario';
+  document.getElementById('cBtnAnnulla').classList.add('hide');
+  document.getElementById('cData').value='';
+  document.getElementById('cOra').value='20:00';
+  document.getElementById('cOr').value='';
+  schemiOption('cSch','');
+  document.getElementById('cSchMan').value='';
+  document.getElementById('cCant').value='';
+  document.getElementById('cFerma').value='';
+  document.getElementById('cNote').value='';
+}
+function modificaCal(id){
+  var c=cal.find(function(x){return x.id===id;}); if(!c) return;
+  calEditId=id;
+  document.getElementById('cal-formTitolo').textContent='Modifica programmazione';
+  document.getElementById('cBtnSalva').textContent='Aggiorna';
+  document.getElementById('cBtnAnnulla').classList.remove('hide');
+  document.getElementById('cData').value=c.data||'';
+  document.getElementById('cOra').value=c.ora||'20:00';
+  optgroupOratori('cOr', c.orId||'');
+  schemiOption('cSch', c.orId||'', c.sch);
+  var schSel=document.getElementById('cSch');
+  var inElenco=[].slice.call(schSel.options).some(function(op){return op.value===String(c.sch);});
+  document.getElementById('cSchMan').value = inElenco ? '' : (c.sch||'');
+  document.getElementById('cCant').value=c.cant||'';
+  document.getElementById('cFerma').value=c.ferma||'';
+  document.getElementById('cNote').value=c.note||'';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function eliminaCal(id){
+  var c=cal.find(function(x){return x.id===id;}); if(!c) return;
+  if(!confirm('Eliminare la programmazione del '+fmtData(c.data)+'?')) return;
+  cal=cal.filter(function(x){return x.id!==id;}); salva(); renderCal(); toast('Eliminata');
+}
+function toggleInv(id){ var c=cal.find(function(x){return x.id===id;}); if(!c) return; c.inv=!c.inv; salva(); renderCal(); }
+function toggleMat(id){ var c=cal.find(function(x){return x.id===id;}); if(!c) return; c.mat=!c.mat; salva(); renderCal(); }
+function calCardHtml(c, prossima, passata){
+  var cls='cal-card'+(c.inv&&c.mat?' completa':'')+(passata?' passata':'')+(prossima?' prossima':'');
+  var h='<div class="'+cls+'">';
+  if(prossima) h+='<div class="cal-tag">Prossima</div>';
+  h+='<div class="cal-date">'+eh(fmtData(c.data))+' · ore '+eh(String(c.ora||'').replace(':','.'))+'</div>';
+  h+='<div class="cal-or">'+eh((c.cogn||'')+' '+(c.nome||''))+'</div>';
+  h+='<div class="cal-meta"><b>Cong.:</b> '+eh(c.cg||'—')+' · <b>Schema:</b> n '+eh(c.sch||'—');
+  if(c.cant) h+=' · <b>Cantico:</b> '+eh(c.cant);
+  if(c.ferma) h+='<br><b>Si ferma:</b> '+(c.ferma==='si'?'Sì':'No');
+  if(c.note) h+='<br><b>Note:</b> '+eh(c.note);
+  h+='</div>';
+  h+='<div class="stato-row">';
+  h+='<button class="stato-btn '+(c.inv?'ok':'todo')+'" onclick="toggleInv(\''+eh(c.id)+'\')">'+(c.inv?'Invito mandato':'Invito da mandare')+'</button>';
+  h+='<button class="stato-btn '+(c.mat?'ok':'todo')+'" onclick="toggleMat(\''+eh(c.id)+'\')">'+(c.mat?'Materiale ricevuto':'Materiale in attesa')+'</button>';
+  h+='</div>';
+  var _t=msgDa(c.nome,c.data,c.ora,c.sch,c.cant);
+  var _tel=normTel(c.tel);
+  var _wa=(_tel?('https://wa.me/'+_tel):'https://wa.me/')+'?text='+encodeURIComponent(_t);
+  h+='<div class="cal-acts">';
+  h+='<a class="cal-btn wa" href="'+eh(_wa)+'" target="_blank" rel="noopener">WhatsApp</a>';
+  h+='<button class="cal-btn" onclick="copiaCal(\''+eh(c.id)+'\')">Copia</button>';
+  h+='<button class="cal-btn" onclick="notaCal(\''+eh(c.id)+'\')">Nota a me</button>';
+  h+='<button class="cal-btn" onclick="modificaCal(\''+eh(c.id)+'\')">Modifica</button>';
+  h+='<button class="cal-btn del" onclick="eliminaCal(\''+eh(c.id)+'\')">Elimina</button>';
+  h+='</div></div>';
+  return h;
+}
+function renderCal(){
+  var box=document.getElementById('calList');
+  if(cal.length===0){ box.innerHTML='<div class="cal-empty">Nessun oratore programmato.<br>Compila il riquadro qui sopra e tocca «Salva nel calendario».</div>'; return; }
+  var oggi=new Date(); oggi.setHours(0,0,0,0);
+  var future=[], passate=[];
+  cal.forEach(function(c){
+    var d=dObj(c.data);
+    if(d && !isNaN(d) && d.getTime()>=oggi.getTime()) future.push(c); else passate.push(c);
+  });
+  future.sort(function(a,b){return (a.data||'')<(b.data||'')?-1:1;});
+  passate.sort(function(a,b){return (a.data||'')>(b.data||'')?-1:1;});
+  var h='';
+  future.forEach(function(c,i){ h+=calCardHtml(c, i===0, false); });
+  if(passate.length){
+    h+='<div class="cal-sep">Adunanze passate</div>';
+    passate.forEach(function(c){ h+=calCardHtml(c, false, true); });
+  }
+  box.innerHTML=h;
+}
+function msgTesto(nome, quando, ora, sch, cant){
+  var s='Ciao '+(nome||'')+', sono il frat Affuso Giovanni della congregazione di Cerano. '
+    +quando+' alle ore '+ora+' sei ospite da noi come oratore con lo schema n '+(sch||'___');
+  if(cant) s+=' e il cantico n '+cant+'. Mandami per favore appena puoi le immagini se ne hai. ';
+  else s+='. Mandami per favore appena puoi il cantico e le immagini se ne hai. ';
+  s+='Fammi sapere se ti fermi tutta l\'adunanza. A presto.';
+  return s;
+}
+function msgDa(nome, data, ora, sch, cant){
+  var d=dObj(data);
+  var quando=(d&&!isNaN(d)) ? (GIORNI[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()]) : '';
+  return msgTesto(nome, quando, String(ora||'20:00').replace(':','.'), sch, cant);
+}
+function copiaCal(id){
+  var c=cal.find(function(x){return x.id===id;}); if(!c) return;
+  copiaTesto(msgDa(c.nome,c.data,c.ora,c.sch,c.cant));
+}
+function openWA(url){
+  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ try{document.body.removeChild(a);}catch(e){} },200);
+}
+function copiaTesto(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){toast('Copiato');},function(){fallbackCopy(t);}); }
+  else fallbackCopy(t);
+}
+function fallbackCopy(t){
+  var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.left='-9999px';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); toast('Copiato'); }catch(e){ toast('Copia non riuscita'); }
+  document.body.removeChild(ta);
+}
+
+/* ======= INVITO RAPIDO ======= */
+function rOrSel(){
+  var orId=document.getElementById('rOr').value;
+  var o=oratori.find(function(x){return x.id===orId;});
+  if(o){
+    document.getElementById('rNome').value=o.n||'';
+    document.getElementById('rCong').value=o.cg||'';
+    document.getElementById('rTel').value=o.t||'';
+  }
+  schemiOption('rSchSel', orId);
+  rAgg();
+}
+function rSchPick(){
+  var v=document.getElementById('rSchSel').value;
+  if(v) document.getElementById('rSchema').value=v;
+  rAgg();
+}
+function rSetGiorno(g){
+  rGiorno=g;
+  document.getElementById('rgSab').classList.toggle('on', g==='Sabato');
+  document.getElementById('rgDom').classList.toggle('on', g==='Domenica');
+  rAgg();
+}
+function rComponi(){
+  var nome=(document.getElementById('rNome').value||'').trim()||'[nome]';
+  var ora=(document.getElementById('rOra').value||'20:00').replace(':','.');
+  var sch=(document.getElementById('rSchema').value||'').trim()||'[___]';
+  var cant=(document.getElementById('rCant').value||'').trim();
+  return msgTesto(nome, rGiorno, ora, sch, cant);
+}
+function rAgg(){ if(!rMsgMod) document.getElementById('rTxt').value=rComponi(); }
+function rRigenera(){ rMsgMod=false; document.getElementById('rTxt').value=rComponi(); toast('Testo rigenerato'); }
+function rCopia(){ copiaTesto(document.getElementById('rTxt').value); }
+function rWhatsApp(){
+  var tel=document.getElementById('rTel').value.trim();
+  var testo=encodeURIComponent(document.getElementById('rTxt').value);
+  var url= tel ? ('https://wa.me/'+normTel(tel)+'?text='+testo) : ('https://wa.me/?text='+testo);
+  openWA(url);
+  if(!tel) toast('Nessun numero: scegli il contatto');
+}
+
+/* ======= ORATORI ======= */
+function renderOr(){
+  var q=(document.getElementById('oCerca').value||'').toLowerCase();
+  var box=document.getElementById('orList');
+  var arr=oratori.slice().filter(function(o){
+    if(!q) return true;
+    return (nomeIntero(o)+' '+(o.cg||'')).toLowerCase().indexOf(q)>=0;
+  }).sort(function(a,b){ var ca=(a.cg||''), cb=(b.cg||''); return ca!==cb ? ca.localeCompare(cb) : nomeIntero(a).localeCompare(nomeIntero(b)); });
+  document.getElementById('oCount').textContent=arr.length+' oratori'+(q?' trovati':' in elenco');
+  if(arr.length===0){ box.innerHTML='<div class="cal-empty">Nessun oratore.</div>'; return; }
+  box.innerHTML='';
+  arr.forEach(function(o){
+    var el=document.createElement('div'); el.className='speaker';
+    var schemi=(o.d&&o.d.length)?(o.d.length+' schemi'):'nessuno schema';
+    var meta=[o.cg, o.t, schemi].filter(Boolean).join(' · ');
+    el.innerHTML='<div class="info"><div class="nm"></div><div class="meta"></div></div>'+
+      '<div class="acts"><button class="icbtn">Modifica</button><button class="icbtn del">Elimina</button></div>';
+    el.querySelector('.nm').textContent=nomeIntero(o)||'(senza nome)';
+    el.querySelector('.meta').textContent=meta;
+    el.querySelectorAll('button')[0].onclick=function(){modificaOr(o.id);};
+    el.querySelectorAll('button')[1].onclick=function(){eliminaOr(o.id);};
+    box.appendChild(el);
+  });
+}
+function salvaOr(){
+  var c=document.getElementById('oC').value.trim();
+  var n=document.getElementById('oN').value.trim();
+  if(!c&&!n){ toast('Inserisci almeno cognome o nome'); return; }
+  var d=document.getElementById('oD').value.split(/[\s,]+/).map(function(x){return parseInt(x,10);}).filter(function(x){return !isNaN(x)&&x>0;});
+  d.sort(function(a,b){return a-b;});
+  var obj={ id:oEditId||('o'+Date.now()), c:c, n:n, cg:document.getElementById('oCg').value.trim(),
+    t:document.getElementById('oT').value.trim(), d:d };
+  if(oEditId){ var i=oratori.findIndex(function(x){return x.id===oEditId;}); if(i>=0) oratori[i]=obj; toast('Oratore aggiornato'); }
+  else { oratori.push(obj); toast('Oratore aggiunto'); }
+  salva(); annullaOr(); renderOr();
+}
+function annullaOr(){
+  oEditId=null;
+  document.getElementById('oFormTitolo').textContent='Aggiungi oratore';
+  document.getElementById('oBtnSalva').textContent='Salva oratore';
+  document.getElementById('oBtnAnnulla').classList.add('hide');
+  ['oC','oN','oCg','oT','oD'].forEach(function(x){document.getElementById(x).value='';});
+}
+function modificaOr(id){
+  var o=oratori.find(function(x){return x.id===id;}); if(!o) return;
+  oEditId=id;
+  document.getElementById('oFormTitolo').textContent='Modifica oratore';
+  document.getElementById('oBtnSalva').textContent='Aggiorna oratore';
+  document.getElementById('oBtnAnnulla').classList.remove('hide');
+  document.getElementById('oC').value=o.c||'';
+  document.getElementById('oN').value=o.n||'';
+  document.getElementById('oCg').value=o.cg||'';
+  document.getElementById('oT').value=o.t||'';
+  document.getElementById('oD').value=(o.d||[]).join(' ');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function eliminaOr(id){
+  var o=oratori.find(function(x){return x.id===id;}); if(!o) return;
+  if(!confirm('Eliminare '+nomeIntero(o)+'?')) return;
+  oratori=oratori.filter(function(x){return x.id!==id;}); salva(); renderOr(); toast('Eliminato');
+}
+
+/* ======= TOAST ======= */
+var toastT;
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2000); }
+
+/* ======= BACKUP / RIPRISTINO ======= */
+function due(n){ return (n<10?'0':'')+n; }
+function esportaBackup(){
+  var dati={ app:'inviti_oratori', versione:2, data:new Date().toISOString(), oratori:oratori, cal:cal, mioNum:mioNum };
+  var blob=new Blob([JSON.stringify(dati,null,2)], {type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var d=new Date();
+  var nome='inviti_backup_'+d.getFullYear()+'-'+due(d.getMonth()+1)+'-'+due(d.getDate())+'.json';
+  var a=document.createElement('a');
+  a.href=url; a.download=nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ try{document.body.removeChild(a);}catch(e){} URL.revokeObjectURL(url); }, 300);
+  toast('Backup salvato');
+}
+function importaBackup(input){
+  var file=input.files&&input.files[0]; if(!file){ return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var dati=JSON.parse(e.target.result);
+      if(!dati || (!Array.isArray(dati.oratori) && !Array.isArray(dati.cal))) throw new Error('formato');
+      if(!confirm('Ripristinare i dati da questo backup? I dati attuali nell\'app verranno sostituiti.')){ input.value=''; return; }
+      if(Array.isArray(dati.oratori)) oratori=dati.oratori;
+      if(Array.isArray(dati.cal)) cal=dati.cal;
+      if(typeof dati.mioNum==='string'){ mioNum=dati.mioNum; var mn=document.getElementById('mioNumInput'); if(mn) mn.value=mioNum; }
+      salva();
+      optgroupOratori('cOr',''); optgroupOratori('rOr','');
+      schemiOption('cSch',''); schemiOption('rSchSel','');
+      renderCal(); renderOr();
+      toast('Dati ripristinati');
+    }catch(err){
+      alert('Il file scelto non sembra un backup valido di questa app.');
+    }
+    input.value='';
+  };
+  reader.onerror=function(){ alert('Impossibile leggere il file.'); input.value=''; };
+  reader.readAsText(file);
+}
+
+/* ======= NOTA A ME STESSO ======= */
+function salvaMioNum(){
+  mioNum=document.getElementById('mioNumInput').value.trim();
+  salva();
+  toast(mioNum?'Numero salvato':'Numero rimosso');
+}
+function notaAMe(testo){
+  if(!mioNum){
+    alert('Per usare «Nota a me» inserisci prima il tuo numero WhatsApp, in fondo alla scheda Oratori.');
+    mostra('oratori');
+    var mn=document.getElementById('mioNumInput'); if(mn) mn.focus();
+    return;
+  }
+  openWA('https://wa.me/'+normTel(mioNum)+'?text='+encodeURIComponent(testo));
+}
+function notaCal(id){
+  var c=cal.find(function(x){return x.id===id;}); if(!c) return;
+  var d=dObj(c.data);
+  var quando=(d&&!isNaN(d))?(GIORNI[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()]):'';
+  var t='Promemoria mandato a '+((c.cogn||'')+' '+(c.nome||'')).trim()+(c.cg?' ('+c.cg+')':'')+' - '+quando+' - schema '+(c.sch||'___');
+  if(c.cant) t+=' - cantico '+c.cant;
+  notaAMe(t);
+}
+function notaRapido(){
+  var nome=(document.getElementById('rNome').value||'').trim();
+  var cong=(document.getElementById('rCong').value||'').trim();
+  var sch=(document.getElementById('rSchema').value||'').trim();
+  var cant=(document.getElementById('rCant').value||'').trim();
+  var t='Promemoria mandato a '+(nome||'[nome]')+(cong?' ('+cong+')':'')+' - '+rGiorno+' - schema '+(sch||'___');
+  if(cant) t+=' - cantico '+cant;
+  notaAMe(t);
+}
+
+/* ======= AVVIO ======= */
+carica();
+document.getElementById('mioNumInput').value=mioNum;
+optgroupOratori('cOr','');
+optgroupOratori('rOr','');
+schemiOption('cSch','');
+schemiOption('rSchSel','');
+renderCal();
+rAgg();
+</script>
+</body>
+</html>
