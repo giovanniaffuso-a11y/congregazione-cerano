@@ -2,6 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SISTEMA GIANNI — DISCORSI</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 <style>
@@ -328,6 +329,16 @@ body { font-family:'Segoe UI',sans-serif; display:flex; height:100vh; overflow:h
 #foglio::-webkit-scrollbar-track { background:#f0f0f0; border-radius:6px; }
 #foglio::-webkit-scrollbar-thumb { background:#1a5276; border-radius:6px; }
 #foglio::-webkit-scrollbar-thumb:hover { background:#2e86c1; }
+
+/* ══ MOBILE: correzione scorrimento su telefono (≤600px) — non tocca PC/tablet ══ */
+@media (max-width:600px){
+  html,body{ height:auto; }
+  body{ flex-direction:column; min-height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  #sidebar{ width:100%; flex-shrink:1; box-shadow:none; border-right:none; border-bottom:2px solid var(--gold); }
+  #main{ width:100%; }
+  #workspace{ overflow:visible; }
+  #foglio{ height:auto; }
+}
 </style>
 </head>
 
