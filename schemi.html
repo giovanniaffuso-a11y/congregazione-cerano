@@ -24,6 +24,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--navy);
 .di-hd{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;}
 .di-num{color:#fff;border-radius:8px;padding:4px 8px;font-size:.8rem;font-weight:700;min-width:36px;text-align:center;flex-shrink:0;background:var(--navy);}
 .di-num.has-img{background:var(--teal);}
+.di-num.has-video{background:#7c3aed;}
 .di-num.mod{background:var(--gold);color:var(--navy);}
 .di-titolo{flex:1;font-size:.88rem;font-weight:600;color:var(--navy);line-height:1.3;}
 .di-arr{color:var(--gold);font-size:.75rem;flex-shrink:0;transition:transform .3s;}
@@ -998,7 +999,7 @@ function aggiornaNumCls(n){
   var el=document.getElementById('dn'+n);if(!el)return;
   var hasImg=!!(MAPPA_IMG[n]&&MAPPA_IMG[n].length);
   var isMod=!!(state.rinumerati[n]!==undefined||state.titoli[n]);
-  el.className='di-num'+(isMod?' mod':(hasImg?' has-img':''));
+  el.className='di-num'+(isMod?' mod':(hasImg?' has-img':(HA_VIDEO[n]?' has-video':'')));
   el.textContent=getNum(n);
 }
 function apriNum(n){
@@ -1022,6 +1023,10 @@ function chiudiLB(){document.getElementById('lb').classList.remove('open');}
 function navLB(d){lbX=(lbX+d+lbI.length)%lbI.length;document.getElementById('lb-img').src=lbI[lbX];document.getElementById('lb-info').textContent=(lbX+1)+'/'+lbI.length;}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')chiudiLB();});
 
+const HA_VIDEO = {
+  47: "https://www.jw.org/finder?wtlocale=I&pub=jwbcov21&track=24",
+  90: "https://www.jw.org/finder?wtlocale=I&pub=S-34v&track=90"
+};
 function render(){
   var h='';
   SCHEMI_BASE.forEach(function(s){
@@ -1032,7 +1037,7 @@ function render(){
     var hasImg=imgs.length>0;
     var isMod=!!(state.rinumerati[n]!==undefined||state.titoli[n]);
     var testo=getTesto(n);
-    var nc='di-num'+(isMod?' mod':(hasImg?' has-img':''));
+    var nc='di-num'+(isMod?' mod':(hasImg?' has-img':(HA_VIDEO[n]?' has-video':'')));
 
     h+='<div class="di" id="di'+n+'" data-n="'+n+'">'
       +'<div class="di-hd" onclick="togDi('+n+')">'
@@ -1065,6 +1070,9 @@ function render(){
           +imgs.map(function(img,i){return '<img class="schema-img" src="'+img+'" onclick="apriLB('+n+','+i+')">';}).join('')
           +'</div>'
         : '')
+
+      // VIDEO (se presente)
+      +(HA_VIDEO[n]?'<span class="lbl">Video del discorso</span><div style="margin:8px 0 4px;"><a href="'+HA_VIDEO[n]+'" target="_blank" rel="noopener" style="display:inline-block;background:#7c3aed;color:#fff;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;">&#9654; Guarda il video (JW Library)</a></div>':'')
 
       // TESTO SCHEMA
       +'<span class="lbl">Testo dello schema</span>'
