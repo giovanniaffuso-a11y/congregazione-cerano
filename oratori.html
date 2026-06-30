@@ -1058,6 +1058,9 @@ let state = {
 };
 
 const STORAGE_KEY = 'oratoriAppV4';
+// Versione elenco oratori: cambia questa data ogni volta che aggiorni gli oratori
+// -> tutti i dispositivi rigenerano l'elenco dai default e si risincronizzano da soli
+const ORATORI_DB_VERSION = '2026-06-30';
 function salvaStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 function caricaStorage(){
   const s=localStorage.getItem(STORAGE_KEY);
@@ -1066,6 +1069,12 @@ function caricaStorage(){
   if(!state.oratoriAnnuale) state.oratoriAnnuale=[];
   if(!state.congregazioni||!state.congregazioni.length) state.congregazioni = CONG_DEFAULT.map(c=>({...c}));
   if(!state.oratoriDb||!state.oratoriDb.length) state.oratoriDb = ORATORI_DEFAULT.map(o=>({...o, discorsi:[...o.discorsi]}));
+  // Versioning: se la versione dell'elenco oratori e' cambiata, rigenera dai default aggiornati
+  if(state.oratoriDbVersion !== ORATORI_DB_VERSION){
+    state.oratoriDb = ORATORI_DEFAULT.map(o=>({...o, discorsi:[...o.discorsi]}));
+    state.oratoriDbVersion = ORATORI_DB_VERSION;
+    salvaStorage();
+  }
   if(!state.grigliaEntrata) state.grigliaEntrata={};
   if(!state.grigliaCerano) state.grigliaCerano={};
 }
@@ -1776,6 +1785,15 @@ function raccogliDati(){
   var d={state:state,fratelliCerano:getFratelliCerano()};
   return d;
 }
+// Push silenzioso sul cloud, usato dal versioning automatico (nessun popup)
+function pushOratoriDbSuCloud(){
+  try{
+    var apiKey=localStorage.getItem('cloudApiKey')||'$2a$10$40sWcOQrCASIrvDUztKHg.x8vJ0PsMJnmjCvYQ/FtHf.pVWlYKIjK';
+    var binId=localStorage.getItem('cloudBinId')||'69d8e1b7aaba882197e3ca35';
+    if(!apiKey||!binId) return;
+    fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':apiKey},body:JSON.stringify(raccogliDati())}).catch(function(){});
+  }catch(e){}
+}
 function ripristinaDati(d){
   if(d.state) Object.assign(state,d.state);
   // Congregazioni: merge cloud/saved con CONG_DEFAULT
@@ -1796,6 +1814,13 @@ function ripristinaDati(d){
   });
   if(!state.grigliaEntrata) state.grigliaEntrata={};
   if(!state.grigliaCerano) state.grigliaCerano={};
+  // Versioning: se il cloud ha una versione vecchia dell'elenco oratori,
+  // rigenera dai default aggiornati e ripubblica sul cloud per tutti gli altri dispositivi
+  if(state.oratoriDbVersion !== ORATORI_DB_VERSION){
+    state.oratoriDb = ORATORI_DEFAULT.map(function(o){return {...o, discorsi:[...o.discorsi]};});
+    state.oratoriDbVersion = ORATORI_DB_VERSION;
+    pushOratoriDbSuCloud();
+  }
   if(d.fratelliCerano) salvFratelliCerano(d.fratelliCerano);
   salvaStorage(); buildAnnoSelect();
   document.getElementById('selGiorno').value=state.giorno;
