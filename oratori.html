@@ -1816,7 +1816,8 @@ function ripristinaDati(d){
   if(!state.grigliaCerano) state.grigliaCerano={};
   // Versioning: se il cloud ha una versione vecchia dell'elenco oratori,
   // rigenera dai default aggiornati e ripubblica sul cloud per tutti gli altri dispositivi
-  if(state.oratoriDbVersion !== ORATORI_DB_VERSION){
+  // (controlla la versione ARRIVATA DAL CLOUD, non quella locale gia' aggiornata da caricaStorage)
+  if(!d.state || d.state.oratoriDbVersion !== ORATORI_DB_VERSION){
     state.oratoriDb = ORATORI_DEFAULT.map(function(o){return {...o, discorsi:[...o.discorsi]};});
     state.oratoriDbVersion = ORATORI_DB_VERSION;
     pushOratoriDbSuCloud();
