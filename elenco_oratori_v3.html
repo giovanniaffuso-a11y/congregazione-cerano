@@ -305,7 +305,25 @@ async function syncUp(){
         updateSyncBadge(); return;
       } else { setSyncStatus('❌ Errore creazione bin','#C62828'); return; }
     }
+    // CONTROLLO CONFLITTI: il cloud è stato modificato da un altro dispositivo dopo il mio ultimo accesso?
+    var visto=parseInt(localStorage.getItem('eo_cloudTsVisto')||'0',10);
+    try{
+      var rc=await fetch('https://api.jsonbin.io/v3/b/'+cfg.binId+'/latest',{headers:{'X-Master-Key':apiKey}});
+      if(rc.ok){
+        var dc=await rc.json(); var rcd=dc.record;
+        if(rcd&&rcd.elencoOratori&&rcd.elencoOratori.or) rcd=rcd.elencoOratori;
+        var cloudTs=(rcd&&rcd.ts)||0;
+        if(visto>0 && cloudTs>visto){
+          var quando=new Date(cloudTs).toLocaleString('it');
+          if(!confirm('⚠ ATTENZIONE — possibile conflitto\n\nIl cloud è stato aggiornato da un altro dispositivo ('+quando+').\n\nSe continui, quelle modifiche verranno SOVRASCRITTE con i dati di QUESTO dispositivo.\n\nVuoi davvero salvare?\n\n(Consiglio: annulla e premi prima "🔄 Aggiorna" per vedere le modifiche dell\'altro dispositivo.)')){
+            setSyncStatus('⏹ Salvataggio annullato (conflitto)','#C87A3A');
+            return;
+          }
+        }
+      }
+    }catch(e){}
     // Salva S direttamente (senza wrapper)
+    if(!S.ts) S.ts=Date.now();
     var r=await fetch('https://api.jsonbin.io/v3/b/'+cfg.binId,{
       method:'PUT',
       headers:{'Content-Type':'application/json','X-Master-Key':apiKey},
@@ -313,6 +331,7 @@ async function syncUp(){
     });
     if(r.ok){
       var now=new Date().toLocaleTimeString('it');
+      localStorage.setItem('eo_cloudTsVisto',String(S.ts));
       setSyncStatus('✅ Cloud aggiornato '+now,'#2D5A3D');
       localStorage.setItem('lastSync',now);
       updateSyncBadge();
@@ -338,12 +357,27 @@ async function syncDown(){
       // Gestisce sia {or:[...]} che {elencoOratori:{or:[...]}}
       if(rec&&rec.elencoOratori&&rec.elencoOratori.or) rec=rec.elencoOratori;
       if(rec&&rec.or&&rec.or.length>0){
-        // Sovrascrive sempre (l'utente ha premuto manualmente 🔄 Aggiorna)
+        // CONTROLLO CONFLITTI: ho modifiche locali non ancora caricate sul cloud?
+        var cloudTs=rec.ts||0;
+        var visto=parseInt(localStorage.getItem('eo_cloudTsVisto')||'0',10);
+        var localTs=S.ts||0;
+        if(visto>0 && localTs>visto && localTs>cloudTs){
+          if(!confirm('⚠ ATTENZIONE\n\nSu QUESTO dispositivo hai modifiche non ancora caricate sul cloud.\n\nSe scarichi, queste modifiche andranno PERSE e verrà presa la versione del cloud.\n\nVuoi continuare?\n\n(Consiglio: annulla e premi prima "💾 Salva" per caricare le tue modifiche.)')){
+            setSyncStatus('⏹ Aggiornamento annullato','#C87A3A');
+            var ab0=document.getElementById('btn-aggiorna');
+            if(ab0){ ab0.textContent='🔄 Aggiorna'; }
+            return;
+          }
+        }
+        // Sovrascrive con la versione del cloud
         S.or=rec.or;
         if(rec.cg&&rec.cg.length>0) S.cg=rec.cg;
         if(rec.agg) S.agg=rec.agg;
         S.f='Tutte';
         sv(false);
+        S.ts=cloudTs;
+        try{ localStorage.setItem(SK,JSON.stringify(S)); }catch(e){}
+        localStorage.setItem('eo_cloudTsVisto',String(cloudTs));
         document.getElementById('sagg').textContent=S.agg||'';
         rP(); rl();
         var now=new Date().toLocaleTimeString('it');
