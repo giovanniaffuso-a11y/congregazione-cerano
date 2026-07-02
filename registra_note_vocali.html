@@ -203,6 +203,7 @@
     <div id="timer">00:00</div>
     <div id="statusText">Tocca per iniziare a registrare</div>
     <div id="wakeLockBadge">🔒 Schermo bloccato acceso durante la registrazione</div>
+    <div id="diagBadge" style="font-size:.72rem;color:#8a6d3b;margin-top:6px;display:none;"></div>
     <div id="liveTranscript"></div>
 
     <div id="titleInputWrap">
@@ -298,6 +299,10 @@
   let transcriptFinal = "";
   let timerInterval = null;
   let secondsElapsed = 0;
+  let restartCount = 0;
+  let errorCount = 0;
+  let lastErrorType = "-";
+  let lastRestartAtSec = 0;
   let wakeLock = null;
   let lastSaveTick = 0;
 
@@ -377,7 +382,9 @@
     };
 
     r.onerror = (event) => {
-      // Mostriamo sempre l'errore esatto per capire la causa (diagnostica visibile)
+      errorCount++;
+      lastErrorType = event.error;
+      updateDiagBadge();
       if(event.error === "not-allowed" || event.error === "service-not-allowed"){
         statusText.textContent = "Microfono non autorizzato. Controlla i permessi del browser.";
       } else {
@@ -393,6 +400,9 @@
 
     r.onend = () => {
       if(recognitionShouldRun){
+        restartCount++;
+        lastRestartAtSec = secondsElapsed;
+        updateDiagBadge();
         try{
           recognition = buildRecognition();
           recognition.start();
@@ -413,6 +423,12 @@
 
   function escapeHtml(str){
     return str.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
+
+  const diagBadge = document.getElementById("diagBadge");
+  function updateDiagBadge(){
+    diagBadge.style.display = "block";
+    diagBadge.textContent = `Diagnostica — riavvii trascrizione: ${restartCount} (ultimo a ${fmtTime(lastRestartAtSec)}) · errori: ${errorCount} (ultimo: ${lastErrorType})`;
   }
 
   // Quando il riconoscimento vocale riparte da solo (dopo una pausa), Chrome su Android
@@ -494,6 +510,12 @@
 
     transcriptFinal = "";
     secondsElapsed = 0;
+    restartCount = 0;
+    errorCount = 0;
+    lastErrorType = "-";
+    lastRestartAtSec = 0;
+    diagBadge.style.display = "none";
+    diagBadge.textContent = "";
     currentRecordId = "rec_" + Date.now();
     currentDataInizio = new Date().toISOString();
 
