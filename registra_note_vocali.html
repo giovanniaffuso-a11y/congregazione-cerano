@@ -304,6 +304,9 @@
   let lastErrorType = "-";
   let lastRestartAtSec = 0;
   let pendingInterim = "";
+  let audioStartCount = 0;
+  let soundStartCount = 0;
+  let speechStartCount = 0;
   let wakeLock = null;
   let lastSaveTick = 0;
 
@@ -400,6 +403,10 @@
       }
     };
 
+    r.onaudiostart = () => { audioStartCount++; updateDiagBadge(); };
+    r.onsoundstart = () => { soundStartCount++; updateDiagBadge(); };
+    r.onspeechstart = () => { speechStartCount++; updateDiagBadge(); };
+
     r.onend = () => {
       // Se c'era del testo "in corso di riconoscimento" non ancora confermato,
       // lo salviamo comunque come definitivo prima di ripartire: altrimenti si perde.
@@ -438,7 +445,7 @@
   const diagBadge = document.getElementById("diagBadge");
   function updateDiagBadge(){
     diagBadge.style.display = "block";
-    diagBadge.textContent = `Diagnostica — riavvii trascrizione: ${restartCount} (ultimo a ${fmtTime(lastRestartAtSec)}) · errori: ${errorCount} (ultimo: ${lastErrorType})`;
+    diagBadge.textContent = `Diagnostica — riavvii: ${restartCount} (ultimo a ${fmtTime(lastRestartAtSec)}) · errori: ${errorCount} (${lastErrorType}) · audio rilevato: ${audioStartCount} · suono: ${soundStartCount} · voce: ${speechStartCount}`;
   }
 
   // Quando il riconoscimento vocale riparte da solo (dopo una pausa), a volte ripete
@@ -562,6 +569,9 @@
     lastErrorType = "-";
     lastRestartAtSec = 0;
     pendingInterim = "";
+    audioStartCount = 0;
+    soundStartCount = 0;
+    speechStartCount = 0;
     diagBadge.style.display = "none";
     diagBadge.textContent = "";
     currentRecordId = "rec_" + Date.now();
