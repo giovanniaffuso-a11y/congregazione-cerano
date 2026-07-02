@@ -377,9 +377,17 @@
     };
 
     r.onerror = (event) => {
-      // no-speech / network / aborted: se stiamo ancora registrando, ripartirà da onend
+      // Mostriamo sempre l'errore esatto per capire la causa (diagnostica visibile)
       if(event.error === "not-allowed" || event.error === "service-not-allowed"){
         statusText.textContent = "Microfono non autorizzato. Controlla i permessi del browser.";
+      } else {
+        statusText.textContent = "Registrazione in corso — errore trascrizione: [" + event.error + "]";
+      }
+    };
+
+    r.onstart = () => {
+      if(isRecording){
+        statusText.textContent = "Registrazione in corso — trascrizione attiva ✅";
       }
     };
 
@@ -388,7 +396,9 @@
         try{
           recognition = buildRecognition();
           recognition.start();
-        }catch(e){ /* riprova al prossimo giro utile */ }
+        }catch(e){
+          statusText.textContent = "Registrazione in corso — trascrizione non riesce a ripartire";
+        }
       }
     };
 
