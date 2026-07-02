@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Registra Note Vocali - CDP Cerano</title>
+<style>
+  :root{
+    --blu:#1d4f8c;
+    --blu-scuro:#123a68;
+    --blu-chiaro:#e8f0fb;
+    --rosso:#c0392b;
+    --rosso-chiaro:#fdeceb;
+    --grigio:#5a6472;
+    --sfondo:#f4f6f9;
+    --bordo:#dde3ea;
+    --verde:#2e8b57;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--sfondo);
+    color:#1c1c1c;
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--blu);
+    color:#fff;
+    padding:16px 18px;
+    position:sticky;
+    top:0;
+    z-index:10;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  header h1{margin:0;font-size:1.15rem;font-weight:700;}
+  header p{margin:2px 0 0;font-size:.78rem;opacity:.85;}
+
+  #recoveryBanner{
+    background:#fff6e0;
+    border-bottom:1px solid #f0d98c;
+    padding:12px 16px;
+    font-size:.88rem;
+    display:none;
+  }
+  #recoveryBanner strong{display:block;margin-bottom:6px;}
+  #recoveryBanner .banner-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  #recoveryBanner button{
+    border:none;border-radius:8px;padding:8px 12px;font-size:.82rem;font-weight:600;cursor:pointer;
+  }
+  .btn-warn-primary{background:var(--blu);color:#fff;}
+  .btn-warn-secondary{background:#fff;color:var(--grigio);border:1px solid var(--bordo)!important;}
+
+  main{max-width:640px;margin:0 auto;padding:18px 14px;}
+
+  #recorderCard{
+    background:#fff;
+    border-radius:16px;
+    padding:22px 18px;
+    text-align:center;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
+    border:1px solid var(--bordo);
+  }
+
+  #recBtn{
+    width:96px;height:96px;
+    border-radius:50%;
+    border:none;
+    background:var(--blu);
+    color:#fff;
+    font-size:2.1rem;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(29,79,140,.4);
+    transition:transform .15s ease, background .2s ease;
+  }
+  #recBtn:active{transform:scale(0.94);}
+  #recBtn.recording{
+    background:var(--rosso);
+    box-shadow:0 4px 14px rgba(192,57,43,.45);
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(192,57,43,.45);}
+    70%{box-shadow:0 0 0 18px rgba(192,57,43,0);}
+    100%{box-shadow:0 0 0 0 rgba(192,57,43,0);}
+  }
+
+  #timer{font-size:1.6rem;font-weight:700;margin-top:14px;color:var(--blu-scuro);font-variant-numeric:tabular-nums;}
+  #statusText{font-size:.85rem;color:var(--grigio);margin-top:2px;min-height:18px;}
+
+  #liveTranscript{
+    margin-top:16px;
+    text-align:left;
+    background:var(--blu-chiaro);
+    border:1px solid var(--bordo);
+    border-radius:10px;
+    padding:12px;
+    min-height:70px;
+    max-height:220px;
+    overflow-y:auto;
+    font-size:.92rem;
+    line-height:1.45;
+    white-space:pre-wrap;
+    display:none;
+  }
+  #liveTranscript.show{display:block;}
+  #liveTranscript .interim{color:#7b8794;font-style:italic;}
+
+  #titleInputWrap{margin-top:14px;display:none;text-align:left;}
+  #titleInputWrap.show{display:block;}
+  #titleInputWrap label{font-size:.8rem;color:var(--grigio);display:block;margin-bottom:4px;}
+  #titleInput{
+    width:100%;padding:10px;border-radius:8px;border:1px solid var(--bordo);font-size:.95rem;
+  }
+  #saveTitleBtn{
+    margin-top:10px;width:100%;padding:11px;border:none;border-radius:8px;
+    background:var(--verde);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;
+  }
+
+  #listSection{margin-top:26px;}
+  #listSection h2{font-size:1rem;color:var(--blu-scuro);margin-bottom:10px;}
+  #emptyState{color:var(--grigio);font-size:.88rem;text-align:center;padding:20px 10px;}
+
+  .rec-card{
+    background:#fff;
+    border:1px solid var(--bordo);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .rec-card .rec-title{font-weight:700;font-size:.95rem;color:#1c1c1c;}
+  .rec-card .rec-meta{font-size:.76rem;color:var(--grigio);margin-top:2px;}
+  .rec-card .rec-preview{font-size:.85rem;color:#444;margin-top:8px;line-height:1.4;}
+  .rec-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .rec-actions button{
+    border:1px solid var(--bordo);background:#fafbfc;border-radius:8px;
+    padding:7px 10px;font-size:.78rem;cursor:pointer;color:#1c1c1c;
+  }
+  .rec-actions button.danger{color:var(--rosso);border-color:#f2c9c4;}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.5);
+    display:flex;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .modal-overlay.hidden{display:none;}
+  .modal-sheet{
+    background:#fff;width:100%;max-width:640px;border-radius:16px 16px 0 0;
+    max-height:88vh;overflow-y:auto;padding:18px;
+  }
+  .modal-sheet h3{margin:0 0 10px;font-size:1.02rem;color:var(--blu-scuro);}
+  .modal-sheet audio{width:100%;margin-bottom:12px;}
+  .modal-sheet textarea{
+    width:100%;min-height:180px;border:1px solid var(--bordo);border-radius:10px;
+    padding:10px;font-size:.92rem;line-height:1.45;font-family:inherit;
+  }
+  .modal-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .modal-actions button{
+    flex:1;min-width:110px;border:none;border-radius:8px;padding:11px;font-size:.85rem;
+    font-weight:600;cursor:pointer;
+  }
+  .m-save{background:var(--blu);color:#fff;}
+  .m-copy{background:var(--blu-chiaro);color:var(--blu-scuro);}
+  .m-wa{background:#25D366;color:#fff;}
+  .m-export{background:#f0eee6;color:#443f33;}
+  .m-close{background:#eee;color:#333;}
+
+  #wakeLockBadge{
+    font-size:.72rem;color:var(--verde);margin-top:8px;display:none;
+  }
+  #wakeLockBadge.show{display:block;}
+
+  #compatWarning{
+    background:var(--rosso-chiaro);color:var(--rosso);border-radius:10px;padding:10px 12px;
+    font-size:.82rem;margin:0 0 14px;display:none;
+  }
+  #compatWarning.show{display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎙️ Registra Note Vocali</h1>
+  <p>Adunanze e riunioni — CDP Cerano</p>
+</header>
+
+<div id="recoveryBanner">
+  <strong>⚠️ Registrazione interrotta trovata</strong>
+  <span id="recoveryText"></span>
+  <div class="banner-actions">
+    <button class="btn-warn-primary" id="recoveryKeepBtn">Salva come completata</button>
+    <button class="btn-warn-secondary" id="recoveryDeleteBtn">Elimina</button>
+  </div>
+</div>
+
+<main>
+  <div id="compatWarning">
+    Il riconoscimento vocale non è supportato da questo browser. Usa Chrome su Android per la trascrizione automatica. L'audio comunque verrà registrato.
+  </div>
+
+  <div id="recorderCard">
+    <button id="recBtn">🎙️</button>
+    <div id="timer">00:00</div>
+    <div id="statusText">Tocca per iniziare a registrare</div>
+    <div id="wakeLockBadge">🔒 Schermo bloccato acceso durante la registrazione</div>
+    <div id="liveTranscript"></div>
+
+    <div id="titleInputWrap">
+      <label for="titleInput">Titolo della nota (es. "Adunanza 2 luglio")</label>
+      <input type="text" id="titleInput" placeholder="Titolo...">
+      <button id="saveTitleBtn">💾 Salva nota</button>
+    </div>
+  </div>
+
+  <div id="listSection">
+    <h2>📋 Note salvate</h2>
+    <div id="recordingsList"></div>
+    <div id="emptyState">Nessuna nota salvata ancora.</div>
+  </div>
+</main>
+
+<div class="modal-overlay hidden" id="detailModal">
+  <div class="modal-sheet">
+    <h3 id="modalTitleDisplay"></h3>
+    <div id="modalMeta" style="font-size:.78rem;color:#5a6472;margin-bottom:10px;"></div>
+    <audio id="modalAudio" controls></audio>
+    <textarea id="modalTranscript"></textarea>
+    <div class="modal-actions">
+      <button class="m-save" id="modalSaveBtn">💾 Salva modifiche</button>
+      <button class="m-copy" id="modalCopyBtn">📋 Copia testo</button>
+      <button class="m-wa" id="modalWaBtn">📱 WhatsApp</button>
+      <button class="m-export" id="modalExportBtn">⬇️ Esporta .txt</button>
+      <button class="m-close" id="modalCloseBtn">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- IndexedDB ----------
+  const DB_NAME = "noteVocaliDB";
+  const STORE = "registrazioni";
+  let db;
+
+  function openDB(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = (e) => {
+        const _db = e.target.result;
+        if(!_db.objectStoreNames.contains(STORE)){
+          const store = _db.createObjectStore(STORE, { keyPath: "id" });
+          store.createIndex("stato", "stato", { unique:false });
+          store.createIndex("dataInizio", "dataInizio", { unique:false });
+        }
+      };
+      req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+      req.onerror = (e) => reject(e);
+    });
+  }
+
+  function putRecord(record){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).put(record);
+      tx.oncomplete = () => resolve();
+      tx.onerror = (e) => reject(e);
+    });
+  }
+
+  function deleteRecordDB(id){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = (e) => reject(e);
+    });
+  }
+
+  function getAllRecords(){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = (e) => reject(e);
+    });
+  }
+
+  // ---------- State ----------
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let mediaStream = null;
+  let recognition = null;
+  let isRecording = false;
+  let recognitionShouldRun = false;
+  let currentRecordId = null;
+  let transcriptFinal = "";
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let wakeLock = null;
+  let lastSaveTick = 0;
+
+  const recBtn = document.getElementById("recBtn");
+  const timerEl = document.getElementById("timer");
+  const statusText = document.getElementById("statusText");
+  const liveTranscript = document.getElementById("liveTranscript");
+  const titleInputWrap = document.getElementById("titleInputWrap");
+  const titleInput = document.getElementById("titleInput");
+  const saveTitleBtn = document.getElementById("saveTitleBtn");
+  const wakeLockBadge = document.getElementById("wakeLockBadge");
+  const compatWarning = document.getElementById("compatWarning");
+  const recoveryBanner = document.getElementById("recoveryBanner");
+  const recoveryText = document.getElementById("recoveryText");
+  const recoveryKeepBtn = document.getElementById("recoveryKeepBtn");
+  const recoveryDeleteBtn = document.getElementById("recoveryDeleteBtn");
+
+  const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognitionAPI){
+    compatWarning.classList.add("show");
+  }
+
+  function fmtTime(sec){
+    const m = Math.floor(sec/60).toString().padStart(2,"0");
+    const s = Math.floor(sec%60).toString().padStart(2,"0");
+    return m+":"+s;
+  }
+
+  function fmtDateIt(iso){
+    const d = new Date(iso);
+    return d.toLocaleDateString("it-IT") + " " + d.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+  }
+
+  // ---------- Wake Lock ----------
+  async function requestWakeLock(){
+    try{
+      if("wakeLock" in navigator){
+        wakeLock = await navigator.wakeLock.request("screen");
+        wakeLockBadge.classList.add("show");
+        wakeLock.addEventListener("release", () => {
+          wakeLockBadge.classList.remove("show");
+        });
+      }
+    }catch(e){
+      // non bloccante: alcuni browser negano il permesso
+    }
+  }
+  function releaseWakeLock(){
+    if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; }
+    wakeLockBadge.classList.remove("show");
+  }
+  document.addEventListener("visibilitychange", async () => {
+    if(isRecording && document.visibilityState === "visible"){
+      await requestWakeLock();
+    }
+  });
+
+  // ---------- Recognition ----------
+  function buildRecognition(){
+    const r = new SpeechRecognitionAPI();
+    r.lang = "it-IT";
+    r.continuous = true;
+    r.interimResults = true;
+
+    r.onresult = (event) => {
+      let interim = "";
+      for(let i = event.resultIndex; i < event.results.length; i++){
+        const res = event.results[i];
+        if(res.isFinal){
+          transcriptFinal += res[0].transcript + " ";
+          saveTranscriptProgress();
+        } else {
+          interim += res[0].transcript;
+        }
+      }
+      renderLiveTranscript(interim);
+    };
+
+    r.onerror = (event) => {
+      // no-speech / network / aborted: se stiamo ancora registrando, ripartirà da onend
+      if(event.error === "not-allowed" || event.error === "service-not-allowed"){
+        statusText.textContent = "Microfono non autorizzato. Controlla i permessi del browser.";
+      }
+    };
+
+    r.onend = () => {
+      if(recognitionShouldRun){
+        try{
+          recognition = buildRecognition();
+          recognition.start();
+        }catch(e){ /* riprova al prossimo giro utile */ }
+      }
+    };
+
+    return r;
+  }
+
+  function renderLiveTranscript(interim){
+    liveTranscript.innerHTML = escapeHtml(transcriptFinal) +
+      (interim ? '<span class="interim">' + escapeHtml(interim) + '</span>' : "");
+    liveTranscript.scrollTop = liveTranscript.scrollHeight;
+  }
+
+  function escapeHtml(str){
+    return str.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
+
+  // ---------- Salvataggio incrementale ----------
+  async function saveTranscriptProgress(){
+    if(!currentRecordId) return;
+    const record = {
+      id: currentRecordId,
+      titolo: "Nota del " + fmtDateIt(new Date().toISOString()),
+      dataInizio: currentDataInizio,
+      dataFine: new Date().toISOString(),
+      trascrizione: transcriptFinal.trim(),
+      audioBlob: currentAudioBlob(),
+      durata: secondsElapsed,
+      stato: "in_corso"
+    };
+    try{ await putRecord(record); }catch(e){ /* silenzioso, riprova al prossimo salvataggio */ }
+  }
+
+  function currentAudioBlob(){
+    if(audioChunks.length === 0) return null;
+    return new Blob(audioChunks, { type: mediaRecorder ? mediaRecorder.mimeType : "audio/webm" });
+  }
+
+  let currentDataInizio = null;
+
+  async function saveAudioProgress(){
+    if(!currentRecordId) return;
+    const record = {
+      id: currentRecordId,
+      titolo: "Nota del " + fmtDateIt(currentDataInizio),
+      dataInizio: currentDataInizio,
+      dataFine: new Date().toISOString(),
+      trascrizione: transcriptFinal.trim(),
+      audioBlob: currentAudioBlob(),
+      durata: secondsElapsed,
+      stato: "in_corso"
+    };
+    try{ await putRecord(record); }catch(e){}
+  }
+
+  // ---------- Avvio / stop registrazione ----------
+  async function startRecording(){
+    try{
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }catch(e){
+      statusText.textContent = "Permesso microfono negato o non disponibile.";
+      return;
+    }
+
+    audioChunks = [];
+    transcriptFinal = "";
+    secondsElapsed = 0;
+    currentRecordId = "rec_" + Date.now();
+    currentDataInizio = new Date().toISOString();
+
+    let mimeType = "audio/webm";
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")){
+      mimeType = "audio/webm;codecs=opus";
+    }
+    mediaRecorder = new MediaRecorder(mediaStream, { mimeType });
+
+    mediaRecorder.ondataavailable = (e) => {
+      if(e.data && e.data.size > 0){
+        audioChunks.push(e.data);
+        saveAudioProgress();
+      }
+    };
+
+    mediaRecorder.onstop = async () => {
+      await finalizeRecordAsCompleted();
+    };
+
+    mediaRecorder.start(4000); // salva un pezzo audio ogni 4 secondi
+
+    isRecording = true;
+    recognitionShouldRun = true;
+
+    if(SpeechRecognitionAPI){
+      recognition = buildRecognition();
+      try{ recognition.start(); }catch(e){}
+    }
+
+    await requestWakeLock();
+
+    recBtn.textContent = "⏹️";
+    recBtn.classList.add("recording");
+    statusText.textContent = "Registrazione in corso — non chiudere il browser";
+    liveTranscript.classList.add("show");
+    titleInputWrap.classList.remove("show");
+
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      timerEl.textContent = fmtTime(secondsElapsed);
+    }, 1000);
+  }
+
+  async function stopRecording(){
+    isRecording = false;
+    recognitionShouldRun = false;
+
+    if(recognition){
+      try{ recognition.stop(); }catch(e){}
+    }
+    if(mediaRecorder && mediaRecorder.state !== "inactive"){
+      mediaRecorder.stop();
+    }
+    if(mediaStream){
+      mediaStream.getTracks().forEach(t => t.stop());
+    }
+    releaseWakeLock();
+    clearInterval(timerInterval);
+
+    recBtn.textContent = "🎙️";
+    recBtn.classList.remove("recording");
+    statusText.textContent = "Registrazione conclusa. Dai un titolo e salva.";
+    titleInputWrap.classList.add("show");
+    titleInput.value = "Nota del " + fmtDateIt(currentDataInizio);
+    titleInput.focus();
+  }
+
+  async function finalizeRecordAsCompleted(){
+    // chiamato da mediaRecorder.onstop: assicura che l'ultimo pezzo audio sia salvato
+    const record = {
+      id: currentRecordId,
+      titolo: "Nota del " + fmtDateIt(currentDataInizio),
+      dataInizio: currentDataInizio,
+      dataFine: new Date().toISOString(),
+      trascrizione: transcriptFinal.trim(),
+      audioBlob: currentAudioBlob(),
+      durata: secondsElapsed,
+      stato: "in_corso" // diventa "completata" solo quando l'utente conferma il titolo
+    };
+    try{ await putRecord(record); }catch(e){}
+  }
+
+  saveTitleBtn.addEventListener("click", async () => {
+    const titolo = titleInput.value.trim() || ("Nota del " + fmtDateIt(currentDataInizio));
+    const record = {
+      id: currentRecordId,
+      titolo,
+      dataInizio: currentDataInizio,
+      dataFine: new Date().toISOString(),
+      trascrizione: transcriptFinal.trim(),
+      audioBlob: currentAudioBlob(),
+      durata: secondsElapsed,
+      stato: "completata"
+    };
+    await putRecord(record);
+    titleInputWrap.classList.remove("show");
+    liveTranscript.classList.remove("show");
+    liveTranscript.innerHTML = "";
+    timerEl.textContent = "00:00";
+    statusText.textContent = "Nota salvata ✅ Tocca per registrarne un'altra";
+    currentRecordId = null;
+    await refreshList();
+  });
+
+  recBtn.addEventListener("click", () => {
+    if(!isRecording){
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  });
+
+  // ---------- Lista note ----------
+  async function refreshList(){
+    const all = await getAllRecords();
+    const completed = all.filter(r => r.stato === "completata")
+                          .sort((a,b) => new Date(b.dataInizio) - new Date(a.dataInizio));
+    const listEl = document.getElementById("recordingsList");
+    const emptyEl = document.getElementById("emptyState");
+    listEl.innerHTML = "";
+
+    if(completed.length === 0){
+      emptyEl.style.display = "block";
+    } else {
+      emptyEl.style.display = "none";
+      completed.forEach(rec => listEl.appendChild(buildCard(rec)));
+    }
+
+    // banner di recupero per registrazioni rimaste "in_corso" (browser chiuso senza salvare)
+    const orphan = all.find(r => r.stato === "in_corso");
+    if(orphan && orphan.id !== currentRecordId){
+      recoveryBanner.style.display = "block";
+      const car = orphan.trascrizione ? orphan.trascrizione.length : 0;
+      recoveryText.textContent = `Del ${fmtDateIt(orphan.dataInizio)}, con ${car} caratteri di testo salvati e audio parziale presente. Puoi salvarla come nota completata o eliminarla.`;
+      recoveryKeepBtn.onclick = async () => {
+        orphan.stato = "completata";
+        if(!orphan.titolo) orphan.titolo = "Nota recuperata del " + fmtDateIt(orphan.dataInizio);
+        await putRecord(orphan);
+        recoveryBanner.style.display = "none";
+        await refreshList();
+      };
+      recoveryDeleteBtn.onclick = async () => {
+        await deleteRecordDB(orphan.id);
+        recoveryBanner.style.display = "none";
+        await refreshList();
+      };
+    } else {
+      recoveryBanner.style.display = "none";
+    }
+  }
+
+  function buildCard(rec){
+    const card = document.createElement("div");
+    card.className = "rec-card";
+    const preview = (rec.trascrizione || "(nessun testo trascritto)").slice(0, 140);
+    card.innerHTML = `
+      <div class="rec-title">${escapeHtml(rec.titolo)}</div>
+      <div class="rec-meta">${fmtDateIt(rec.dataInizio)} · durata ${fmtTime(rec.durata||0)}</div>
+      <div class="rec-preview">${escapeHtml(preview)}${(rec.trascrizione||"").length>140 ? "…" : ""}</div>
+      <div class="rec-actions">
+        <button data-action="open">👁️ Apri</button>
+        <button data-action="delete" class="danger">🗑️ Elimina</button>
+      </div>
+    `;
+    card.querySelector('[data-action="open"]').addEventListener("click", () => openDetail(rec.id));
+    card.querySelector('[data-action="delete"]').addEventListener("click", async () => {
+      if(confirm("Eliminare questa nota? L'operazione non è reversibile.")){
+        await deleteRecordDB(rec.id);
+        await refreshList();
+      }
+    });
+    return card;
+  }
+
+  // ---------- Modale dettaglio ----------
+  const detailModal = document.getElementById("detailModal");
+  const modalTitleDisplay = document.getElementById("modalTitleDisplay");
+  const modalMeta = document.getElementById("modalMeta");
+  const modalAudio = document.getElementById("modalAudio");
+  const modalTranscript = document.getElementById("modalTranscript");
+  let modalCurrentId = null;
+  let modalObjectUrl = null;
+
+  async function openDetail(id){
+    const all = await getAllRecords();
+    const rec = all.find(r => r.id === id);
+    if(!rec) return;
+    modalCurrentId = id;
+    modalTitleDisplay.textContent = rec.titolo;
+    modalMeta.textContent = fmtDateIt(rec.dataInizio) + " · durata " + fmtTime(rec.durata||0);
+    modalTranscript.value = rec.trascrizione || "";
+
+    if(modalObjectUrl){ URL.revokeObjectURL(modalObjectUrl); modalObjectUrl = null; }
+    if(rec.audioBlob){
+      modalObjectUrl = URL.createObjectURL(rec.audioBlob);
+      modalAudio.src = modalObjectUrl;
+      modalAudio.style.display = "block";
+    } else {
+      modalAudio.style.display = "none";
+    }
+    detailModal.classList.remove("hidden");
+  }
+
+  document.getElementById("modalCloseBtn").addEventListener("click", () => {
+    detailModal.classList.add("hidden");
+    if(modalObjectUrl){ URL.revokeObjectURL(modalObjectUrl); modalObjectUrl = null; }
+  });
+
+  document.getElementById("modalSaveBtn").addEventListener("click", async () => {
+    const all = await getAllRecords();
+    const rec = all.find(r => r.id === modalCurrentId);
+    if(!rec) return;
+    rec.trascrizione = modalTranscript.value;
+    await putRecord(rec);
+    await refreshList();
+    detailModal.classList.add("hidden");
+  });
+
+  document.getElementById("modalCopyBtn").addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(modalTranscript.value);
+      alert("Testo copiato negli appunti.");
+    }catch(e){
+      alert("Impossibile copiare automaticamente. Seleziona e copia il testo manualmente.");
+    }
+  });
+
+  document.getElementById("modalWaBtn").addEventListener("click", () => {
+    const text = encodeURIComponent(modalTitleDisplay.textContent + "\n\n" + modalTranscript.value);
+    window.open("https://api.whatsapp.com/send?text=" + text, "_blank");
+  });
+
+  document.getElementById("modalExportBtn").addEventListener("click", () => {
+    const blob = new Blob([modalTranscript.value], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = modalTitleDisplay.textContent.replace(/[^\wàèéìòù \-]/gi,"") + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ---------- Avvio ----------
+  (async function init(){
+    await openDB();
+    await refreshList();
+  })();
+
+})();
+</script>
+</body>
+</html>
