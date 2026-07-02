@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Solo Voce</title>
+<style>
+  body{font-family:sans-serif;padding:20px;background:#f4f6f9;}
+  button{font-size:1.3rem;padding:16px 24px;border-radius:12px;border:none;background:#1d4f8c;color:#fff;}
+  button.on{background:#c0392b;}
+  #out{margin-top:20px;background:#e8f0fb;border-radius:10px;padding:14px;min-height:80px;font-size:1.05rem;white-space:pre-wrap;}
+  #stato{margin-top:10px;font-size:.9rem;color:#5a6472;}
+</style>
+</head>
+<body>
+  <h2>Test SOLO trascrizione (senza registrare audio)</h2>
+  <button id="btn">🎙️ Avvia</button>
+  <div id="stato">Pronto</div>
+  <div id="out"></div>
+
+<script>
+  const btn = document.getElementById("btn");
+  const out = document.getElementById("out");
+  const stato = document.getElementById("stato");
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let running = false;
+  let testo = "";
+
+  function build(){
+    const r = new SR();
+    r.lang = "it-IT";
+    r.continuous = true;
+    r.interimResults = true;
+    r.onstart = () => stato.textContent = "Trascrizione attiva ✅ — parla ora";
+    r.onerror = (e) => stato.textContent = "Errore: [" + e.error + "]";
+    r.onresult = (event) => {
+      let interim = "";
+      for(let i = event.resultIndex; i < event.results.length; i++){
+        const res = event.results[i];
+        if(res.isFinal){ testo += res[0].transcript + " "; }
+        else { interim += res[0].transcript; }
+      }
+      out.textContent = testo + interim;
+    };
+    r.onend = () => { if(running){ recognition = build(); recognition.start(); } };
+    return r;
+  }
+
+  btn.addEventListener("click", () => {
+    if(!running){
+      running = true;
+      testo = "";
+      out.textContent = "";
+      recognition = build();
+      recognition.start();
+      btn.textContent = "⏹️ Ferma";
+      btn.classList.add("on");
+    } else {
+      running = false;
+      if(recognition) recognition.stop();
+      btn.textContent = "🎙️ Avvia";
+      btn.classList.remove("on");
+      stato.textContent = "Fermato";
+    }
+  });
+</script>
+</body>
+</html>
