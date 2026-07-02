@@ -367,7 +367,7 @@
       for(let i = event.resultIndex; i < event.results.length; i++){
         const res = event.results[i];
         if(res.isFinal){
-          transcriptFinal += res[0].transcript + " ";
+          appendFinalText(res[0].transcript);
           saveTranscriptProgress();
         } else {
           interim += res[0].transcript;
@@ -413,6 +413,27 @@
 
   function escapeHtml(str){
     return str.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
+
+  // Quando il riconoscimento vocale riparte da solo (dopo una pausa), Chrome su Android
+  // spesso ripete le ultime parole già trascritte. Questa funzione confronta la fine del
+  // testo già salvato con l'inizio del nuovo pezzo e toglie la parte ripetuta.
+  function appendFinalText(segment){
+    segment = segment.trim();
+    if(!segment) return;
+    const existingWords = transcriptFinal.trim().length ? transcriptFinal.trim().split(/\s+/) : [];
+    const newWords = segment.split(/\s+/);
+    const maxOverlap = Math.min(8, existingWords.length, newWords.length);
+    let overlapLen = 0;
+    for(let n = maxOverlap; n > 0; n--){
+      const tailExisting = existingWords.slice(-n).join(" ").toLowerCase();
+      const headNew = newWords.slice(0, n).join(" ").toLowerCase();
+      if(tailExisting === headNew){ overlapLen = n; break; }
+    }
+    const remainder = newWords.slice(overlapLen).join(" ");
+    if(remainder){
+      transcriptFinal = transcriptFinal.trim() + (transcriptFinal.trim() ? " " : "") + remainder + " ";
+    }
   }
 
   // ---------- Salvataggio incrementale ----------
