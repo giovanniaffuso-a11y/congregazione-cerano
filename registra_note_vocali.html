@@ -420,25 +420,26 @@
     if(!currentRecordId) return;
     const record = {
       id: currentRecordId,
-      titolo: "Nota del " + fmtDateIt(new Date().toISOString()),
+      titolo: "Nota del " + fmtDateIt(currentDataInizio),
       dataInizio: currentDataInizio,
       dataFine: new Date().toISOString(),
       trascrizione: transcriptFinal.trim(),
-      audioBlob: currentAudioBlob(),
+      audioBlob: null,
       durata: secondsElapsed,
       stato: "in_corso"
     };
     try{ await putRecord(record); }catch(e){ /* silenzioso, riprova al prossimo salvataggio */ }
   }
 
-  function currentAudioBlob(){
-    if(audioChunks.length === 0) return null;
-    return new Blob(audioChunks, { type: mediaRecorder ? mediaRecorder.mimeType : "audio/webm" });
-  }
+  // Nota: su alcuni telefoni (verificato su Xiaomi/HyperOS) il microfono non può essere
+  // usato contemporaneamente per registrare l'audio grezzo E per la trascrizione vocale:
+  // le due funzioni si "rubano" il microfono a vicenda e la trascrizione resta muta.
+  // Per questo qui usiamo SOLO la trascrizione (nessun audioBlob), che è comunque
+  // salvata parola per parola man mano che parli, quindi non si perde nulla.
 
   let currentDataInizio = null;
 
-  async function saveAudioProgress(){
+  async function saveTextProgress(stato){
     if(!currentRecordId) return;
     const record = {
       id: currentRecordId,
@@ -446,54 +447,40 @@
       dataInizio: currentDataInizio,
       dataFine: new Date().toISOString(),
       trascrizione: transcriptFinal.trim(),
-      audioBlob: currentAudioBlob(),
+      audioBlob: null,
       durata: secondsElapsed,
-      stato: "in_corso"
+      stato: stato || "in_corso"
     };
     try{ await putRecord(record); }catch(e){}
   }
 
   // ---------- Avvio / stop registrazione ----------
   async function startRecording(){
+    if(!SpeechRecognitionAPI){
+      statusText.textContent = "Il riconoscimento vocale non è supportato da questo browser.";
+      return;
+    }
+
+    // Chiediamo comunque il permesso del microfono esplicitamente prima di partire,
+    // così l'utente vede subito la richiesta di autorizzazione.
     try{
-      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      tempStream.getTracks().forEach(t => t.stop()); // lo rilasciamo subito: serve solo per il permesso
     }catch(e){
       statusText.textContent = "Permesso microfono negato o non disponibile.";
       return;
     }
 
-    audioChunks = [];
     transcriptFinal = "";
     secondsElapsed = 0;
     currentRecordId = "rec_" + Date.now();
     currentDataInizio = new Date().toISOString();
 
-    let mimeType = "audio/webm";
-    if(window.MediaRecorder && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")){
-      mimeType = "audio/webm;codecs=opus";
-    }
-    mediaRecorder = new MediaRecorder(mediaStream, { mimeType });
-
-    mediaRecorder.ondataavailable = (e) => {
-      if(e.data && e.data.size > 0){
-        audioChunks.push(e.data);
-        saveAudioProgress();
-      }
-    };
-
-    mediaRecorder.onstop = async () => {
-      await finalizeRecordAsCompleted();
-    };
-
-    mediaRecorder.start(4000); // salva un pezzo audio ogni 4 secondi
-
     isRecording = true;
     recognitionShouldRun = true;
 
-    if(SpeechRecognitionAPI){
-      recognition = buildRecognition();
-      try{ recognition.start(); }catch(e){}
-    }
+    recognition = buildRecognition();
+    try{ recognition.start(); }catch(e){}
 
     await requestWakeLock();
 
@@ -506,6 +493,7 @@
     timerInterval = setInterval(() => {
       secondsElapsed++;
       timerEl.textContent = fmtTime(secondsElapsed);
+      if(secondsElapsed % 5 === 0){ saveTextProgress("in_corso"); } // salvataggio di sicurezza ogni 5s
     }, 1000);
   }
 
@@ -516,14 +504,9 @@
     if(recognition){
       try{ recognition.stop(); }catch(e){}
     }
-    if(mediaRecorder && mediaRecorder.state !== "inactive"){
-      mediaRecorder.stop();
-    }
-    if(mediaStream){
-      mediaStream.getTracks().forEach(t => t.stop());
-    }
     releaseWakeLock();
     clearInterval(timerInterval);
+    await saveTextProgress("in_corso");
 
     recBtn.textContent = "🎙️";
     recBtn.classList.remove("recording");
@@ -531,21 +514,6 @@
     titleInputWrap.classList.add("show");
     titleInput.value = "Nota del " + fmtDateIt(currentDataInizio);
     titleInput.focus();
-  }
-
-  async function finalizeRecordAsCompleted(){
-    // chiamato da mediaRecorder.onstop: assicura che l'ultimo pezzo audio sia salvato
-    const record = {
-      id: currentRecordId,
-      titolo: "Nota del " + fmtDateIt(currentDataInizio),
-      dataInizio: currentDataInizio,
-      dataFine: new Date().toISOString(),
-      trascrizione: transcriptFinal.trim(),
-      audioBlob: currentAudioBlob(),
-      durata: secondsElapsed,
-      stato: "in_corso" // diventa "completata" solo quando l'utente conferma il titolo
-    };
-    try{ await putRecord(record); }catch(e){}
   }
 
   saveTitleBtn.addEventListener("click", async () => {
@@ -556,7 +524,7 @@
       dataInizio: currentDataInizio,
       dataFine: new Date().toISOString(),
       trascrizione: transcriptFinal.trim(),
-      audioBlob: currentAudioBlob(),
+      audioBlob: null,
       durata: secondsElapsed,
       stato: "completata"
     };
@@ -599,7 +567,7 @@
     if(orphan && orphan.id !== currentRecordId){
       recoveryBanner.style.display = "block";
       const car = orphan.trascrizione ? orphan.trascrizione.length : 0;
-      recoveryText.textContent = `Del ${fmtDateIt(orphan.dataInizio)}, con ${car} caratteri di testo salvati e audio parziale presente. Puoi salvarla come nota completata o eliminarla.`;
+      recoveryText.textContent = `Del ${fmtDateIt(orphan.dataInizio)}, con ${car} caratteri di testo salvati. Puoi salvarla come nota completata o eliminarla.`;
       recoveryKeepBtn.onclick = async () => {
         orphan.stato = "completata";
         if(!orphan.titolo) orphan.titolo = "Nota recuperata del " + fmtDateIt(orphan.dataInizio);
