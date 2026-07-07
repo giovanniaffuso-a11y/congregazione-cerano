@@ -693,7 +693,7 @@ function renderAll(){
     if(urg.length>0){
       const f=urg[0];const info=di(f.dat);
       html+='<div style="background:var(--orn-light);border:1px solid #FED7AA;border-radius:var(--r);padding:14px;margin-bottom:14px;cursor:pointer" onclick="document.querySelectorAll(\'.tab\')[3].click()">'
-        +'<span style="font-weight:700;color:var(--orange)">🔔 '+urg.length+' scadenza/e nei prossimi 30 giorni!</span><br>'
+        +'<span style="font-weight:700;color:var(--orange)">📅 '+urg.length+' scadenza/e in arrivo nei prossimi 30 giorni</span><br>'
         +'<span style="font-size:13px;color:var(--text2)">Prossima: <strong>'+f.tit+'</strong> — '+eu(f.imp)+' — '+info.tx+'</span><br>'
         +'<span style="font-size:12px;color:var(--primary)">👆 Clicca per vedere le scadenze</span>'
       +'</div>';
@@ -781,7 +781,7 @@ function renderScad(){
   let urg=0;
   const html=rems.filter(r=>r.on).map(r=>{
     const info=di(r.dat);
-    if(info.df<=30)urg++;
+    if(info.df<=7)urg++;
     const fq=r.freq==='mensile'?'Mensile':r.freq==='trimestrale'?'Trimestrale':r.freq==='annuale'?'Annuale':'Una tantum';
     return `<div class="ri ${info.cls}" style="margin-bottom:10px">
       <div class="ri-head">
@@ -805,7 +805,7 @@ function renderScad(){
   if(bdg){if(urg>0){bdg.style.display='inline';bdg.textContent=urg;}else{bdg.style.display='none';}}
   const al=document.getElementById('alert-scad');
   if(al){
-    if(urg>0){al.innerHTML=`<div style="background:var(--orn-light);border:1px solid #FED7AA;border-radius:var(--r);padding:14px;margin-bottom:14px"><span style="font-weight:700;color:var(--orange)">⚠️ ${urg} scadenza/e nei prossimi 30 giorni!</span><br><span style="font-size:13px;color:var(--text2)">Clicca "✅ Saldato" quando effettui il pagamento — viene registrato automaticamente.</span></div>`;}
+    if(urg>0){al.innerHTML=`<div style="background:var(--orn-light);border:1px solid #FED7AA;border-radius:var(--r);padding:14px;margin-bottom:14px"><span style="font-weight:700;color:var(--orange)">⚠️ ${urg} scadenza/e nei prossimi 7 giorni!</span><br><span style="font-size:13px;color:var(--text2)">Clicca "✅ Saldato" quando effettui il pagamento — viene registrato automaticamente.</span></div>`;}
     else{al.innerHTML='';}
   }
 }
