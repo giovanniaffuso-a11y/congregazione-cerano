@@ -1456,7 +1456,44 @@ function buildEntrataStats(){
   html+='</div></div>';
   el.innerHTML=html;
 }
+function sincronizzaGrigliaRef(){
+  // Àncora ogni casella al cognome+nome dell'oratore (riferimento stabile).
+  // Cosi' se l'elenco oratori cambia posizione, i nomi restano al posto giusto.
+  if(!state.grigliaEntrata) return;
+  var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+  var db=state.oratoriDb||[];
+  function trovaIdx(cog,nom,cong){
+    var c=(cog||'').trim().toLowerCase(), n=(nom||'').trim().toLowerCase(), primo=-1;
+    for(var i=0;i<db.length;i++){
+      var o=db[i]; if(!o) continue;
+      if((o.cognome||'').trim().toLowerCase()===c && (o.nome||'').trim().toLowerCase()===n){
+        if(primo<0) primo=i;
+        if(cong && (o.congregazione||'').trim().toLowerCase()===(cong||'').trim().toLowerCase()) return i;
+      }
+    }
+    return primo;
+  }
+  var sv=state.grigliaEntrata, cambiato=false;
+  for(var ck in sv){
+    var cel=sv[ck]; if(!cel) continue;
+    var oi=cel.orIdx;
+    if(oi==='' || oi===undefined || oi===null) continue;
+    if(speciali.indexOf(oi)>=0) continue; // voce speciale: non toccare
+    if(cel.orRef && cel.orRef.indexOf('|')>=0){
+      // Gia' ancorata: ricalcola la posizione attuale partendo dal nome
+      var parti=cel.orRef.split('|');
+      var idx=trovaIdx(parti[0],parti[1],cel.cong);
+      if(idx>=0 && String(idx)!==String(cel.orIdx)){ cel.orIdx=idx; cambiato=true; }
+    } else {
+      // Conversione una-tantum: crea l'ancora dalla posizione attuale (giusta adesso)
+      var o=db[parseInt(oi)];
+      if(o){ cel.orRef=(o.cognome||'').trim()+'|'+(o.nome||'').trim(); cambiato=true; }
+    }
+  }
+  if(cambiato){ salvaStorage(); }
+}
 function buildGrigliaEntrata(){
+  sincronizzaGrigliaRef();
   buildEntrataStats();
   aggiornaSottotitoloEntrata();
   var tbody=document.getElementById('grigliaEntrataBody');
@@ -1563,9 +1600,9 @@ function geSelOratore(ck,val){
       }
     }
   }
-  sv[ck].orIdx=val; sv[ck].disc=''; sv[ck].tema=''; sv[ck].cong='';
+  sv[ck].orIdx=val; sv[ck].disc=''; sv[ck].tema=''; sv[ck].cong=''; sv[ck].orRef='';
   if(speciali.indexOf(val)<0 && val!==''){
-    var o=state.oratoriDb[parseInt(val)];if(o)sv[ck].cong=o.congregazione||'';
+    var o=state.oratoriDb[parseInt(val)];if(o){sv[ck].cong=o.congregazione||''; sv[ck].orRef=(o.cognome||'').trim()+'|'+(o.nome||'').trim();}
     // Sync automatico in D-Out se e' un fratello di Cerano
     if(o&&(o.congregazione||'').trim().toLowerCase()==='cerano'){
       var FC=getFratelliCerano();
