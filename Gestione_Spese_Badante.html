@@ -793,7 +793,7 @@ function renderScad(){
           <div class="ri-date">📅 ${new Date(r.dat).toLocaleDateString('it-IT')} · ${fq}</div>
         </div>
         <div class="ri-btns">
-          <button class="btn bg bsm" onclick="openSaldato('${r.id}')">✅ Saldato</button>
+          <button class="btn bg bsm" onclick="saldaDiretto('${r.id}')">✅ Saldato</button>
           <button class="btn br bsm" onclick="delRem('${r.id}')">🗑️</button>
         </div>
       </div>
@@ -892,7 +892,28 @@ function delPag(id){
   renderAll();toast('🗑️ Pagamento rimosso');
 }
 
-// ===== SALDATO MODAL =====
+// ===== SALDATO DIRETTO (un click, senza finestra di conferma) =====
+function saldaDiretto(id){
+  const r=gRem().find(x=>x.id===id);if(!r)return;
+  const og=new Date().toISOString().split('T')[0];
+  const pags=gPag();
+  pags.unshift({id:Date.now().toString(),tit:r.tit,imp:r.imp,cat:r.cat,dat:og,not:'Da scadenzario ('+r.freq+')'});
+  savP(pags);
+  const rems=gRem().map(x=>{
+    if(x.id!==r.id)return x;
+    if(r.freq==='una_tantum')return{...x,on:false};
+    const d=new Date(r.dat);
+    if(r.freq==='mensile')d.setMonth(d.getMonth()+1);
+    else if(r.freq==='trimestrale')d.setMonth(d.getMonth()+3);
+    else if(r.freq==='annuale')d.setFullYear(d.getFullYear()+1);
+    return{...x,dat:d.toISOString().split('T')[0]};
+  });
+  savR(rems);
+  renderAll();
+  toast('✅ '+r.tit+' — '+eu(r.imp)+' registrato in Pagamenti!');
+}
+
+// ===== SALDATO MODAL (non più usato dal bottone Scadenze, lasciato per compatibilità) =====
 function openSaldato(id){
   const r=gRem().find(x=>x.id===id);if(!r)return;
   saldando=r;
