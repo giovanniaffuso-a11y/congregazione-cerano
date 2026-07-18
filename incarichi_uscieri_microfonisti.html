@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incarichi Uscieri e Microfonisti</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .usciere-cancello { background: #3b82f6; }
+        .usciere-sala { background: #8b5cf6; }
+        .microfonista { background: #ec4899; }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .input-group select:hover {
+            border-color: #8b5cf6;
+        }
+
+        .input-group select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .preview-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px dashed #d1d5db;
+        }
+
+        .preview-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #1f2937;
+            min-height: 200px;
+        }
+
+        .preview-content .header-cancello {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .preview-content .header-sala {
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        .preview-content .header-microfonista {
+            color: #ec4899;
+            font-weight: bold;
+        }
+
+        .preview-content .nome-bold {
+            font-weight: bold;
+        }
+
+        .preview-content .title-main {
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 13px;
+            background: #f9fafb;
+        }
+
+        .nomi-list-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #e5e7eb;
+            display: none;
+        }
+
+        .nomi-list-section.show {
+            display: block;
+        }
+
+        .nomi-list-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+
+        .add-nome-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #d1d5db;
+        }
+
+        .add-nome-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .add-nome-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .add-nome-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-add {
+            padding: 12px 25px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .nomi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .nome-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
+            color: #1f2937;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .nome-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .nome-text {
+            flex: 1;
+        }
+
+        .btn-remove {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #dc2626;
+        }
+
+        .nomi-count {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .btn-toggle {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-toggle:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        .btn-toggle.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>*USCIERI* E *MICROFONISTI*</h1>
+            <p>Seleziona gli incarichi e copia per WhatsApp</p>
+        </div>
+
+        <div class="content">
+            <!-- Usciere Cancello -->
+            <div class="section">
+                <div class="section-title usciere-cancello">
+                    Usciere Cancello
+                </div>
+                <div class="input-group">
+                    <label>Prima persona</label>
+                    <select id="usciere-cancello-1">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Seconda persona</label>
+                    <select id="usciere-cancello-2">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Terza persona (opzionale)</label>
+                    <select id="usciere-cancello-3">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Usciere Sala -->
+            <div class="section">
+                <div class="section-title usciere-sala">
+                    Usciere Sala
+                </div>
+                <div class="input-group">
+                    <label>Prima persona</label>
+                    <select id="usciere-sala-1">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Seconda persona</label>
+                    <select id="usciere-sala-2">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Terza persona (opzionale)</label>
+                    <select id="usciere-sala-3">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Microfonista -->
+            <div class="section">
+                <div class="section-title microfonista">
+                    Microfonista
+                </div>
+                <div class="input-group">
+                    <label>Prima persona</label>
+                    <select id="microfonista-1">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Seconda persona</label>
+                    <select id="microfonista-2">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Terza persona (opzionale)</label>
+                    <select id="microfonista-3">
+                        <option value="">-- Seleziona --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Anteprima -->
+            <div class="preview-section">
+                <div class="preview-title">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    Anteprima messaggio WhatsApp
+                </div>
+                <div class="preview-content" id="preview"></div>
+            </div>
+
+            <!-- Pulsanti -->
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="copiaPerWhatsApp()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                    </svg>
+                    Copia per WhatsApp
+                </button>
+                <button class="btn btn-secondary" onclick="pulisci()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Pulisci tutto
+                </button>
+            </div>
+
+            <div class="button-group" style="margin-top: 10px;">
+                <button class="btn btn-secondary" onclick="esportaBackup()">
+                    💾 Backup dati
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('fileBackupIncarichi').click()">
+                    📂 Ripristina backup
+                </button>
+                <input type="file" id="fileBackupIncarichi" accept=".json,application/json" style="display:none" onchange="importaBackup(this)">
+            </div>
+
+            <!-- Bottoni gestione liste -->
+            <div class="button-group" style="margin-top: 10px;">
+                <button class="btn btn-toggle" id="toggleCancelloBtn" onclick="toggleListaNomi('usciereCancello')">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    Gestisci Usciere Cancello
+                </button>
+            </div>
+            <div class="button-group" style="margin-top: 10px;">
+                <button class="btn btn-toggle" id="toggleSalaBtn" onclick="toggleListaNomi('usciereSala')">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    Gestisci Usciere Sala
+                </button>
+            </div>
+            <div class="button-group" style="margin-top: 10px;">
+                <button class="btn btn-toggle" id="toggleMicroBtn" onclick="toggleListaNomi('microfonista')">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    Gestisci Microfonista
+                </button>
+            </div>
+
+            <!-- Lista nomi -->
+            <div class="nomi-list-section" id="nomiListSection">
+                <div class="nomi-list-title" id="nomiListTitle">
+                    📋 Gestione nomi - Usciere Cancello
+                </div>
+
+                <!-- Form aggiungi nome -->
+                <div class="add-nome-section">
+                    <div class="add-nome-form">
+                        <input 
+                            type="text" 
+                            id="nuovoNomeInput" 
+                            class="add-nome-input" 
+                            placeholder="Inserisci nuovo nome (es. Rossi M)"
+                            onkeypress="if(event.key === 'Enter') aggiungiNome()"
+                        >
+                        <button class="btn-add" onclick="aggiungiNome()">
+                            ➕ Aggiungi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contatore nomi -->
+                <div class="nomi-count" id="nomiCount">
+                    Totale nomi: 20
+                </div>
+
+                <!-- Griglia nomi -->
+                <div class="nomi-grid" id="nomiGrid">
+                    <!-- I nomi verranno inseriti qui da JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Congregazione di Cerano - Circoscrizione Lombardia 4
+        </div>
+    </div>
+
+    <!-- Messaggio di successo -->
+    <div class="success-message" id="successMessage">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Testo copiato! Ora incollalo su WhatsApp</span>
+    </div>
+
+    <script>
+        // Liste nomi predefinite per ogni incarico
+        const nomiPredefiniti = {
+            usciereCancello: [
+                "Affuso G",
+                "Aula G",
+                "Aula L.",
+                "Aula V",
+                "Barberi A",
+                "Barberi S",
+                "Bocchino D",
+                "Braghin P.",
+                "Catalano R",
+                "Cazzolla G",
+                "Circosta V.",
+                "Colombo M",
+                "Condello F",
+                "Conte D",
+                "Coppola S",
+                "Guarnieri F",
+                "Mandica G",
+                "Mazzotta M",
+                "Palano G",
+                "Perla A"
+            ],
+            usciereSala: [
+                "Affuso G",
+                "Aula G",
+                "Aula L.",
+                "Aula V",
+                "Barberi A",
+                "Barberi S",
+                "Bocchino D",
+                "Braghin P.",
+                "Catalano R",
+                "Cazzolla G",
+                "Circosta V.",
+                "Colombo M",
+                "Condello F",
+                "Conte D",
+                "Coppola S",
+                "Guarnieri F",
+                "Mandica G",
+                "Mazzotta M",
+                "Palano G",
+                "Perla A"
+            ],
+            microfonista: [
+                "Affuso G",
+                "Aula G",
+                "Aula L.",
+                "Aula V",
+                "Barberi A",
+                "Barberi S",
+                "Bocchino D",
+                "Braghin Chri",
+                "Braghin P.",
+                "Catalano R",
+                "Cazzolla G",
+                "Circosta V.",
+                "Colombo M",
+                "Condello F",
+                "Conte D",
+                "Coppola S",
+                "Del Grosso A",
+                "Guarnieri F",
+                "Luisi F",
+                "Mandica G",
+                "Mazzotta M",
+                "Palano G",
+                "Perla A"
+            ]
+        };
+
+        // Carica nomi da localStorage o usa predefiniti
+        let nomi = {
+            usciereCancello: [],
+            usciereSala: [],
+            microfonista: []
+        };
+
+        function caricaNomi() {
+            const saved = localStorage.getItem('nomi_liste');
+            if (saved) {
+                nomi = JSON.parse(saved);
+            } else {
+                nomi = {
+                    usciereCancello: [...nomiPredefiniti.usciereCancello],
+                    usciereSala: [...nomiPredefiniti.usciereSala],
+                    microfonista: [...nomiPredefiniti.microfonista]
+                };
+            }
+            // Ordina alfabeticamente
+            nomi.usciereCancello.sort();
+            nomi.usciereSala.sort();
+            nomi.microfonista.sort();
+        }
+
+        function salvaNomi() {
+            localStorage.setItem('nomi_liste', JSON.stringify(nomi));
+        }
+
+        // Variabile per tracciare quale lista stiamo gestendo
+        let listaCorrente = 'usciereCancello';
+
+        // Popola tutti i select
+        function popolaSelect() {
+            // Usciere Cancello
+            const selectsCancello = ['usciere-cancello-1', 'usciere-cancello-2', 'usciere-cancello-3'];
+            selectsCancello.forEach(id => {
+                const select = document.getElementById(id);
+                const currentValue = select.value;
+                
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                
+                nomi.usciereCancello.forEach(nome => {
+                    const option = document.createElement('option');
+                    option.value = nome;
+                    option.textContent = nome;
+                    select.appendChild(option);
+                });
+                
+                if (nomi.usciereCancello.includes(currentValue)) {
+                    select.value = currentValue;
+                } else {
+                    select.value = '';
+                }
+            });
+
+            // Usciere Sala
+            const selectsSala = ['usciere-sala-1', 'usciere-sala-2', 'usciere-sala-3'];
+            selectsSala.forEach(id => {
+                const select = document.getElementById(id);
+                const currentValue = select.value;
+                
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                
+                nomi.usciereSala.forEach(nome => {
+                    const option = document.createElement('option');
+                    option.value = nome;
+                    option.textContent = nome;
+                    select.appendChild(option);
+                });
+                
+                if (nomi.usciereSala.includes(currentValue)) {
+                    select.value = currentValue;
+                } else {
+                    select.value = '';
+                }
+            });
+
+            // Microfonista
+            const selectsMicro = ['microfonista-1', 'microfonista-2', 'microfonista-3'];
+            selectsMicro.forEach(id => {
+                const select = document.getElementById(id);
+                const currentValue = select.value;
+                
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                
+                nomi.microfonista.forEach(nome => {
+                    const option = document.createElement('option');
+                    option.value = nome;
+                    option.textContent = nome;
+                    select.appendChild(option);
+                });
+                
+                if (nomi.microfonista.includes(currentValue)) {
+                    select.value = currentValue;
+                } else {
+                    select.value = '';
+                }
+            });
+        }
+
+        // Carica valori salvati
+        function caricaValori() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                const saved = localStorage.getItem(select.id);
+                if (saved) {
+                    select.value = saved;
+                }
+            });
+        }
+
+        // Salva valore
+        function salvaValore(id, value) {
+            localStorage.setItem(id, value);
+        }
+
+        function due(n) { return ("0" + n).slice(-2); }
+
+        function esportaBackup() {
+            const valori = {};
+            document.querySelectorAll('select').forEach(select => {
+                const v = localStorage.getItem(select.id);
+                if (v !== null) valori[select.id] = v;
+            });
+            const dati = { app: 'incarichi_uscieri_microfonisti', versione: 1, data: new Date().toISOString(), nomi: nomi, valori: valori };
+            const blob = new Blob([JSON.stringify(dati, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const d = new Date();
+            const nomeFile = 'incarichi_backup_' + d.getFullYear() + '-' + due(d.getMonth() + 1) + '-' + due(d.getDate()) + '.json';
+            const a = document.createElement('a');
+            a.href = url; a.download = nomeFile;
+            document.body.appendChild(a); a.click();
+            setTimeout(() => { try { document.body.removeChild(a); } catch (e) {} URL.revokeObjectURL(url); }, 300);
+            alert('Backup salvato');
+        }
+
+        function importaBackup(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dati = JSON.parse(e.target.result);
+                    if (!dati || !dati.nomi) throw new Error('formato');
+                    if (!confirm('Ripristinare i dati da questo backup? I dati attuali nell\'app verranno sostituiti.')) { input.value = ''; return; }
+                    nomi = dati.nomi;
+                    salvaNomi();
+                    if (dati.valori) {
+                        Object.keys(dati.valori).forEach(id => localStorage.setItem(id, dati.valori[id]));
+                    }
+                    popolaSelect();
+                    caricaValori();
+                    alert('Dati ripristinati');
+                } catch (err) {
+                    alert('Il file scelto non sembra un backup valido di questa app.');
+                }
+                input.value = '';
+            };
+            reader.onerror = function() { alert('Impossibile leggere il file.'); input.value = ''; };
+            reader.readAsText(file);
+        }
+
+        // Aggiungi listener a tutti i select
+        function aggiungiListeners() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    salvaValore(this.id, this.value);
+                    aggiornaAnteprima();
+                });
+            });
+        }
+
+        // Aggiorna anteprima
+        function aggiornaAnteprima() {
+            const usciereCancello1 = document.getElementById('usciere-cancello-1').value;
+            const usciereCancello2 = document.getElementById('usciere-cancello-2').value;
+            const usciereCancello3 = document.getElementById('usciere-cancello-3').value;
+            
+            const usciereSala1 = document.getElementById('usciere-sala-1').value;
+            const usciereSala2 = document.getElementById('usciere-sala-2').value;
+            const usciereSala3 = document.getElementById('usciere-sala-3').value;
+            
+            const microfonista1 = document.getElementById('microfonista-1').value;
+            const microfonista2 = document.getElementById('microfonista-2').value;
+            const microfonista3 = document.getElementById('microfonista-3').value;
+
+            // Testo per WhatsApp (con intestazioni in grassetto)
+            let testoWhatsApp = "*USCIERI* E *MICROFONISTI*\n\n";
+            
+            testoWhatsApp += "*Usciere Cancello*\n\n";
+            if (usciereCancello1) testoWhatsApp += "*" + usciereCancello1 + "*\n";
+            if (usciereCancello2) testoWhatsApp += "*" + usciereCancello2 + "*\n";
+            if (usciereCancello3) testoWhatsApp += "*" + usciereCancello3 + "*\n";
+            
+            testoWhatsApp += "\n*Usciere Sala*\n\n";
+            if (usciereSala1) testoWhatsApp += "*" + usciereSala1 + "*\n";
+            if (usciereSala2) testoWhatsApp += "*" + usciereSala2 + "*\n";
+            if (usciereSala3) testoWhatsApp += "*" + usciereSala3 + "*\n";
+            
+            testoWhatsApp += "\n*Microfonista*\n\n";
+            if (microfonista1) testoWhatsApp += "*" + microfonista1 + "*\n";
+            if (microfonista2) testoWhatsApp += "*" + microfonista2 + "*\n";
+            if (microfonista3) testoWhatsApp += "*" + microfonista3 + "*\n";
+            
+            testoWhatsApp += "\nGrazie della vostra\npreziosa collaborazione";
+
+            // Salva il testo per la copia
+            window.testoPerWhatsApp = testoWhatsApp;
+
+            // HTML per anteprima con colori
+            let htmlAnteprima = '<span class="title-main">*USCIERI* E *MICROFONISTI*</span>\n\n';
+            
+            htmlAnteprima += '<span class="header-cancello">*Usciere Cancello*</span>\n\n';
+            if (usciereCancello1) htmlAnteprima += '<span class="nome-bold">*' + usciereCancello1 + '*</span>\n';
+            if (usciereCancello2) htmlAnteprima += '<span class="nome-bold">*' + usciereCancello2 + '*</span>\n';
+            if (usciereCancello3) htmlAnteprima += '<span class="nome-bold">*' + usciereCancello3 + '*</span>\n';
+            
+            htmlAnteprima += '\n<span class="header-sala">*Usciere Sala*</span>\n\n';
+            if (usciereSala1) htmlAnteprima += '<span class="nome-bold">*' + usciereSala1 + '*</span>\n';
+            if (usciereSala2) htmlAnteprima += '<span class="nome-bold">*' + usciereSala2 + '*</span>\n';
+            if (usciereSala3) htmlAnteprima += '<span class="nome-bold">*' + usciereSala3 + '*</span>\n';
+            
+            htmlAnteprima += '\n<span class="header-microfonista">*Microfonista*</span>\n\n';
+            if (microfonista1) htmlAnteprima += '<span class="nome-bold">*' + microfonista1 + '*</span>\n';
+            if (microfonista2) htmlAnteprima += '<span class="nome-bold">*' + microfonista2 + '*</span>\n';
+            if (microfonista3) htmlAnteprima += '<span class="nome-bold">*' + microfonista3 + '*</span>\n';
+            
+            htmlAnteprima += '\nGrazie della vostra\npreziosa collaborazione';
+
+            document.getElementById('preview').innerHTML = htmlAnteprima;
+        }
+
+        // Copia per WhatsApp
+        async function copiaPerWhatsApp() {
+            const testo = window.testoPerWhatsApp || '';
+            
+            if (!testo) {
+                alert('Seleziona almeno un nome prima di copiare!');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(testo);
+                mostraMessaggioSuccesso();
+            } catch (err) {
+                // Fallback per browser più vecchi
+                const textarea = document.createElement('textarea');
+                textarea.value = testo;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                mostraMessaggioSuccesso();
+            }
+        }
+
+        // Mostra messaggio di successo
+        function mostraMessaggioSuccesso() {
+            const msg = document.getElementById('successMessage');
+            msg.style.display = 'flex';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        // Pulisci tutti i campi
+        function pulisci() {
+            if (confirm('Vuoi davvero cancellare tutte le selezioni?')) {
+                const selects = document.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.value = '';
+                    localStorage.removeItem(select.id);
+                });
+                aggiornaAnteprima();
+            }
+        }
+
+        // Toggle lista nomi
+        function toggleListaNomi(tipo) {
+            const section = document.getElementById('nomiListSection');
+            const btnCancello = document.getElementById('toggleCancelloBtn');
+            const btnSala = document.getElementById('toggleSalaBtn');
+            const btnMicro = document.getElementById('toggleMicroBtn');
+            
+            // Chiudi se si clicca sullo stesso bottone
+            if (section.classList.contains('show') && listaCorrente === tipo) {
+                section.classList.remove('show');
+                btnCancello.classList.remove('active');
+                btnSala.classList.remove('active');
+                btnMicro.classList.remove('active');
+                return;
+            }
+            
+            // Imposta la lista corrente
+            listaCorrente = tipo;
+            
+            // Mostra la sezione
+            section.classList.add('show');
+            
+            // Aggiorna i bottoni
+            btnCancello.classList.remove('active');
+            btnSala.classList.remove('active');
+            btnMicro.classList.remove('active');
+            
+            if (tipo === 'usciereCancello') {
+                btnCancello.classList.add('active');
+                document.getElementById('nomiListTitle').textContent = '📋 Gestione nomi - Usciere Cancello';
+            } else if (tipo === 'usciereSala') {
+                btnSala.classList.add('active');
+                document.getElementById('nomiListTitle').textContent = '📋 Gestione nomi - Usciere Sala';
+            } else {
+                btnMicro.classList.add('active');
+                document.getElementById('nomiListTitle').textContent = '📋 Gestione nomi - Microfonista';
+            }
+            
+            // Aggiorna la lista
+            popolaListaNomi();
+        }
+
+        // Popola lista nomi
+        function popolaListaNomi() {
+            const grid = document.getElementById('nomiGrid');
+            grid.innerHTML = ''; // Pulisci la griglia
+            
+            const listaNomi = nomi[listaCorrente];
+            
+            listaNomi.forEach(nome => {
+                const item = document.createElement('div');
+                item.className = 'nome-item';
+                
+                const nomeText = document.createElement('span');
+                nomeText.className = 'nome-text';
+                nomeText.textContent = nome;
+                
+                const btnRemove = document.createElement('button');
+                btnRemove.className = 'btn-remove';
+                btnRemove.textContent = '✕';
+                btnRemove.onclick = () => rimuoviNome(nome);
+                
+                item.appendChild(nomeText);
+                item.appendChild(btnRemove);
+                grid.appendChild(item);
+            });
+
+            // Aggiorna contatore
+            document.getElementById('nomiCount').textContent = `Totale nomi: ${listaNomi.length}`;
+        }
+
+        // Aggiungi nuovo nome
+        function aggiungiNome() {
+            const input = document.getElementById('nuovoNomeInput');
+            const nuovoNome = input.value.trim();
+            
+            if (!nuovoNome) {
+                alert('Inserisci un nome!');
+                return;
+            }
+            
+            const listaNomi = nomi[listaCorrente];
+            
+            // Controlla se il nome esiste già
+            if (listaNomi.includes(nuovoNome)) {
+                alert('Questo nome esiste già in questa lista!');
+                return;
+            }
+            
+            // Aggiungi il nome
+            listaNomi.push(nuovoNome);
+            listaNomi.sort(); // Riordina alfabeticamente
+            salvaNomi();
+            
+            // Aggiorna tutto
+            popolaSelect();
+            popolaListaNomi();
+            
+            // Pulisci input
+            input.value = '';
+            input.focus();
+            
+            // Mostra messaggio
+            mostraMessaggioCustom('✅ Nome aggiunto con successo!');
+        }
+
+        // Rimuovi nome
+        function rimuoviNome(nome) {
+            if (!confirm(`Vuoi davvero rimuovere "${nome}" dalla lista?\n\nAttenzione: se questo nome è attualmente selezionato, verrà rimosso anche da lì.`)) {
+                return;
+            }
+            
+            // Rimuovi dalla lista
+            nomi[listaCorrente] = nomi[listaCorrente].filter(n => n !== nome);
+            salvaNomi();
+            
+            // Rimuovi dalle selezioni se presente
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                if (select.value === nome) {
+                    select.value = '';
+                    salvaValore(select.id, '');
+                }
+            });
+            
+            // Aggiorna tutto
+            popolaSelect();
+            popolaListaNomi();
+            aggiornaAnteprima();
+            
+            // Mostra messaggio
+            mostraMessaggioCustom('🗑️ Nome rimosso dalla lista');
+        }
+
+        // Mostra messaggio personalizzato
+        function mostraMessaggioCustom(testo) {
+            const msg = document.getElementById('successMessage');
+            const span = msg.querySelector('span');
+            span.textContent = testo;
+            msg.style.display = 'flex';
+            setTimeout(() => {
+                msg.style.display = 'none';
+                span.textContent = 'Testo copiato! Ora incollalo su WhatsApp';
+            }, 3000);
+        }
+
+        // Inizializza
+        window.onload = function() {
+            caricaNomi();
+            popolaSelect();
+            caricaValori();
+            aggiungiListeners();
+            aggiornaAnteprima();
+        };
+    </script>
+</body>
+</html>
