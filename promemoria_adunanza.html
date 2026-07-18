@@ -224,6 +224,11 @@ textarea{resize:vertical;min-height:48px}
     <button class="btn ghost" onclick="ripristina()">↺ Ripristina da Incarichi</button>
     <button class="btn" onclick="chiudiGest()">Chiudi</button>
   </div>
+  <div class="modal-foot" style="margin-top:8px">
+    <button class="btn ghost" onclick="esportaBackup()">💾 Backup dati</button>
+    <button class="btn ghost" onclick="document.getElementById('fileBackupAdunanza').click()">📂 Ripristina backup</button>
+    <input type="file" id="fileBackupAdunanza" accept=".json,application/json" style="display:none" onchange="importaBackup(this)">
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -655,6 +660,44 @@ function pulisci(){
   genera();
   segnaAgg();
   toast("Campi puliti (la data resta)");
+}
+
+function due(n){return ("0"+n).slice(-2);}
+function esportaBackup(){
+  var dati={ app:'promemoria_adunanza', versione:1, data:new Date().toISOString(), elenchi:elenchi, settimana:JSON.parse(localStorage.getItem(STORAGE_KEY_SETT)||'null') };
+  var blob=new Blob([JSON.stringify(dati,null,2)], {type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var d=new Date();
+  var nome='promemoria_adunanza_backup_'+d.getFullYear()+'-'+due(d.getMonth()+1)+'-'+due(d.getDate())+'.json';
+  var a=document.createElement('a');
+  a.href=url; a.download=nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ try{document.body.removeChild(a);}catch(e){} URL.revokeObjectURL(url); }, 300);
+  toast('Backup salvato');
+}
+function importaBackup(input){
+  var file=input.files&&input.files[0]; if(!file){ return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var dati=JSON.parse(e.target.result);
+      if(!dati || !dati.elenchi) throw new Error('formato');
+      if(!confirm('Ripristinare i dati da questo backup? I dati attuali nell\'app verranno sostituiti.')){ input.value=''; return; }
+      elenchi=dati.elenchi;
+      salvaElenchi();
+      if(dati.settimana) localStorage.setItem(STORAGE_KEY_SETT, JSON.stringify(dati.settimana));
+      popolaTendine();
+      caricaSettimana();
+      genera();
+      segnaAgg();
+      toast('Dati ripristinati');
+    }catch(err){
+      alert('Il file scelto non sembra un backup valido di questa app.');
+    }
+    input.value='';
+  };
+  reader.onerror=function(){ alert('Impossibile leggere il file.'); input.value=''; };
+  reader.readAsText(file);
 }
 
 window.onload=function(){
