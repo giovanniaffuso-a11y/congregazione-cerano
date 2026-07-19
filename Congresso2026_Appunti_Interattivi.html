@@ -419,6 +419,55 @@
   .btn-save:hover { background: #d4b25c; transform: translateY(-1px); }
   .btn-clear { background: rgba(255,255,255,0.15); color: white; }
   .btn-clear:hover { background: rgba(255,255,255,0.25); }
+  .btn-export { background: var(--verde-chiaro); color: #1a1a1a; }
+  .btn-export:hover { background: #b5c49c; transform: translateY(-1px); }
+
+  .cloud-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.04em;
+  }
+  .cloud-status.ok { color: #a3d9a5; }
+  .cloud-status.saving { color: #f0d878; }
+  .cloud-status.error { color: #f0a0a0; }
+
+  .export-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--bordo);
+    border-radius: 8px;
+    background: var(--crema);
+    color: var(--testo);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .export-option:last-child { margin-bottom: 0; }
+  .export-option:hover { background: var(--crema-scuro); border-color: var(--verde-medio); }
+  .export-option .export-icon { font-size: 1.3rem; }
+  .export-option .export-text { display: flex; flex-direction: column; }
+  .export-option .export-text small { font-weight: 400; color: #777; font-size: 0.75rem; margin-top: 2px; }
+
+  @media print {
+    .nav-tabs, .save-bar, .toast, .modal-overlay { display: none !important; }
+    #coverPage { display: none !important; }
+    body.print-all .day-section { display: block !important; }
+    body.print-all .day-section:not(:first-of-type) { page-break-before: always; break-before: page; }
+    .note-area { border: 1px solid #999 !important; }
+  }
 
   .toast {
     position: fixed;
@@ -1099,7 +1148,9 @@
 
 <!-- BARRA SALVATAGGIO -->
 <div class="save-bar">
-  <button class="btn-save" onclick="saveNotes()">💾 Salva Appunti</button>
+  <span id="cloudStatus" class="cloud-status">☁️ …</span>
+  <button class="btn-save" onclick="manualSave()">💾 Salva Appunti</button>
+  <button class="btn-export" onclick="openExportMenu()">📤 Esporta</button>
   <button class="btn-clear" onclick="goToCover()">🏠 Copertina</button>
 </div>
 
@@ -1115,6 +1166,32 @@
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeEditName()">Annulla</button>
       <button class="btn-ok" onclick="saveEditName()">✅ Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL ESPORTA ===== -->
+<div class="modal-overlay" id="modalExport">
+  <div class="modal-box">
+    <h3>📤 Esporta appunti</h3>
+    <button class="export-option" onclick="downloadDayHTML()">
+      <span class="export-icon">💾</span>
+      <span class="export-text">Giorno corrente — HTML<small>Salva sul PC la pagina di questo giorno con gli appunti dentro</small></span>
+    </button>
+    <button class="export-option" onclick="printCurrentDay()">
+      <span class="export-icon">🖨️</span>
+      <span class="export-text">Giorno corrente — PDF<small>Apre la stampa: scegli "Salva come PDF"</small></span>
+    </button>
+    <button class="export-option" onclick="downloadAllHTML()">
+      <span class="export-icon">💾</span>
+      <span class="export-text">Tutti e 3 i giorni — HTML<small>Salva sul PC l'intero Congresso con gli appunti dentro</small></span>
+    </button>
+    <button class="export-option" onclick="printAllDays()">
+      <span class="export-icon">🖨️</span>
+      <span class="export-text">Tutti e 3 i giorni — PDF<small>Apre la stampa con tutti i giorni, uno per pagina</small></span>
+    </button>
+    <div class="modal-btns" style="margin-top:14px;">
+      <button class="btn-cancel" onclick="closeExportMenu()">Chiudi</button>
     </div>
   </div>
 </div>
@@ -1232,15 +1309,116 @@ function applyAllLinks() {
 // NAVIGAZIONE E STORAGE
 // ============================================================
 const STORAGE_KEY = 'congresso2026_appunti';
+const CLOUD_TS_KEY = 'congresso2026_cloud_ts';
+
+// ============================================================
+// SINCRONIZZAZIONE CLOUD (JSONBin.io) — bin dedicato al Congresso
+// ============================================================
+const JSONBIN_ID = '6a44eb13da38895dfe1b207b';
+const JSONBIN_KEY = '$2a$10$7/y/F.Of85te2gj5.mnoteOd2/ILu7i.iU6a4IQt5kHrLf8NlLjwW';
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_ID;
+
+let cloudSyncTimer = null;
+
+function setCloudStatus(state, detail) {
+  const el = document.getElementById('cloudStatus');
+  if (!el) return;
+  if (state === 'ok')      { el.textContent = '☁️ Sincronizzato';    el.className = 'cloud-status ok'; }
+  else if (state === 'saving') { el.textContent = '☁️ Salvataggio…';  el.className = 'cloud-status saving'; }
+  else if (state === 'error')  { el.textContent = '⚠️ ' + (detail || 'Non sincronizzato'); el.className = 'cloud-status error'; }
+  else { el.textContent = '☁️ …'; el.className = 'cloud-status'; }
+}
+
+function collectAllData() {
+  const data = {};
+  document.querySelectorAll('.note-area').forEach(ta => {
+    if (ta.dataset.key) data[ta.dataset.key] = ta.value;
+  });
+  const nameEl = document.getElementById('displayName');
+  return { notes: data, nome: nameEl ? nameEl.textContent : '', updatedAt: Date.now() };
+}
+
+async function pushToCloud() {
+  setCloudStatus('saving');
+  try {
+    const payload = collectAllData();
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    localStorage.setItem(CLOUD_TS_KEY, String(payload.updatedAt));
+    setCloudStatus('ok');
+  } catch (e) {
+    setCloudStatus('error', e.message);
+  }
+}
+
+// Scarica dal cloud; se applyIfNewer è vero e i dati remoti sono più
+// recenti di quelli locali, li applica alle textarea sostituendo quelli attuali.
+async function pullFromCloud(applyIfNewer) {
+  try {
+    const res = await fetch(JSONBIN_URL + '/latest', { headers: { 'X-Master-Key': JSONBIN_KEY } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const remote = json.record;
+    if (!remote || !remote.updatedAt) { setCloudStatus('ok'); return; }
+    const localTs = parseInt(localStorage.getItem(CLOUD_TS_KEY) || '0', 10);
+    if (applyIfNewer && remote.updatedAt > localTs) {
+      document.querySelectorAll('.note-area').forEach(ta => {
+        if (ta.dataset.key && remote.notes && (ta.dataset.key in remote.notes)) {
+          ta.value = remote.notes[ta.dataset.key];
+        }
+      });
+      if (remote.nome) {
+        const nameEl = document.getElementById('displayName');
+        if (nameEl) { nameEl.textContent = remote.nome; localStorage.setItem(NAME_KEY, remote.nome); }
+      }
+      saveNotes(true);
+      localStorage.setItem(CLOUD_TS_KEY, String(remote.updatedAt));
+      showToast('☁️ Appunti aggiornati dall\'altro dispositivo');
+    }
+    setCloudStatus('ok');
+  } catch (e) {
+    setCloudStatus('error', e.message);
+  }
+}
+
+function scheduleCloudPush() {
+  setCloudStatus('saving');
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(() => { saveNotes(true); pushToCloud(); }, 1500);
+}
+
+function onNoteInput() {
+  scheduleCloudPush();
+}
+
+function attachNoteListeners() {
+  document.querySelectorAll('.note-area').forEach(ta => {
+    if (ta.dataset.listenerAttached) return;
+    ta.dataset.listenerAttached = '1';
+    ta.addEventListener('input', onNoteInput);
+  });
+}
+
+function manualSave() {
+  clearTimeout(cloudSyncTimer);
+  saveNotes();
+  pushToCloud();
+}
 
 function openProgram() {
   document.getElementById('coverPage').style.display = 'none';
   document.getElementById('programPage').style.display = 'block';
   loadNotes();
+  attachNoteListeners();
+  pullFromCloud(true);
 }
 
 function goToCover() {
-  saveNotes();
+  saveNotes(true);
   document.getElementById('programPage').style.display = 'none';
   document.getElementById('coverPage').style.display = 'block';
 }
@@ -1253,16 +1431,16 @@ function showDay(dayId, btn) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function saveNotes() {
+function saveNotes(silent) {
   const data = {};
   document.querySelectorAll('.note-area').forEach(ta => {
     if (ta.dataset.key) data[ta.dataset.key] = ta.value;
   });
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    showToast('✅ Appunti salvati!');
+    if (!silent) showToast('✅ Appunti salvati!');
   } catch(e) {
-    showToast('⚠️ Errore nel salvataggio');
+    if (!silent) showToast('⚠️ Errore nel salvataggio');
   }
 }
 
@@ -1284,9 +1462,12 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// Auto-salva ogni 60 secondi
+// Auto-salva ogni 60 secondi (rete di sicurezza, oltre al salvataggio immediato mentre scrivi)
 setInterval(() => {
-  if (document.getElementById('programPage').style.display !== 'none') saveNotes();
+  if (document.getElementById('programPage').style.display !== 'none') {
+    saveNotes(true);
+    pushToCloud();
+  }
 }, 60000);
 
 // Avvio: converte tutte le scritture in link
@@ -1327,6 +1508,105 @@ function saveEditName() {
 // Chiudi modal cliccando fuori
 document.getElementById('modalNome').addEventListener('click', function(e) {
   if (e.target === this) closeEditName();
+});
+
+// ============================================================
+// ESPORTAZIONE: download HTML e stampa PDF
+// ============================================================
+function openExportMenu() {
+  saveNotes();
+  document.getElementById('modalExport').classList.add('open');
+}
+function closeExportMenu() {
+  document.getElementById('modalExport').classList.remove('open');
+}
+document.getElementById('modalExport').addEventListener('click', function(e) {
+  if (e.target === this) closeExportMenu();
+});
+
+function getCurrentDayId() {
+  const visible = document.querySelector('.day-section.visible');
+  return visible ? visible.id : 'venerdi';
+}
+
+function dayLabel(id) {
+  const map = { venerdi: 'Venerdi', sabato: 'Sabato', domenica: 'Domenica' };
+  return map[id] || id;
+}
+
+// Copia i valori attuali delle textarea (che vivono solo nel DOM, non nell'HTML)
+// dentro il clone che verrà scaricato, cosi il file salvato le contiene davvero.
+function syncNotesIntoClone(clone) {
+  const liveAreas = document.querySelectorAll('.note-area');
+  const cloneAreas = clone.querySelectorAll('.note-area');
+  liveAreas.forEach((ta, i) => {
+    if (cloneAreas[i]) cloneAreas[i].textContent = ta.value;
+  });
+}
+
+function downloadBlob(content, filename, type) {
+  const blob = new Blob([content], { type: type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function downloadDayHTML() {
+  saveNotes();
+  const dayId = getCurrentDayId();
+  const clone = document.documentElement.cloneNode(true);
+  syncNotesIntoClone(clone);
+  clone.querySelectorAll('.day-section').forEach(sec => {
+    if (sec.id !== dayId) sec.remove();
+  });
+  const navTabs = clone.querySelector('.nav-tabs');
+  if (navTabs) navTabs.remove();
+  const coverEl = clone.querySelector('#coverPage');
+  if (coverEl) coverEl.style.display = 'none';
+  const progEl = clone.querySelector('#programPage');
+  if (progEl) progEl.style.display = 'block';
+  const daySec = clone.querySelector('#' + dayId);
+  if (daySec) daySec.classList.add('visible');
+  const exportModal = clone.querySelector('#modalExport');
+  if (exportModal) exportModal.remove();
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  downloadBlob(html, 'Congresso2026_' + dayLabel(dayId) + '.html', 'text/html');
+  closeExportMenu();
+  showToast('✅ Scaricato: ' + dayLabel(dayId));
+}
+
+function downloadAllHTML() {
+  saveNotes();
+  const clone = document.documentElement.cloneNode(true);
+  syncNotesIntoClone(clone);
+  const exportModal = clone.querySelector('#modalExport');
+  if (exportModal) exportModal.remove();
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  downloadBlob(html, 'Congresso2026_Completo.html', 'text/html');
+  closeExportMenu();
+  showToast('✅ Scaricati tutti i giorni');
+}
+
+function printCurrentDay() {
+  saveNotes();
+  closeExportMenu();
+  setTimeout(() => window.print(), 150);
+}
+
+function printAllDays() {
+  saveNotes();
+  closeExportMenu();
+  document.body.classList.add('print-all');
+  setTimeout(() => window.print(), 150);
+}
+
+window.addEventListener('afterprint', function() {
+  document.body.classList.remove('print-all');
 });
 
 </script>
