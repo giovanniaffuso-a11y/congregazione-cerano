@@ -2,17 +2,24 @@
 // Salva la pagina nella memoria del telefono al primo caricamento
 // (con connessione), così l'app si apre anche senza campo/internet.
 
-const CACHE_NAME = 'congresso2026-v1';
+const CACHE_NAME = 'congresso2026-v2'; // versione aumentata: forza il rinnovo della cache
 const URLS_TO_CACHE = [
-  './',
   './Congresso2026_Appunti_Interattivi.html'
 ];
 
-// All'installazione, salva subito la pagina principale in cache
+// All'installazione, salva subito la pagina principale in cache.
+// Ogni file viene salvato singolarmente: se uno fallisse, non blocca gli altri
+// (prima il problema era che un errore su un singolo file bloccava tutto).
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(URLS_TO_CACHE);
+      return Promise.all(
+        URLS_TO_CACHE.map(function (url) {
+          return cache.add(url).catch(function (err) {
+            console.log('Impossibile salvare in cache:', url, err);
+          });
+        })
+      );
     })
   );
   self.skipWaiting();
