@@ -1149,6 +1149,7 @@
 <!-- BARRA SALVATAGGIO -->
 <div class="save-bar">
   <span id="cloudStatus" class="cloud-status">☁️ …</span>
+  <span id="offlineStatus" class="cloud-status">📴 verifica…</span>
   <button class="btn-save" onclick="manualSave()">💾 Salva Appunti</button>
   <button class="btn-export" onclick="openExportMenu()">📤 Esporta</button>
   <button class="btn-clear" onclick="goToCover()">🏠 Copertina</button>
@@ -1475,6 +1476,41 @@ window.addEventListener('DOMContentLoaded', function() {
   applyAllLinks();
   loadName();
 });
+
+// ============================================================
+// MODALITÀ OFFLINE (Service Worker)
+// Salva questa pagina nella memoria del telefono al primo
+// caricamento (con connessione), così si apre anche senza campo.
+// ============================================================
+function setOfflineStatus(state, detail) {
+  const el = document.getElementById('offlineStatus');
+  if (!el) return;
+  if (state === 'ready')       { el.textContent = '📴 Pronto offline';        el.className = 'cloud-status ok'; }
+  else if (state === 'installing') { el.textContent = '📴 Salvataggio in corso…'; el.className = 'cloud-status saving'; }
+  else if (state === 'error')  { el.textContent = '📴 ' + (detail || 'Non disponibile'); el.className = 'cloud-status error'; }
+  else                          { el.textContent = '📴 non supportato';       el.className = 'cloud-status error'; }
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      setOfflineStatus(reg.active ? 'ready' : 'installing');
+      reg.addEventListener('updatefound', function() {
+        const nw = reg.installing;
+        if (nw) {
+          nw.addEventListener('statechange', function() {
+            if (nw.state === 'activated') setOfflineStatus('ready');
+          });
+        }
+      });
+      navigator.serviceWorker.ready.then(function() { setOfflineStatus('ready'); });
+    }).catch(function(err) {
+      setOfflineStatus('error', 'Errore: ' + err.message);
+    });
+  });
+} else {
+  setOfflineStatus('unsupported');
+}
 // ============================================================
 // GESTIONE NOME PERSONALIZZATO
 // ============================================================
