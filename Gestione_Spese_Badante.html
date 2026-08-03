@@ -188,7 +188,7 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
     <div style="font-weight:700;margin-bottom:8px">📋 Date importanti dal contratto</div>
     <div style="display:grid;gap:4px;line-height:1.5">
       <div>💵 Busta paga: inviata il <strong>25 di ogni mese</strong></div>
-      <div>💳 Pagamento stipendio: entro il <strong>1° del mese successivo</strong> — netto <strong id="nc-netto">€1.105,80</strong></div>
+      <div>💳 Pagamento stipendio: entro il <strong>1° del mese successivo</strong> — netto <strong id="nc-netto">€1.095,90</strong></div>
       <div>🏛️ INPS Q2 (solo Giugno 2026): entro <strong>10 luglio 2026</strong></div>
       <div>🏛️ INPS Q3 (Lug-Set): entro <strong>10 ottobre 2026</strong></div>
       <div>🏛️ INPS Q4 (Ott-Dic): entro <strong>10 gennaio 2027</strong></div>
@@ -202,8 +202,8 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
   <div class="sgrid">
     <div class="sc blue">
       <div class="sc-label">💰 Stipendio da Pagare</div>
-      <div class="sc-val" id="s-netto">€1.105,80</div>
-      <div class="sc-sub" id="s-netto-sub">Lordo: €1.145,40 · Netto: €1.105,80</div>
+      <div class="sc-val" id="s-netto">€1.095,90</div>
+      <div class="sc-sub" id="s-netto-sub">Lordo: €1.145,40 · Netto: €1.095,90</div>
     </div>
     <div class="sc orn">
       <div class="sc-label">🏛️ INPS Trimestrale</div>
@@ -225,15 +225,15 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
   <!-- Busta paga reale -->
   <div class="card">
     <div class="ctitle">📋 Busta Paga Mensile (come da contratto CAF CISL)</div>
-    <div class="row"><span class="lbl">💼 Retribuzione lorda (130 ore × €8,30)</span><span id="bp-lordo">€1.079,00</span></div>
+    <div class="row"><span class="lbl" id="bp-lordo-lbl">💼 Retribuzione lorda (130 ore × €8,30)</span><span id="bp-lordo">€1.079,00</span></div>
     <div class="row"><span class="lbl">🎉 Festività</span><span id="bp-fest">€41,50</span></div>
     <div class="row"><span class="lbl">⏱️ Straordinario domenica/festività</span><span id="bp-straord">€24,90</span></div>
     <div class="row tot"><span>📊 Totale lordo</span><span id="bp-tot-lordo">€1.145,40</span></div>
-    <div class="row"><span class="lbl" style="color:var(--red)">(-) Contributi INPS lavoratrice (120h × €0,31)</span><span style="color:var(--red)">- €37,20</span></div>
-    <div class="row"><span class="lbl" style="color:var(--red)">(-) Cassa malattia COLF (120h × €0,02)</span><span style="color:var(--red)">- €2,40</span></div>
+    <div class="row"><span class="lbl" style="color:var(--red)" id="bp-inps-lbl">(-) Contributi INPS lavoratrice (150h × €0,31)</span><span style="color:var(--red)" id="bp-inps">- €46,50</span></div>
+    <div class="row"><span class="lbl" style="color:var(--red)" id="bp-cassa-lbl">(-) Cassa malattia COLF (150h × €0,02)</span><span style="color:var(--red)" id="bp-cassa">- €3,00</span></div>
     <div class="nettobox">
       <span style="font-weight:700;color:var(--green);font-size:15px">💵 NETTO DA PAGARE alla badante</span>
-      <span id="bp-netto" style="font-weight:800;color:var(--green);font-size:24px">€1.105,80</span>
+      <span id="bp-netto" style="font-weight:800;color:var(--green);font-size:24px">€1.095,90</span>
     </div>
   </div>
 
@@ -246,7 +246,7 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
     <div class="row"><span class="lbl">📦 Quota TFR mensile (paghi a fine contratto)</span><span id="c-tfr">€0</span></div>
     <div class="row tot"><span>💰 Costo reale mensile (tutto incluso)</span><span id="c-tot" style="color:var(--primary)">€0</span></div>
     <div style="background:var(--yel-light);border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-top:10px;font-size:13px;color:var(--yellow)">
-      ⚠️ <strong>Ogni mese paghi solo <span id="cd-netto">€1.105,80</span></strong> alla badante. Le altre voci (INPS, 13ª, TFR) vengono pagate in momenti diversi durante l'anno.
+      ⚠️ <strong>Ogni mese paghi solo <span id="cd-netto">€1.095,90</span></strong> alla badante. Le altre voci (INPS, 13ª, TFR) vengono pagate in momenti diversi durante l'anno.
     </div>
   </div>
 
@@ -267,7 +267,7 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
       <div class="fg">
         <label class="fl2">Tipo pagamento</label>
         <select class="fsel" id="q-tipo" onchange="aggQImporto()">
-          <option value="stipendio" id="q-opt-stip" data-imp="1105.80">💼 Stipendio mensile (€1.105,80)</option>
+          <option value="stipendio" id="q-opt-stip" data-imp="1095.90">💼 Stipendio mensile (€1.095,90)</option>
           <option value="contributi" data-imp="409.50">🏛️ Contributi INPS trimestrale</option>
           <option value="tredicesima" data-imp="1079">🎄 Tredicesima (€1.079)</option>
           <option value="caf" data-imp="120">📋 CAF CISL trimestrale (~€120)</option>
@@ -417,7 +417,15 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
   </div>
   <div class="card">
     <div class="ctitle">📋 Voci variabili del mese (dalla busta paga)</div>
-    <div class="infobox blue" style="margin-bottom:12px;font-size:12px">Ogni mese copia qui i due importi che leggi sulla busta paga. Cambiano in base alle feste e agli straordinari del mese. Poi premi <strong>💾 Salva Impostazioni</strong> qui sotto: il netto si aggiorna da solo ovunque.</div>
+    <div class="infobox blue" style="margin-bottom:12px;font-size:12px"><strong>Modo facile:</strong> scegli il mese e premi <strong>📅 Calcola dal calendario</strong> — l'app conta da sola i giorni lavorativi (domeniche escluse), le festività italiane e le ore INPS (sabati del mese × 30). Poi <strong>confronta con la busta CAF</strong>, correggi se serve e premi <strong>💾 Salva Impostazioni</strong>.</div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">📅 Mese di riferimento</label><input class="fi" id="s-mese" type="month" value="2026-08"/></div>
+      <div class="fg" style="display:flex;align-items:flex-end"><button class="btn bg" style="width:100%" onclick="autoMese()">📅 Calcola dal calendario</button></div>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label class="fl2">🕐 Ore effettive del mese</label><input class="fi" id="s-oremese" type="number" step="0.5" value="130" oninput="agPrev()"/></div>
+      <div class="fg"><label class="fl2">🏛️ Ore ai fini INPS (sabati × 30)</label><input class="fi" id="s-oreinps" type="number" step="1" value="150" oninput="agPrev()"/></div>
+    </div>
     <div class="fg2">
       <div class="fg"><label class="fl2">🎉 Festività (€)</label><input class="fi" id="s-fest" type="number" step="0.01" value="41.50" oninput="agPrev()"/></div>
       <div class="fg"><label class="fl2">⏱️ Straordinario (€)</label><input class="fi" id="s-straord" type="number" step="0.01" value="24.90" oninput="agPrev()"/></div>
@@ -426,7 +434,7 @@ body.fl{font-size:18px;}body.fh{font-size:20px;}
   <div class="card">
     <div class="ctitle">🧮 Anteprima Calcoli</div>
     <div class="row"><span class="lbl">💼 Stipendio lordo (base calcoli)</span><span id="p-stip" style="color:var(--primary);font-weight:700">€0</span></div>
-    <div class="row" style="background:var(--grn-light);border-radius:8px;padding:10px;margin:4px 0"><span class="lbl" style="color:var(--green);font-weight:700">💵 Netto da pagare alla badante</span><span id="p-netto" style="color:var(--green);font-weight:800;font-size:18px">€1.105,80</span></div>
+    <div class="row" style="background:var(--grn-light);border-radius:8px;padding:10px;margin:4px 0"><span class="lbl" style="color:var(--green);font-weight:700">💵 Netto da pagare alla badante</span><span id="p-netto" style="color:var(--green);font-weight:800;font-size:18px">€1.095,90</span></div>
     <div class="row"><span class="lbl">INPS trimestrale</span><span id="p-inps" style="color:var(--orange);font-weight:700">€0</span></div>
     <div class="row"><span class="lbl">INPS mensile (1/3)</span><span id="p-inpsm">€0</span></div>
     <div class="row"><span class="lbl">13ª mensile (÷12)</span><span id="p-13">€0</span></div>
@@ -500,7 +508,7 @@ const CAT = {
 };
 
 // ===== STORAGE =====
-const DEF_SETTINGS = {nome:'Strus-Halyna',tar:8.30,ore:30,inps:1.05,bud:1500,dinizio:'2026-06-01',fest:41.50,straord:24.90};
+const DEF_SETTINGS = {nome:'Strus-Halyna',tar:8.30,ore:30,inps:1.05,bud:1500,dinizio:'2026-06-01',fest:41.50,straord:24.90,oreMese:130,oreInps:150};
 
 function gS(){
   try{
@@ -508,6 +516,14 @@ function gS(){
     const set=s?JSON.parse(s):Object.assign({},DEF_SETTINGS);
     if(set.fest===undefined)set.fest=DEF_SETTINGS.fest;
     if(set.straord===undefined)set.straord=DEF_SETTINGS.straord;
+    // Migrazione una tantum: allineamento alla busta CAF di Agosto 2026 (130h + festività 15/8 lavorata, 5 sabati = 150 ore INPS)
+    if(set.oreInps===undefined){
+      set.oreMese=130;set.fest=41.50;set.straord=24.90;set.oreInps=150;savS(set);
+      try{
+        const rems=JSON.parse(localStorage.getItem('gsb2_rem'));
+        if(rems){const r1=rems.find(r=>r.id==='r1');if(r1){r1.imp=calc(set).netto;localStorage.setItem('gsb2_rem',JSON.stringify(rems));}}
+      }catch(e){}
+    }
     return set;
   }
   catch(e){return Object.assign({},DEF_SETTINGS);}
@@ -548,21 +564,26 @@ function savR(d){ssave('gsb2_rem',d);}
 
 // ===== CALCOLI =====
 function calc(set){
-  const lordoBase=Math.round(set.tar*set.ore*4.333);        // retribuzione base (~130 ore)
+  const oreMese=parseFloat(set.oreMese)||0;                  // ore effettive del mese (dalla busta paga CAF)
+  const oreCalc=oreMese>0?oreMese:Math.round(set.ore*4.333); // se vuoto, usa il mese medio (~130 ore)
+  const lordoBase=Math.round(oreCalc*set.tar*100)/100;       // retribuzione base = ore effettive × tariffa
   const fest=parseFloat(set.fest)||0;                        // festività del mese (da busta paga)
   const straord=parseFloat(set.straord)||0;                  // straordinario del mese (da busta paga)
   const lordo=Math.round((lordoBase+fest+straord)*100)/100;  // totale lordo busta paga
-  const trattenute=39.60;                                    // INPS €37,20 + cassa malattia €2,40 (a carico lavoratrice)
+  const oreInps=parseFloat(set.oreInps)||120;                // ore ai fini INPS (settimane del mese × 30: 4 sabati=120, 5 sabati=150)
+  const trInps=Math.round(oreInps*0.31*100)/100;             // contributi INPS lavoratrice €0,31/ora
+  const trCassa=Math.round(oreInps*0.02*100)/100;            // cassa malattia COLF €0,02/ora
+  const trattenute=Math.round((trInps+trCassa)*100)/100;     // totale trattenute (luglio 39,60 - agosto 49,50)
   const netto=Math.round((lordo-trattenute)*100)/100;        // netto da pagare alla badante
   const stip=lordoBase;
   const inpsTrim=Math.round(set.inps*set.ore*13*100)/100;
   const inpsM=Math.round(inpsTrim/3*100)/100;
   const m13=Math.round(stip/12*100)/100;
-  const tfr=Math.round(stip/13.5*100)/100;
+  const tfr=Math.round(stip/13.5*100)/100;                   // come sulla busta CAF (retribuzione lorda ÷ 13,5)
   const totM=Math.round((netto+inpsM+m13+tfr)*100)/100;
   const totT=Math.round((netto*3+inpsTrim+m13*3+tfr*3)*100)/100;
   const ann=Math.round(totT*4*100)/100;
-  return{stip,lordo,fest,straord,trattenute,netto,inpsTrim,inpsM,m13,tfr,totM,totT,ann};
+  return{stip,lordo,fest,straord,trattenute,netto,inpsTrim,inpsM,m13,tfr,totM,totT,ann,oreCalc,oreInps,trInps,trCassa};
 }
 function eu(n){return '€'+parseFloat(n).toLocaleString('it-IT',{minimumFractionDigits:2});}
 
@@ -625,7 +646,12 @@ function renderAll(){
   sel('s-netto-sub','Lordo: '+eu(c.lordo)+' · Netto: '+eu(c.netto));
 
   // Busta paga (aggiorna con impostazioni)
+  sel('bp-lordo-lbl','💼 Retribuzione lorda ('+c.oreCalc+' ore × '+eu(set.tar)+')');
   sel('bp-lordo',eu(c.stip));
+  sel('bp-inps-lbl','(-) Contributi INPS lavoratrice ('+c.oreInps+'h × €0,31)');
+  sel('bp-inps','- '+eu(c.trInps));
+  sel('bp-cassa-lbl','(-) Cassa malattia COLF ('+c.oreInps+'h × €0,02)');
+  sel('bp-cassa','- '+eu(c.trCassa));
   sel('bp-fest',eu(c.fest));
   sel('bp-straord',eu(c.straord));
   sel('bp-tot-lordo',eu(c.lordo));
@@ -728,6 +754,8 @@ function renderAll(){
   const sd=document.getElementById('s-dinizio');if(sd)sd.value=set.dinizio;
   const sfe=document.getElementById('s-fest');if(sfe)sfe.value=set.fest;
   const sst=document.getElementById('s-straord');if(sst)sst.value=set.straord;
+  const som=document.getElementById('s-oremese');if(som)som.value=set.oreMese||'';
+  const soi=document.getElementById('s-oreinps');if(soi)soi.value=set.oreInps||120;
   agPrev();
 }
 
@@ -1013,6 +1041,8 @@ function salvaImp(){
     dinizio:document.getElementById('s-dinizio').value,
     fest:parseFloat(document.getElementById('s-fest').value)||0,
     straord:parseFloat(document.getElementById('s-straord').value)||0,
+    oreMese:parseFloat(document.getElementById('s-oremese').value)||0,
+    oreInps:parseFloat(document.getElementById('s-oreinps').value)||120,
   };
   savS(set);
   // Allinea l'importo dello stipendio nelle Scadenze al nuovo netto
@@ -1022,13 +1052,59 @@ function salvaImp(){
   if(r1){r1.imp=c.netto;savR(rems);}
   renderAll();toast('✅ Impostazioni salvate!');
 }
+// ===== CALCOLO AUTOMATICO DAL CALENDARIO =====
+function pasquetta(y){ // Lunedì dell'Angelo (algoritmo di Gauss/Butcher per la Pasqua)
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
+        h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),
+        mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+  const p=new Date(y,mo-1,da);p.setDate(p.getDate()+1);return p;
+}
+function autoMese(){
+  const v=document.getElementById('s-mese').value;
+  if(!v){toast('⚠️ Scegli prima il mese');return;}
+  const parts=v.split('-');const y=parseInt(parts[0]);const m=parseInt(parts[1]);
+  const tar=parseFloat(document.getElementById('s-tar')?.value)||8.30;
+  const oreSett=parseFloat(document.getElementById('s-ore')?.value)||30;
+  const dailyH=oreSett/6; // ore al giorno (lun-sab)
+  // Festività nazionali italiane
+  const fisse=[[1,1],[1,6],[4,25],[5,1],[6,2],[8,15],[11,1],[12,8],[12,25],[12,26]];
+  const pq=pasquetta(y);
+  const nGiorni=new Date(y,m,0).getDate();
+  let oreLav=0,sabati=0;const festGiorni=[];
+  for(let d=1;d<=nGiorni;d++){
+    const dt=new Date(y,m-1,d);const dow=dt.getDay();
+    const isFest=fisse.some(f=>f[0]===m&&f[1]===d)||(pq.getFullYear()===y&&pq.getMonth()===m-1&&pq.getDate()===d);
+    if(dow===6)sabati++;              // i sabati contano per le ore INPS (anche se festivi)
+    if(dow===0)continue;              // domenica: giorno di riposo
+    if(isFest){festGiorni.push(d);continue;} // festività: pagata a parte, non nelle ore ordinarie
+    oreLav+=dailyH;
+  }
+  let straord=0;
+  if(festGiorni.length>0){
+    const lavorato=confirm('📅 Nel mese ci sono '+festGiorni.length+' festività nei giorni: '+festGiorni.join(', ')+'.\n\nLa badante HA LAVORATO in quei giorni festivi?\n\nOK = SÌ → aggiungo le ore + straordinario festivo (+60%)\nAnnulla = NO → solo indennità di festività');
+    if(lavorato){
+      oreLav+=festGiorni.length*dailyH;
+      straord=Math.round(festGiorni.length*dailyH*tar*0.6*100)/100;
+    }
+  }
+  const fest=Math.round(festGiorni.length*dailyH*tar*100)/100;
+  document.getElementById('s-oremese').value=oreLav;
+  document.getElementById('s-oreinps').value=sabati*oreSett;
+  document.getElementById('s-fest').value=fest.toFixed(2);
+  document.getElementById('s-straord').value=straord.toFixed(2);
+  agPrev();
+  toast('📅 Calcolato! Confronta con la busta CAF, poi 💾 Salva Impostazioni');
+}
+
 function agPrev(){
   const tar=parseFloat(document.getElementById('s-tar')?.value)||8.30;
   const ore=parseFloat(document.getElementById('s-ore')?.value)||30;
   const inps=parseFloat(document.getElementById('s-inps')?.value)||1.05;
   const fest=parseFloat(document.getElementById('s-fest')?.value)||0;
   const straord=parseFloat(document.getElementById('s-straord')?.value)||0;
-  const c=calc({tar,ore,inps,fest,straord});
+  const oreMese=parseFloat(document.getElementById('s-oremese')?.value)||0;
+  const oreInps=parseFloat(document.getElementById('s-oreinps')?.value)||120;
+  const c=calc({tar,ore,inps,fest,straord,oreMese,oreInps});
   sel('p-stip',eu(c.stip));sel('p-netto',eu(c.netto));sel('p-inps',eu(c.inpsTrim));sel('p-inpsm',eu(c.inpsM));
   sel('p-13',eu(c.m13));sel('p-tfr',eu(c.tfr));sel('p-tot',eu(c.totM));
 }
