@@ -1256,10 +1256,9 @@ function buildGrigliaCerano(){
     var hasDomAnno=dDom.getFullYear()===anno;
     var md=hasDomAnno?dDom.getMonth()+1:0, gd=hasDomAnno?dDom.getDate():0;
     var rkDom=hasDomAnno?anno+'_'+String(md).padStart(2,'0')+'_'+String(gd).padStart(2,'0'):'';
-    // Controlla se sabato o domenica hanno dati
-    var hasSab=FC.some(function(f,fi){var cs=rk+'_'+fi;return sv[cs]&&(sv[cs].cong||sv[cs].disc);});
-    var hasDom=hasDomAnno&&FC.some(function(f,fi){var cd=rkDom+'_'+fi;return sv[cd]&&(sv[cd].cong||sv[cd].disc);});
-    // Mostra la settimana solo se almeno un giorno ha dati
+    // Mostra sempre sabato e (se nell'anno) domenica, con o senza dati
+    var hasSab=true;
+    var hasDom=hasDomAnno;
     if(hasSab||hasDom){
       if(m!==mp){html+='<tr style="background:#e8e4dc;"><td colspan="'+(FC.length+1)+'" style="padding:5px 10px;font-weight:700;color:var(--navy);font-size:.8rem;">'+MGC[m].toUpperCase()+' '+anno+'</td></tr>';mp=m;}
       // Riga sabato solo se ha dati
