@@ -1156,7 +1156,7 @@ function buildDOutStats(){
   var FC=getFratelliCerano();
   // Costruisce mappa: fi -> {cong -> count}
   var frMap={};
-  FC.forEach(function(f,fi){ frMap[fi]={nome:f.cognome+' '+f.nome,cong:{},tot:0}; });
+  FC.forEach(function(f,fi){ frMap[fi]={nome:f.cognome+' '+f.nome,cong:{},tot:0,entrate:0}; });
   var MGN2=['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
   Object.keys(sv).forEach(function(ck){
     var s=sv[ck]; if(!s||!s.cong||s.cong==='Cerano'||s.cong==='') return;
@@ -1170,21 +1170,39 @@ function buildDOutStats(){
     frMap[fi].cong[congKey].count++;
     frMap[fi].tot++;
   });
-  // Conta solo fratelli con almeno un'uscita
-  var hasDati=FC.some(function(f,fi){return frMap[fi]&&frMap[fi].tot>0;});
+  // Conta le Entrate: discorsi tenuti dentro Cerano (griglia Programma/Entrata) da uno dei fratelli
+  var svE=state.grigliaEntrata||{};
+  var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+  Object.keys(svE).forEach(function(ck){
+    var entry=svE[ck]; if(!entry||entry.orIdx===''||entry.orIdx===undefined) return;
+    if(speciali.indexOf(entry.orIdx)>=0) return;
+    var p=ck.split('_'); if(parseInt(p[1])!==anno) return;
+    var o=state.oratoriDb[parseInt(entry.orIdx)]; if(!o) return;
+    var fi=FC.findIndex(function(f){
+      return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+          && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+    });
+    if(fi<0||!frMap[fi]) return;
+    frMap[fi].entrate++;
+  });
+  // Conta solo fratelli con almeno un'uscita o un'entrata
+  var hasDati=FC.some(function(f,fi){return frMap[fi]&&(frMap[fi].tot>0||frMap[fi].entrate>0);});
   if(!hasDati){el.innerHTML='';return;}
-  var MGN=['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
   var html='<div style="background:var(--cream-dark);border-radius:10px;padding:12px 14px;margin-bottom:8px;">'
     +'<div style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;">'
-    +'📊 Uscite '+anno+'</div>'
+    +'📊 Uscite / Entrate '+anno+'</div>'
     +'<div style="display:flex;flex-wrap:wrap;gap:8px;">';
   FC.forEach(function(f,fi){
-    var d=frMap[fi]; if(!d||d.tot===0) return;
+    var d=frMap[fi]; if(!d||(d.tot===0&&d.entrate===0)) return;
     var congList=Object.keys(d.cong).sort(function(a,b){return d.cong[b].count-d.cong[a].count;});
     html+='<div style="background:#fff;border-radius:8px;padding:8px 12px;border:1px solid var(--cream-dark);min-width:160px;flex:1;">'
       +'<div style="font-weight:700;color:var(--navy);font-size:.85rem;margin-bottom:6px;">'
       +f.cognome+' '+f.nome
-      +'<span style="background:var(--navy);color:#fff;border-radius:10px;padding:1px 8px;font-size:.72rem;font-weight:700;margin-left:6px;">'+d.tot+'</span>'
+      +'<span style="background:var(--navy);color:#fff;border-radius:10px;padding:1px 8px;font-size:.72rem;font-weight:700;margin-left:6px;" title="Totale uscite+entrate">'+(d.tot+d.entrate)+'</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;margin-bottom:6px;">'
+      +'<span style="background:#fdf0e3;color:#e67e22;border-radius:6px;padding:2px 8px;font-size:.72rem;font-weight:700;">📤 Uscite: '+d.tot+'</span>'
+      +'<span style="background:#e8f4f8;color:var(--teal);border-radius:6px;padding:2px 8px;font-size:.72rem;font-weight:700;">📥 Entrate: '+d.entrate+'</span>'
       +'</div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:4px;">';
     congList.forEach(function(cong){
