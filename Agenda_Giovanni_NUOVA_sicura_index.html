@@ -1,0 +1,2343 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agenda di Giovanni</title>
+<style>
+  :root {
+    --carta: #faf7f0;
+    --carta-scheda: #ffffff;
+    --inchiostro: #241f18;
+    --inchiostro-lieve: #766c5c;
+    --bordo: #e6ded0;
+    --pino: #1f4b43;
+    --pino-scuro: #143630;
+    --ambra: #c97c2c;
+    --ambra-lieve: #f4e3cc;
+    --ombra: 0 8px 24px -12px rgba(36, 31, 24, 0.18);
+    --raggio: 16px;
+    --urgenza-oggi: #b3341f;
+    --urgenza-settimana: #c97c2c;
+    --urgenza-piu-avanti: #9a927f;
+    --salute: #2b5f8a;
+    --salute-lieve: #e3edf5;
+    --finanze: #2f7d4f;
+    --finanze-lieve: #e5f1e8;
+    --casa: #8a5a2b;
+    --casa-lieve: #f2e9de;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: var(--carta);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(31,75,67,0.05), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(201,124,44,0.06), transparent 45%);
+    color: var(--inchiostro);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif; color: var(--pino-scuro); margin: 0 0 6px; }
+  h1 { font-size: 1.7rem; }
+  button, input, textarea { font-family: inherit; font-size: 1rem; }
+  input, textarea {
+    padding: 10px 12px; border: 1px solid var(--bordo); border-radius: 10px;
+    background: var(--carta); color: var(--inchiostro);
+  }
+  input:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid var(--pino); outline-offset: 2px;
+  }
+  .input-file-nascosto {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .etichetta-file { display: inline-block; cursor: pointer; }
+  textarea { width: 100%; resize: vertical; margin-bottom: 12px; }
+  .testo-secondario { color: var(--inchiostro-lieve); margin: 0 0 16px; }
+  .app { display: flex; min-height: 100vh; }
+  .contenuto { flex: 1; padding: 32px clamp(20px, 4vw, 48px); max-width: 820px; }
+  .menu { width: 240px; flex-shrink: 0; background: var(--pino); color: #f4efe2; padding: 28px 20px; position: relative; }
+  .menu::after {
+    content: ""; position: absolute; top: 0; right: -14px; bottom: 0; width: 14px;
+    background: repeating-linear-gradient(-45deg, var(--pino), var(--pino) 6px, var(--pino-scuro) 6px, var(--pino-scuro) 12px);
+    opacity: 0.35;
+  }
+  .menu-intestazione { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .menu-simbolo { font-size: 1.8rem; }
+  .menu-intestazione h2 { color: #fff; font-size: 1.15rem; margin: 0; }
+  .menu-intestazione p { margin: 0; color: #cfe0da; font-size: 0.85rem; }
+  .orologio-menu {
+    color: #eae4d6; font-size: 0.85rem; line-height: 1.5; text-transform: capitalize;
+    padding: 10px 12px; margin-bottom: 22px; background: rgba(255,255,255,0.06); border-radius: 10px;
+  }
+  .voce-menu {
+    display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+    padding: 12px 14px; margin-bottom: 8px; border: none; border-radius: 10px;
+    background: transparent; color: #eae4d6; cursor: pointer; transition: background 0.15s ease;
+  }
+  .voce-menu:hover { background: rgba(255,255,255,0.08); }
+  .voce-attiva { background: var(--ambra); color: #2a1a06; font-weight: 600; }
+  .voce-icona { font-size: 1.1rem; }
+  .scheda { background: var(--carta-scheda); border: 1px solid var(--bordo); padding: 24px; border-radius: var(--raggio); box-shadow: var(--ombra); margin-bottom: 20px; }
+  .intestazione-giorno { background: linear-gradient(135deg, var(--pino) 0%, var(--pino-scuro) 100%); color: #f6f1e4; border: none; }
+  .intestazione-giorno h1 { color: #fff; }
+  .etichetta-data { text-transform: capitalize; color: var(--ambra-lieve); margin: 0 0 4px; letter-spacing: 0.03em; }
+  .intestazione-giorno .testo-secondario { color: #d8e4df; }
+  .griglia-schede { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .scheda-cliccabile { cursor: pointer; text-align: left; }
+  .scheda-cliccabile:hover { border-color: var(--pino); }
+  .numero-grande { font-family: Georgia, serif; font-size: 2.1rem; color: var(--pino); margin: 4px 0; }
+  .titolo-sezione { margin-top: 24px; }
+  .riga-modulo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .riga-modulo input:not([type="checkbox"]):not([type="radio"]) { flex: 1; min-width: 160px; }
+  .riga-modulo input[type="checkbox"], .riga-modulo input[type="radio"] { flex: 0 0 auto; width: 18px; height: 18px; min-width: 0; }
+  .bottone-primario { padding: 10px 18px; border: none; border-radius: 10px; background: var(--pino); color: #fff; cursor: pointer; transition: background 0.15s ease; }
+  .bottone-primario:hover { background: var(--pino-scuro); }
+  .bottone-icona { border: none; background: transparent; cursor: pointer; font-size: 1rem; padding: 4px 6px; border-radius: 8px; line-height: 1; }
+  .bottone-icona:hover { background: var(--ambra-lieve); }
+  .lista-pulita { list-style: none; margin: 0; padding: 0; }
+  .lista-pulita li { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--bordo); }
+  .lista-pulita li:last-child { border-bottom: none; }
+  .testo-riga { flex: 1; }
+  .testo-completato { text-decoration: line-through; color: var(--inchiostro-lieve); }
+  .data-pillola { background: var(--ambra-lieve); color: #6b4110; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap; text-transform: capitalize; }
+  .riga-oggi .data-pillola { background: var(--pino); color: #fff; }
+  .lista-diario { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .pagina-diario { border-left: 3px solid var(--ambra); padding: 10px 16px; background: #fffdf8; border-radius: 0 10px 10px 0; }
+  .pagina-diario-testata { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .pagina-diario-testo { margin: 0; white-space: pre-wrap; }
+  .griglia-note { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .nota-adesiva { background: var(--ambra-lieve); border-radius: 8px; padding: 14px; min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; transform: rotate(-1deg); }
+  .nota-adesiva:nth-child(even) { transform: rotate(1deg); }
+  .nota-adesiva p { margin: 0; white-space: pre-wrap; }
+  .nota-adesiva .bottone-icona { align-self: flex-end; }
+  .chip-categoria { padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .riga-filtri { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .filtro-chip { border: 1px solid var(--bordo); background: var(--carta); color: var(--inchiostro-lieve); padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; }
+  .filtro-chip:hover { border-color: var(--pino); }
+  .filtro-chip-attivo { background: var(--pino); color: #fff; border-color: var(--pino); }
+  select { padding: 10px 12px; border: 1px solid var(--bordo); border-radius: 10px; background: var(--carta); color: var(--inchiostro); }
+  .icona-ricorrenza { opacity: 0.7; margin-right: 2px; }
+  .pallino-urgenza { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .pallino-oggi { background: var(--urgenza-oggi); box-shadow: 0 0 0 3px rgba(179,52,31,0.15); }
+  .pallino-settimana { background: var(--urgenza-settimana); box-shadow: 0 0 0 3px rgba(201,124,44,0.15); }
+  .pallino-piu-avanti { background: var(--urgenza-piu-avanti); }
+  .sottotitolo-urgenza { display: flex; align-items: center; gap: 8px; margin-top: 22px; }
+  .sottotitolo-urgenza h3 { margin: 0; }
+  .conteggio-lieve { color: var(--inchiostro-lieve); font-size: 0.85rem; font-weight: 400; }
+  .scheda-priorita { border-left: 4px solid var(--urgenza-oggi); background: #fdf3f1; }
+  .scheda-priorita h3 { color: #7a2415; }
+  .scheda-salute-intestazione { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .badge-salute { background: var(--salute-lieve); color: var(--salute); padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .badge-scadenza-vicina { background: var(--ambra-lieve); color: #6b4110; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .badge-scadenza-passata { background: #fdeceb; color: var(--urgenza-oggi); padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .orario-terapia { font-family: Georgia, serif; font-weight: 700; color: var(--salute); min-width: 52px; }
+  .badge-finanza { background: var(--finanze-lieve); color: var(--finanze); padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .importo { font-family: Georgia, serif; font-weight: 700; min-width: 90px; text-align: right; }
+  .importo-entrata { color: var(--finanze); }
+  .importo-uscita { color: var(--urgenza-oggi); }
+  .riepilogo-bilancio { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .cella-bilancio { background: var(--finanze-lieve); border-radius: 12px; padding: 12px 16px; }
+  .cella-bilancio.uscita { background: #fdf3f1; }
+  .cella-bilancio p { margin: 0; }
+  .cella-bilancio .etichetta { font-size: 0.8rem; color: var(--inchiostro-lieve); }
+  .cella-bilancio .valore { font-family: Georgia, serif; font-size: 1.4rem; font-weight: 700; color: var(--finanze); }
+  .cella-bilancio.uscita .valore { color: var(--urgenza-oggi); }
+  .badge-casa { background: var(--casa-lieve); color: var(--casa); padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .badge-emergenza { background: #fdeceb; color: var(--urgenza-oggi); padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+  .scheda-dat { border: 2px solid var(--urgenza-oggi); background: #fdf6f5; }
+  .scheda-dat h1 { color: #7a2415; }
+  .badge-niente-sangue { display: inline-block; background: var(--urgenza-oggi); color: #fff; padding: 4px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.02em; }
+  .riga-dat { display: flex; flex-wrap: wrap; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--bordo); }
+  .riga-dat:last-child { border-bottom: none; }
+  .riga-dat .etichetta-dat { min-width: 190px; font-weight: 600; color: var(--inchiostro-lieve); flex-shrink: 0; }
+  .riga-dat .valore-dat { flex: 1; min-width: 200px; white-space: pre-wrap; }
+  .riga-dat .valore-dat textarea, .riga-dat .valore-dat input { width: 100%; }
+  .blocco-fiduciario { background: #fff; border: 1px solid var(--bordo); border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+  .blocco-fiduciario h3 { margin-top: 0; }
+  .opzioni-fine-vita label { display: block; margin-bottom: 6px; font-weight: normal; }
+  .scheda-dat p.valore-dat { line-height: 1.5; }
+  .opzione-non-scelta { text-decoration: line-through; color: var(--inchiostro-lieve); }
+  .iniziali-scelta { background: var(--ambra-lieve); color: #6b4110; padding: 1px 8px; border-radius: 6px; font-weight: 700; margin-right: 6px; }
+  .lista-spesa li.spesa-comprata .testo-riga { text-decoration: line-through; color: var(--inchiostro-lieve); }
+  .banner-promemoria {
+    background: var(--ambra-lieve); border: 1px solid var(--ambra); border-radius: var(--raggio);
+    padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-start;
+  }
+  .banner-promemoria h3 { margin: 0 0 6px; color: #6b4110; }
+  .banner-promemoria ul { margin: 0; padding-left: 18px; color: #6b4110; }
+  @media (max-width: 720px) {
+    .app { flex-direction: column; }
+    .menu { width: 100%; padding: 18px; }
+    .menu::after { display: none; }
+    .voce-menu { display: inline-flex; width: auto; margin-right: 8px; }
+    nav { display: flex; flex-wrap: wrap; }
+    .contenuto { padding: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- Strumento temporaneo di diagnosi: mostra un pulsantino che apre una "console" visibile
+     sullo schermo, utile su tablet/cellulare dove non è comodo usare F12. Si può togliere
+     una volta risolto il problema di sincronizzazione. -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
+<script>
+  // Rilevatori temporanei di diagnosi: i telefoni a volte mostrano solo "Script error."
+  // senza dettagli; questi due catturano il messaggio vero, se disponibile.
+  window.addEventListener("error", function (e) {
+    console.error("Errore rilevato:", e.message, "|", e.filename, "riga", e.lineno);
+  });
+  window.addEventListener("unhandledrejection", function (e) {
+    console.error("Operazione fallita senza gestione:", e.reason);
+  });
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" onerror="console.error('Non è stato possibile caricare firebase-app-compat.js (controlla la connessione internet)')"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" onerror="console.error('Non è stato possibile caricare firebase-database-compat.js (controlla la connessione internet)')"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" onerror="console.error('Non è stato possibile caricare firebase-auth-compat.js (controlla la connessione internet)')"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ===== Dati salvati nel browser ===== */
+
+  function leggi(chiave) {
+    try {
+      var v = window.localStorage.getItem(chiave);
+      return v !== null ? JSON.parse(v) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function scrivi(chiave, valore) {
+    try {
+      window.localStorage.setItem(chiave, JSON.stringify(valore));
+    } catch (e) { /* modalità privata: pazienza, l'app funziona comunque */ }
+    sincronizzaSubito();
+  }
+
+  function leggiOggetto(chiave, predefinito) {
+    try {
+      var v = window.localStorage.getItem(chiave);
+      return v !== null ? JSON.parse(v) : predefinito;
+    } catch (e) {
+      return predefinito;
+    }
+  }
+
+  /* ===== Sincronizzazione automatica tra dispositivi (Firebase) ===== */
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyCO6Cs4E5BSJm4U5TBFqPpmLRuMiXxdG3g",
+    authDomain: "agenda-giovanni-e4f2c.firebaseapp.com",
+    databaseURL: "https://agenda-giovanni-e4f2c-default-rtdb.firebaseio.com",
+    projectId: "agenda-giovanni-e4f2c",
+    storageBucket: "agenda-giovanni-e4f2c.firebasestorage.app",
+    messagingSenderId: "700098615039",
+    appId: "1:700098615039:web:38ea1617b0132066c51eca"
+  };
+
+  var refDatiCloud = null;
+  var timerSincronizzazione = null;
+  var ultimoInvioLocale = 0;
+  var statoSincronizzazione = "in attesa"; // "in attesa" | "connesso" | "non disponibile"
+
+  var CAMPI_SINCRONIZZATI = {
+    attivita: "agenda-attivita",
+    appuntamenti: "agenda-appuntamenti",
+    diario: "agenda-diario",
+    note: "agenda-note",
+    contatti: "agenda-contatti",
+    cestino: "agenda-cestino",
+    saluteVisite: "agenda-salute-visite",
+    saluteTerapie: "agenda-salute-terapie",
+    saluteDAT: "agenda-salute-dat",
+    finanzeScadenze: "agenda-finanze-scadenze",
+    finanzeMovimenti: "agenda-finanze-movimenti",
+    casaSpesa: "agenda-casa-spesa",
+    casaCommissioni: "agenda-casa-commissioni"
+  };
+
+  try {
+    if (window.firebase) {
+      firebase.initializeApp(firebaseConfig);
+      // Accesso anonimo automatico: non chiede nulla a Giovanni, serve solo a far sì
+      // che il database riconosca che la richiesta arriva dall'app e non da un estraneo.
+      // Persistenza "NONE": quando il file si apre come file:// (doppio clic da Desktop),
+      // Firebase normalmente prova a "ricordare" l'accesso tramite una finestra invisibile,
+      // ma il browser la blocca perché ogni apertura di un file locale è un luogo isolato
+      // a sé. Con NONE evitiamo del tutto quel meccanismo: ci si ricollega automaticamente
+      // a ogni apertura, senza bisogno di ricordare nulla tra una volta e l'altra.
+      firebase.auth().onAuthStateChanged(function (utente) {
+        if (utente) {
+          refDatiCloud = firebase.database().ref("agendaDati");
+          avviaSincronizzazione();
+        }
+      });
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+        .then(function () {
+          return firebase.auth().signInAnonymously();
+        })
+        .catch(function (errore) {
+          statoSincronizzazione = "non disponibile";
+          console.error("Errore di accesso a Firebase:", errore);
+        });
+    }
+  } catch (e) {
+    refDatiCloud = null;
+    console.error("Errore inizializzazione Firebase:", e.message || e);
+  }
+
+  function pacchettoStatoCorrente() {
+    var pacchetto = {};
+    Object.keys(CAMPI_SINCRONIZZATI).forEach(function (campo) {
+      pacchetto[campo] = stato[campo];
+    });
+    pacchetto.aggiornatoIl = Date.now();
+    return pacchetto;
+  }
+
+  function pianificaSincronizzazione() {
+    if (!refDatiCloud) return;
+    if (timerSincronizzazione) clearTimeout(timerSincronizzazione);
+    timerSincronizzazione = setTimeout(function () {
+      sincronizzaSubito();
+    }, 800);
+  }
+
+  function sincronizzaSubito() {
+    if (!refDatiCloud) return;
+    if (timerSincronizzazione) { clearTimeout(timerSincronizzazione); timerSincronizzazione = null; }
+    var pacchetto = pacchettoStatoCorrente();
+    ultimoInvioLocale = pacchetto.aggiornatoIl;
+    refDatiCloud.set(pacchetto).then(function () {
+      statoSincronizzazione = "connesso";
+    }).catch(function (errore) {
+      statoSincronizzazione = "non disponibile";
+      console.error("Errore invio dati a Firebase:", errore);
+    });
+  }
+
+  function applicaDatiRemoti(dati) {
+    if (!dati) return;
+    // Se l'utente sta compilando il modulo "Aggiungi terapia" quando arriva una sincronizzazione
+    // dal cloud, il ridisegno della pagina non deve cancellare quello che ha già scritto/spuntato.
+    var campoOrarioAttuale = document.getElementById("campo-orario-terapia");
+    var bozzaTerapia = campoOrarioAttuale ? {
+      orario: campoOrarioAttuale.value,
+      nome: document.getElementById("campo-nome-terapia").value,
+      continuativo: document.getElementById("campo-continuativo-terapia").checked,
+      scadenza: document.getElementById("campo-scadenza-terapia").value
+    } : null;
+
+    Object.keys(CAMPI_SINCRONIZZATI).forEach(function (campo) {
+      // Firebase non salva le liste vuote (le omette): se manca, va intesa come lista vuota, non ignorata
+      // (saluteDAT è un oggetto singolo, non una lista: se manca si usano i valori predefiniti)
+      var predefinito = campo === "saluteDAT" ? DAT_PREDEFINITO : [];
+      var valore = dati[campo] !== undefined ? dati[campo] : predefinito;
+      if (campo === "saluteDAT") valore = Object.assign({}, DAT_PREDEFINITO, valore);
+      stato[campo] = valore;
+      try { window.localStorage.setItem(CAMPI_SINCRONIZZATI[campo], JSON.stringify(valore)); } catch (e) {}
+    });
+    statoSincronizzazione = "connesso";
+    render();
+
+    if (bozzaTerapia) {
+      var campoOrarioNuovo = document.getElementById("campo-orario-terapia");
+      if (campoOrarioNuovo) {
+        campoOrarioNuovo.value = bozzaTerapia.orario;
+        document.getElementById("campo-nome-terapia").value = bozzaTerapia.nome;
+        document.getElementById("campo-continuativo-terapia").checked = bozzaTerapia.continuativo;
+        document.getElementById("campo-scadenza-terapia").value = bozzaTerapia.scadenza;
+      }
+    }
+  }
+
+  function avviaSincronizzazione() {
+    if (!refDatiCloud) return;
+
+    refDatiCloud.once("value").then(function (istantanea) {
+      if (!istantanea.val()) pianificaSincronizzazione(); // primo avvio: manda i dati locali al cloud
+    }).catch(function (errore) {
+      statoSincronizzazione = "non disponibile";
+      console.error("Errore lettura iniziale da Firebase:", errore);
+    });
+
+    console.log("Firebase: accesso riuscito, in ascolto dei dati sul database...");
+
+    refDatiCloud.on("value", function (istantanea) {
+      var dati = istantanea.val();
+      console.log("Firebase: dati ricevuti dal cloud", dati);
+      if (!dati) return;
+      if (dati.aggiornatoIl && dati.aggiornatoIl === ultimoInvioLocale) return; // ignora l'eco del mio stesso invio
+      applicaDatiRemoti(dati);
+    }, function (errore) {
+      statoSincronizzazione = "non disponibile";
+      console.error("Errore ascolto dati da Firebase:", errore);
+    });
+
+    // Sui dispositivi mobili, quando si blocca lo schermo o si cambia app, il browser può
+    // "congelare" l'invio in attesa: lo forziamo subito invece di aspettare il timer.
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        if (timerSincronizzazione) {
+          clearTimeout(timerSincronizzazione);
+          timerSincronizzazione = null;
+          var pacchetto = pacchettoStatoCorrente();
+          ultimoInvioLocale = pacchetto.aggiornatoIl;
+          refDatiCloud.set(pacchetto).catch(function () { statoSincronizzazione = "non disponibile"; });
+        }
+      } else {
+        // Quando si torna sull'app, controlliamo subito se ci sono aggiornamenti arrivati nel frattempo
+        refDatiCloud.once("value").then(function (istantanea) {
+          var dati = istantanea.val();
+          if (dati && dati.aggiornatoIl !== ultimoInvioLocale) applicaDatiRemoti(dati);
+        }).catch(function () {});
+      }
+    });
+  }
+
+  var DAT_PREDEFINITO = {
+    nome: "Giovanni Affuso",
+    natoA: "Corigliano Calabro (CS)",
+    dataNascita: "14/02/1956",
+    indirizzo: "Via Novara 50, 28069 Trecate (NO)",
+    dataDocumento: "02/09/2018",
+    fineVita: "a",
+    altreDisposizioni:
+      "PLASMAFERESI: A CONDIZIONE CHE IL PLASMA SIA COSTITUITO DA UN PREPARATO NON EMATICO\n" +
+      "MACCHINA CUORE-POLMONE: A CONDIZIONE CHE IL SANGUE PER AVVIARE LA MACCHINA SIA AUTOLOGO\n" +
+      "ACCETTO: EMODILUIZIONE\n" +
+      "ACCETTO: MACCHINA RECUPERO SANGUE INTRA/POSTOPERATORIO\n" +
+      "ACCETTO: IMMUNOGLOBULINE - ALBUMINA - EMOGLOBINA - EMINA - INTERFERONI - FATTORI DELLA COAGULAZIONE\n" +
+      "ALLERGIE: ACETILSALICILICO\n" +
+      "PRESSIONE: TRATTATA CON PASTIGLIE (TELMISARTAN E IDROCLOROTIAZIDE) 80mg/25",
+    firmaRedigente: "Giovanni Affuso (firma autografa sull'originale cartaceo)",
+    fiduciarioNome: "Daniele Bellan",
+    fiduciarioNato: "Galliate (NO), 11/02/1974",
+    fiduciarioIndirizzo: "Via Strettona n. 4",
+    fiduciarioTelefono: "347 816 9498",
+    fiduciarioDataFirma: "02/09/2018",
+    fiduciarioSupplenteNome: "Teresina Timpano (cognome da verificare: Timpano o Tinpano)",
+    fiduciarioSupplenteNato: "Rosarno (RC), 29/05/1959",
+    fiduciarioSupplenteIndirizzo: "Via Novara 50, Trecate (NO)",
+    fiduciarioSupplenteTelefono: "349 094 3419",
+    fiduciarioSupplenteDataFirma: "(data non leggibile con certezza sull'originale)",
+    posizionePredeposito:
+      "Riguardo al predeposito del mio sangue (prelievo e conservazione prima di un intervento programmato, per eventuale reinfusione), la mia posizione attuale è di rifiuto. Poiché si tratta di una decisione di coscienza personale e non di un divieto religioso assoluto, chiedo che l'équipe medica ne discuta comunque con me prima di escludere definitivamente questa opzione, qualora io sia cosciente e in grado di esprimermi. In caso contrario — se non sono in grado di essere consultato — resta valido il rifiuto sopra indicato."
+  };
+
+  var stato = {
+    sezione: "home",
+    attivita: leggi("agenda-attivita"),
+    appuntamenti: leggi("agenda-appuntamenti"),
+    diario: leggi("agenda-diario"),
+    note: leggi("agenda-note"),
+    contatti: leggi("agenda-contatti"),
+    cestino: leggi("agenda-cestino"),
+    saluteVisite: leggi("agenda-salute-visite"),
+    saluteTerapie: leggi("agenda-salute-terapie"),
+    saluteDAT: Object.assign({}, DAT_PREDEFINITO, leggiOggetto("agenda-salute-dat", {})),
+    modificaDAT: false,
+    finanzeScadenze: leggi("agenda-finanze-scadenze"),
+    finanzeMovimenti: leggi("agenda-finanze-movimenti"),
+    casaSpesa: leggi("agenda-casa-spesa"),
+    casaCommissioni: leggi("agenda-casa-commissioni"),
+    filtroAttivita: "tutte",
+    filtroNote: "tutte",
+    filtroContatti: "tutte",
+    mostraPromemoria: true,
+    assistente: { comando: "", risposta: "" },
+  };
+
+  // Rimuove dal cestino gli elementi eliminati da più di 30 giorni
+  function purgaCestino() {
+    var limite = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    var lunghezzaPrima = stato.cestino.length;
+    stato.cestino = stato.cestino.filter(function (e) {
+      return new Date(e.eliminatoIl).getTime() >= limite;
+    });
+    if (stato.cestino.length !== lunghezzaPrima) scrivi("agenda-cestino", stato.cestino);
+  }
+  purgaCestino();
+
+  var CATEGORIE = [
+    { id: "congregazione", nome: "Congregazione", colore: "#1f4b43" },
+    { id: "famiglia", nome: "Famiglia", colore: "#c97c2c" },
+    { id: "personale", nome: "Personale", colore: "#6b4fa0" },
+    { id: "altro", nome: "Altro", colore: "#767268" },
+  ];
+
+  function categoriaInfo(id) {
+    var trovata = CATEGORIE.filter(function (c) { return c.id === id; })[0];
+    return trovata || CATEGORIE[CATEGORIE.length - 1];
+  }
+
+  var LIVELLI_URGENZA = [
+    { id: "oggi", nome: "Oggi", icona: "🔴", classe: "pallino-oggi" },
+    { id: "settimana", nome: "Questa settimana", icona: "🟠", classe: "pallino-settimana" },
+    { id: "piu-avanti", nome: "Più avanti", icona: "⚪", classe: "pallino-piu-avanti" },
+  ];
+
+  function urgenzaInfo(id) {
+    var trovata = LIVELLI_URGENZA.filter(function (u) { return u.id === id; })[0];
+    return trovata || LIVELLI_URGENZA[2];
+  }
+
+  function opzioniUrgenza(selezionata) {
+    return LIVELLI_URGENZA.map(function (u) {
+      return '<option value="' + u.id + '"' + (u.id === selezionata ? " selected" : "") + '>' + u.icona + ' ' + u.nome + '</option>';
+    }).join("");
+  }
+
+  function hexToRgba(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+  }
+
+  function chipCategoria(idCategoria) {
+    var c = categoriaInfo(idCategoria);
+    return '<span class="chip-categoria" style="background:' + hexToRgba(c.colore, 0.15) + ';color:' + c.colore + '">' + c.nome + '</span>';
+  }
+
+  function opzioniCategorie(selezionata) {
+    return CATEGORIE.map(function (c) {
+      return '<option value="' + c.id + '"' + (c.id === selezionata ? " selected" : "") + '>' + c.nome + '</option>';
+    }).join("");
+  }
+
+  function escapeHtml(testo) {
+    var div = document.createElement("div");
+    div.textContent = testo;
+    return div.innerHTML;
+  }
+
+  function dataOggiISO() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function formattaData(iso, opzioni) {
+    return new Date(iso).toLocaleDateString("it-IT", opzioni);
+  }
+
+  function testoOrologio() {
+    var ora = new Date();
+    var data = ora.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    data = data.charAt(0).toUpperCase() + data.slice(1);
+    var oraTesto = ora.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+    return data + '<br>🕐 ' + oraTesto;
+  }
+
+  /* ===== Ricorrenza appuntamenti ===== */
+
+  function aggiungiGiorni(dataISO, n) {
+    var d = new Date(dataISO + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function aggiungiMesi(dataISO, n) {
+    var d = new Date(dataISO + "T00:00:00");
+    var giorno = d.getDate();
+    d.setMonth(d.getMonth() + n);
+    if (d.getDate() !== giorno) d.setDate(0); // evita salti di mese con giorni overflow (es. 31 -> 30)
+    return d.toISOString().slice(0, 10);
+  }
+
+  // Espande un appuntamento (anche ricorrente) nelle sue occorrenze da oggi in avanti
+  function generaOccorrenze(appuntamento) {
+    var oggi = dataOggiISO();
+    if (!appuntamento.ricorrenza || appuntamento.ricorrenza === "nessuna") {
+      return [appuntamento.data];
+    }
+    var limite = appuntamento.ricorrenza === "settimanale" ? 26 : 12;
+    var passo = appuntamento.ricorrenza === "settimanale" ? 7 : null;
+    var risultati = [];
+    var cursore = appuntamento.data;
+    for (var i = 0; i < limite; i++) {
+      if (cursore >= oggi) risultati.push(cursore);
+      cursore = passo ? aggiungiGiorni(cursore, passo) : aggiungiMesi(cursore, 1);
+    }
+    return risultati;
+  }
+
+  // Elenco unico di tutte le occorrenze (passate incluse per gli appuntamenti singoli,
+  // solo future/oggi per quelli ricorrenti), ordinato per data
+  function elencoAppuntamentiEspanso() {
+    var elenco = [];
+    stato.appuntamenti.forEach(function (a) {
+      if (!a.ricorrenza || a.ricorrenza === "nessuna") {
+        elenco.push({ base: a, data: a.data, ricorrente: false });
+      } else {
+        generaOccorrenze(a).forEach(function (data) {
+          elenco.push({ base: a, data: data, ricorrente: true });
+        });
+      }
+    });
+    return elenco.sort(function (x, y) { return x.data.localeCompare(y.data); });
+  }
+
+  function impegniOggi() {
+    var oggi = dataOggiISO();
+    return elencoAppuntamentiEspanso().filter(function (e) { return e.data === oggi; });
+  }
+
+  /* ===== Assistente ===== */
+
+  var NOMI_GIORNI_SETTIMANA = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"];
+  var ALIAS_GIORNI_SETTIMANA = { "lunedi": "lunedì", "martedi": "martedì", "mercoledi": "mercoledì", "giovedi": "giovedì", "venerdi": "venerdì" };
+
+  function prossimaDataGiorno(nomeGiorno) {
+    var indiceTarget = NOMI_GIORNI_SETTIMANA.indexOf(nomeGiorno);
+    if (indiceTarget < 0) return null;
+    var oggi = new Date();
+    var diff = (indiceTarget - oggi.getDay() + 7) % 7;
+    var d = new Date(oggi);
+    d.setDate(d.getDate() + diff);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function escapeRegExp(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  // Cerca nel testo del comando una data: "oggi", "domani", "dopodomani",
+  // un giorno della settimana (prossima occorrenza), oppure gg/mm(/aaaa).
+  function estraiData(testoInput) {
+    var t = (testoInput || "").toLowerCase();
+    if (t.indexOf("dopodomani") >= 0) return { dataISO: aggiungiGiorni(dataOggiISO(), 2), match: "dopodomani" };
+    if (t.indexOf("domani") >= 0) return { dataISO: aggiungiGiorni(dataOggiISO(), 1), match: "domani" };
+    if (t.indexOf("oggi") >= 0) return { dataISO: dataOggiISO(), match: "oggi" };
+    var i, nome;
+    for (i = 0; i < NOMI_GIORNI_SETTIMANA.length; i++) {
+      nome = NOMI_GIORNI_SETTIMANA[i];
+      if (t.indexOf(nome) >= 0) return { dataISO: prossimaDataGiorno(nome), match: nome };
+    }
+    for (var alias in ALIAS_GIORNI_SETTIMANA) {
+      if (t.indexOf(alias) >= 0) return { dataISO: prossimaDataGiorno(ALIAS_GIORNI_SETTIMANA[alias]), match: alias };
+    }
+    var m = t.match(/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/);
+    if (m) {
+      var gg = parseInt(m[1], 10), mm = parseInt(m[2], 10);
+      var yyyy = m[3] ? parseInt(m[3], 10) : new Date().getFullYear();
+      if (yyyy < 100) yyyy += 2000;
+      var iso = yyyy + "-" + String(mm).padStart(2, "0") + "-" + String(gg).padStart(2, "0");
+      return { dataISO: iso, match: m[0] };
+    }
+    return null;
+  }
+
+  function rispostaRiepilogoOggi() {
+    var oggi = impegniOggi();
+    var prioritaOggi = stato.attivita.filter(function (a) { return !a.completata && (a.urgenza || "piu-avanti") === "oggi"; });
+    var html = "<h3>📋 Riepilogo di oggi</h3>";
+    if (oggi.length === 0 && prioritaOggi.length === 0) {
+      return html + '<p class="testo-secondario">Non hai appuntamenti né priorità segnate per oggi.</p>';
+    }
+    if (oggi.length > 0) {
+      html += '<p class="testo-secondario">Appuntamenti:</p><ul class="lista-pulita">';
+      oggi.forEach(function (e) { html += "<li>" + escapeHtml(e.base.testo) + "</li>"; });
+      html += "</ul>";
+    }
+    if (prioritaOggi.length > 0) {
+      html += '<p class="testo-secondario">Attività da non dimenticare:</p><ul class="lista-pulita">';
+      prioritaOggi.forEach(function (a) { html += "<li>" + escapeHtml(a.nome) + "</li>"; });
+      html += "</ul>";
+    }
+    return html;
+  }
+
+  function rispostaRiepilogoSettimana() {
+    var oggiISOv = dataOggiISO();
+    var fraSette = aggiungiGiorni(oggiISOv, 7);
+    var prossimi = elencoAppuntamentiEspanso().filter(function (e) { return e.data >= oggiISOv && e.data <= fraSette; });
+    var attivitaSettimana = stato.attivita.filter(function (a) { return !a.completata && (a.urgenza || "piu-avanti") === "settimana"; });
+    var html = "<h3>📅 Riepilogo della settimana</h3>";
+    if (prossimi.length === 0 && attivitaSettimana.length === 0) {
+      return html + '<p class="testo-secondario">Non hai appuntamenti né attività segnate per questa settimana.</p>';
+    }
+    if (prossimi.length > 0) {
+      html += '<p class="testo-secondario">Appuntamenti:</p><ul class="lista-pulita">';
+      prossimi.forEach(function (e) {
+        html += '<li><span class="data-pillola">' + formattaData(e.data, { day: "numeric", month: "short" }) + "</span>" + escapeHtml(e.base.testo) + "</li>";
+      });
+      html += "</ul>";
+    }
+    if (attivitaSettimana.length > 0) {
+      html += '<p class="testo-secondario">Attività di questa settimana:</p><ul class="lista-pulita">';
+      attivitaSettimana.forEach(function (a) { html += "<li>" + escapeHtml(a.nome) + "</li>"; });
+      html += "</ul>";
+    }
+    return html;
+  }
+
+  function rispostaPriorita() {
+    var elenco = stato.attivita.filter(function (a) { return !a.completata; });
+    var ordine = { oggi: 0, settimana: 1, "piu-avanti": 2 };
+    elenco.sort(function (a, b) { return ordine[a.urgenza || "piu-avanti"] - ordine[b.urgenza || "piu-avanti"]; });
+    var html = "<h3>🔴 Attività per priorità</h3>";
+    if (elenco.length === 0) return html + '<p class="testo-secondario">Non hai attività da completare.</p>';
+    html += '<ul class="lista-pulita">';
+    elenco.forEach(function (a) {
+      var u = urgenzaInfo(a.urgenza || "piu-avanti");
+      html += "<li>" + u.icona + " " + escapeHtml(a.nome) + "</li>";
+    });
+    html += "</ul>";
+    return html;
+  }
+
+  function rispostaCerca(termine) {
+    var html = '<h3>🔎 Risultati per "' + escapeHtml(termine) + '"</h3>';
+    if (!termine) return html + '<p class="testo-secondario">Scrivi cosa cercare, ad esempio: "cerca dentista".</p>';
+    var t = termine.toLowerCase();
+    var risultati = [];
+    stato.appuntamenti.forEach(function (a) {
+      if ((a.testo || "").toLowerCase().indexOf(t) >= 0) risultati.push("📆 " + a.testo + " (" + formattaData(a.data, { day: "numeric", month: "short" }) + ")");
+    });
+    stato.attivita.forEach(function (a) {
+      if ((a.nome || "").toLowerCase().indexOf(t) >= 0) risultati.push("✅ " + a.nome);
+    });
+    stato.note.forEach(function (n) {
+      if ((n.testo || "").toLowerCase().indexOf(t) >= 0) risultati.push("📌 " + n.testo);
+    });
+    stato.diario.forEach(function (p) {
+      if ((p.testo || "").toLowerCase().indexOf(t) >= 0) risultati.push("📝 " + (p.testo.length > 60 ? p.testo.slice(0, 60) + "…" : p.testo));
+    });
+    stato.contatti.forEach(function (c) {
+      if ((c.nome || "").toLowerCase().indexOf(t) >= 0) risultati.push("👤 " + c.nome + (c.telefono ? " - " + c.telefono : ""));
+    });
+    if (risultati.length === 0) return html + '<p class="testo-secondario">Nessun risultato trovato.</p>';
+    html += '<ul class="lista-pulita">';
+    risultati.forEach(function (r) { html += "<li>" + escapeHtml(r) + "</li>"; });
+    html += "</ul>";
+    return html;
+  }
+
+  function rispostaAggiungiAppuntamento(restoTesto) {
+    var estratto = estraiData(restoTesto);
+    if (!estratto) {
+      return '<h3>📆 Appuntamento</h3><p class="testo-secondario">Non ho capito quando: aggiungi una data al comando (es. "domani", "venerdì" o "20/08").</p>';
+    }
+    var descrizione = restoTesto.replace(new RegExp(escapeRegExp(estratto.match), "i"), "").replace(/\s{2,}/g, " ").trim();
+    descrizione = descrizione.replace(/^(il|per|di)\s+/i, "").replace(/\s+(il|per|di)$/i, "").trim() || "Appuntamento";
+    stato.appuntamenti.push({ id: Date.now(), data: estratto.dataISO, testo: descrizione, ricorrenza: "nessuna" });
+    scrivi("agenda-appuntamenti", stato.appuntamenti);
+    return '<h3>📆 Appuntamento aggiunto</h3><p class="testo-secondario">"' + escapeHtml(descrizione) + '" il ' + formattaData(estratto.dataISO, { weekday: "long", day: "numeric", month: "long" }) + ".</p>";
+  }
+
+  function interpretaComando(testoOriginale) {
+    var testo = (testoOriginale || "").trim();
+    if (!testo) return '<p class="testo-secondario">Scrivi un comando per iniziare.</p>';
+    var t = testo.toLowerCase();
+    if (/riepilogo\s+oggi|cosa\s+ho\s+oggi/.test(t)) return rispostaRiepilogoOggi();
+    if (/riepilogo\s+settiman|organizza.*settiman/.test(t)) return rispostaRiepilogoSettimana();
+    if (/priorit|attivit[aà]\s+urgent/.test(t)) return rispostaPriorita();
+    if (/^cerca\s+/.test(t)) return rispostaCerca(testo.replace(/^cerca\s+/i, "").trim());
+    if (/^(aggiungi\s+(un\s+)?appuntamento|crea\s+(un\s+)?appuntamento)/.test(t)) {
+      return rispostaAggiungiAppuntamento(testo.replace(/^(aggiungi\s+(un\s+)?appuntamento|crea\s+(un\s+)?appuntamento)\s*/i, ""));
+    }
+    if (/^ricordami/.test(t)) {
+      return rispostaAggiungiAppuntamento(testo.replace(/^ricordami\s*(di\s+)?/i, ""));
+    }
+    return '<p class="testo-secondario">Non ho capito il comando. Prova con: "riepilogo oggi", "riepilogo settimana", "priorità", "cerca [parola]", "aggiungi appuntamento [testo] [quando]", "ricordami di [testo] [quando]".</p>';
+  }
+
+  function eseguiComandoAssistente(testoRapido) {
+    var campo = document.getElementById("campo-comando-assistente");
+    var testo = testoRapido !== undefined ? testoRapido : (campo ? campo.value : "");
+    stato.assistente.comando = testo;
+    stato.assistente.risposta = interpretaComando(testo);
+    render();
+  }
+
+  function renderAssistente() {
+    var html =
+      '<div class="scheda">' +
+        "<h1>🤖 Assistente</h1>" +
+        '<p class="testo-secondario">Scrivi un comando oppure usa i pulsanti rapidi. Esempi: "riepilogo oggi", "cerca dentista", "aggiungi appuntamento dentista domani", "ricordami di chiamare Mario venerdì".</p>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-comando-assistente" placeholder="Scrivi un comando..." value="' + escapeHtml(stato.assistente.comando) + '" />' +
+          '<button class="bottone-primario" id="btn-esegui-assistente">Esegui</button>' +
+        "</div>" +
+        '<div class="riga-filtri">' +
+          '<button class="filtro-chip" data-comando-rapido="riepilogo oggi">📋 Oggi</button>' +
+          '<button class="filtro-chip" data-comando-rapido="riepilogo settimana">📅 Settimana</button>' +
+          '<button class="filtro-chip" data-comando-rapido="priorità">🔴 Priorità</button>' +
+        "</div>" +
+      "</div>";
+    if (stato.assistente.risposta) {
+      html += '<div class="scheda">' + stato.assistente.risposta + "</div>";
+    }
+    return html;
+  }
+
+  /* ===== Cestino ===== */
+
+  function nuovoIdCestino() {
+    return Date.now() + "-" + Math.random().toString(36).slice(2);
+  }
+
+  function cestinaElemento(tipo, dati) {
+    stato.cestino.unshift({ id: nuovoIdCestino(), tipo: tipo, dati: dati, eliminatoIl: new Date().toISOString() });
+    scrivi("agenda-cestino", stato.cestino);
+  }
+
+  function etichettaTipo(tipo) {
+    var mappa = { attivita: "Attività", appuntamento: "Appuntamento", diario: "Diario", nota: "Nota", contatto: "Contatto", visitaSalute: "Visita/Esame", terapia: "Terapia", scadenzaFinanza: "Scadenza", movimentoFinanza: "Movimento", articoloSpesa: "Articolo spesa", commissioneCasa: "Commissione/Manutenzione" };
+    return mappa[tipo] || tipo;
+  }
+
+  function riepilogoElemento(e) {
+    switch (e.tipo) {
+      case "attivita": return e.dati.nome;
+      case "appuntamento": return e.dati.testo;
+      case "diario": return e.dati.testo.length > 60 ? e.dati.testo.slice(0, 60) + "…" : e.dati.testo;
+      case "nota": return e.dati.testo;
+      case "contatto": return e.dati.nome;
+      case "visitaSalute": return e.dati.testo;
+      case "terapia": return e.dati.nome;
+      case "scadenzaFinanza": return e.dati.testo;
+      case "movimentoFinanza": return e.dati.descrizione;
+      case "articoloSpesa": return e.dati.testo;
+      case "commissioneCasa": return e.dati.testo;
+      default: return "";
+    }
+  }
+
+  function ripristinaElemento(id) {
+    var voce = stato.cestino.filter(function (e) { return e.id === id; })[0];
+    if (!voce) return;
+    if (voce.tipo === "attivita") { stato.attivita.push(voce.dati); scrivi("agenda-attivita", stato.attivita); }
+    if (voce.tipo === "appuntamento") { stato.appuntamenti.push(voce.dati); scrivi("agenda-appuntamenti", stato.appuntamenti); }
+    if (voce.tipo === "diario") { stato.diario.push(voce.dati); scrivi("agenda-diario", stato.diario); }
+    if (voce.tipo === "nota") { stato.note.push(voce.dati); scrivi("agenda-note", stato.note); }
+    if (voce.tipo === "contatto") { stato.contatti.push(voce.dati); scrivi("agenda-contatti", stato.contatti); }
+    if (voce.tipo === "visitaSalute") { stato.saluteVisite.push(voce.dati); scrivi("agenda-salute-visite", stato.saluteVisite); }
+    if (voce.tipo === "terapia") { stato.saluteTerapie.push(voce.dati); scrivi("agenda-salute-terapie", stato.saluteTerapie); }
+    if (voce.tipo === "scadenzaFinanza") { stato.finanzeScadenze.push(voce.dati); scrivi("agenda-finanze-scadenze", stato.finanzeScadenze); }
+    if (voce.tipo === "movimentoFinanza") { stato.finanzeMovimenti.push(voce.dati); scrivi("agenda-finanze-movimenti", stato.finanzeMovimenti); }
+    if (voce.tipo === "articoloSpesa") { stato.casaSpesa.push(voce.dati); scrivi("agenda-casa-spesa", stato.casaSpesa); }
+    if (voce.tipo === "commissioneCasa") { stato.casaCommissioni.push(voce.dati); scrivi("agenda-casa-commissioni", stato.casaCommissioni); }
+    stato.cestino = stato.cestino.filter(function (e) { return e.id !== id; });
+    scrivi("agenda-cestino", stato.cestino);
+    render();
+  }
+
+  function eliminaDefinitivo(id) {
+    stato.cestino = stato.cestino.filter(function (e) { return e.id !== id; });
+    scrivi("agenda-cestino", stato.cestino);
+    render();
+  }
+
+  function svuotaCestino() {
+    if (stato.cestino.length === 0) return;
+    var conferma = window.confirm(
+      "Vuoi svuotare tutto il cestino? Gli elementi eliminati definitivamente non potranno più essere ripristinati."
+    );
+    if (!conferma) return;
+    stato.cestino = [];
+    scrivi("agenda-cestino", stato.cestino);
+    render();
+  }
+
+  /* ===== Rendering ===== */
+
+  var radice = document.getElementById("app");
+
+  function render() {
+    // Prima di ridisegnare la pagina, salviamo lo stato di qualsiasi campo/casella
+    // che l'utente sta compilando (non ancora inviato), per non perderlo qualunque
+    // sia la causa del ridisegno (sincronizzazione, clic altrove, ecc.)
+    var bozzaCampi = {};
+    radice.querySelectorAll("input[id], textarea[id], select[id]").forEach(function (el) {
+      if (el.type === "checkbox" || el.type === "radio") {
+        bozzaCampi[el.id] = { casella: true, valore: el.checked };
+      } else {
+        bozzaCampi[el.id] = { casella: false, valore: el.value };
+      }
+    });
+
+    radice.innerHTML =
+      '<div class="app">' +
+        renderMenu() +
+        '<main class="contenuto">' + renderSezione() + '</main>' +
+      '</div>';
+
+    Object.keys(bozzaCampi).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var b = bozzaCampi[id];
+      if (b.casella) el.checked = b.valore; else el.value = b.valore;
+    });
+
+    collegaEventi();
+  }
+
+  function renderMenu() {
+    var voci = [
+      { id: "home", et: "Oggi", ic: "🏠" },
+      { id: "calendario", et: "Calendario", ic: "📆" },
+      { id: "attivita", et: "Attività", ic: "✅" },
+      { id: "salute", et: "Salute", ic: "💊" },
+      { id: "finanze", et: "Finanze", ic: "💶" },
+      { id: "casa", et: "Casa", ic: "🏡" },
+      { id: "diario", et: "Diario", ic: "📝" },
+      { id: "note", et: "Note", ic: "📌" },
+      { id: "contatti", et: "Contatti", ic: "👤" },
+      { id: "cestino", et: "Cestino", ic: "🗑️" },
+      { id: "backup", et: "Backup", ic: "💾" },
+      { id: "assistente", et: "Assistente", ic: "🤖" },
+    ];
+    var html =
+      '<aside class="menu">' +
+        '<div class="menu-intestazione">' +
+          '<span class="menu-simbolo">🗓️</span>' +
+          '<div><h2>Agenda</h2><p>di Giovanni</p></div>' +
+        '</div>' +
+        '<div class="orologio-menu" id="orologio-menu">' + testoOrologio() + '</div>' +
+        '<nav>';
+    voci.forEach(function (v) {
+      html +=
+        '<button class="voce-menu ' + (v.id === stato.sezione ? "voce-attiva" : "") + '" data-vai="' + v.id + '">' +
+          '<span class="voce-icona">' + v.ic + '</span>' + v.et +
+        '</button>';
+    });
+    html += '</nav>' +
+      '<p style="font-size:0.7rem; opacity:0.5; padding:10px 4px 0;">Versione app: 10/08/2026 – 23:45 (v.7)</p>' +
+    '</aside>';
+    return html;
+  }
+
+  function renderSezione() {
+    switch (stato.sezione) {
+      case "calendario": return renderCalendario();
+      case "attivita": return renderAttivita();
+      case "salute": return renderSalute();
+      case "finanze": return renderFinanze();
+      case "casa": return renderCasa();
+      case "diario": return renderDiario();
+      case "note": return renderNote();
+      case "contatti": return renderContatti();
+      case "cestino": return renderCestino();
+      case "backup": return renderBackup();
+      case "assistente": return renderAssistente();
+      default: return renderHome();
+    }
+  }
+
+  function renderPromemoria() {
+    if (!stato.mostraPromemoria) return "";
+    var oggi = impegniOggi();
+    if (oggi.length === 0) return "";
+
+    var html =
+      '<div class="banner-promemoria">' +
+        '<div>' +
+          '<h3>📣 Promemoria di oggi</h3>' +
+          '<ul>';
+    oggi.slice(0, 4).forEach(function (e) {
+      html += '<li>' + (e.ricorrente ? '<span class="icona-ricorrenza">🔁</span>' : '') + escapeHtml(e.base.testo) + '</li>';
+    });
+    html += '</ul></div>' +
+        '<button class="bottone-icona" id="btn-chiudi-promemoria" title="Chiudi">✕</button>' +
+      '</div>';
+    return html;
+  }
+
+  function renderHome() {
+    var oggi = new Date();
+    var oggiTesto = oggi.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    var oggiISO = dataOggiISO();
+
+    var daFare = stato.attivita.filter(function (a) { return !a.completata; }).length;
+    var fatte = stato.attivita.length - daFare;
+
+    var prossimi = elencoAppuntamentiEspanso()
+      .filter(function (e) { return e.data >= oggiISO; })
+      .slice(0, 3);
+
+    var prioritaOggi = stato.attivita.filter(function (a) {
+      return !a.completata && (a.urgenza || "piu-avanti") === "oggi";
+    });
+
+    var html = renderPromemoria() +
+      '<div class="scheda intestazione-giorno">' +
+        '<p class="etichetta-data">' + oggiTesto + '</p>' +
+        '<h1>Buongiorno, Giovanni</h1>' +
+        '<p class="testo-secondario">Ecco un riepilogo di quello che ti aspetta.</p>' +
+      '</div>';
+
+    if (prioritaOggi.length > 0) {
+      html += '<div class="scheda scheda-priorita"><h3>🔴 Cosa non dimenticare oggi</h3><ul class="lista-pulita">';
+      prioritaOggi.forEach(function (a) {
+        html +=
+          '<li>' +
+            '<button class="bottone-icona" data-toggle-attivita="' + a.id + '" title="Segna come fatta">⬜</button>' +
+            '<span class="testo-riga">' + escapeHtml(a.nome) + '</span>' +
+            chipCategoria(a.categoria) +
+          '</li>';
+      });
+      html += '</ul></div>';
+    }
+
+    html += '<div class="griglia-schede">' +
+        '<button class="scheda scheda-cliccabile" data-vai="attivita">' +
+          '<h3>✅ Attività</h3><p class="numero-grande">' + daFare + '</p>' +
+          '<p class="testo-secondario">da completare' + (fatte > 0 ? ' · ' + fatte + ' fatte' : '') + '</p>' +
+        '</button>' +
+        '<button class="scheda scheda-cliccabile" data-vai="calendario">' +
+          '<h3>📆 Appuntamenti</h3><p class="numero-grande">' + prossimi.length + '</p>' +
+          '<p class="testo-secondario">' + (prossimi.length > 0 ? 'in arrivo' : 'nessun appuntamento') + '</p>' +
+        '</button>' +
+        '<button class="scheda scheda-cliccabile" data-vai="diario">' +
+          '<h3>📝 Diario</h3><p class="numero-grande">' + stato.diario.length + '</p>' +
+          '<p class="testo-secondario">pagine scritte</p>' +
+        '</button>' +
+        '<button class="scheda scheda-cliccabile" data-vai="salute">' +
+          '<h3>💊 Salute</h3><p class="numero-grande">' + stato.saluteTerapie.length + '</p>' +
+          '<p class="testo-secondario">terapie registrate</p>' +
+        '</button>' +
+      '</div>' +
+      '<div class="scheda"><h3>📌 Prossimi appuntamenti</h3>';
+
+    if (prossimi.length === 0) {
+      html += '<p class="testo-secondario">Non hai appuntamenti in programma.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      prossimi.forEach(function (e) {
+        html +=
+          '<li><span class="data-pillola">' + formattaData(e.data, { day: "numeric", month: "short" }) + '</span>' +
+          (e.ricorrente ? '<span class="icona-ricorrenza">🔁</span>' : '') +
+          escapeHtml(e.base.testo) + '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderCalendario() {
+    var oggiISO = dataOggiISO();
+    var espanso = elencoAppuntamentiEspanso();
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>📆 Calendario</h1>' +
+        '<p class="testo-secondario">Scegli il giorno e aggiungi un appuntamento. Puoi anche renderlo ricorrente.</p>' +
+        '<div class="riga-modulo">' +
+          '<input type="date" id="campo-data-appuntamento" />' +
+          '<input type="text" id="campo-testo-appuntamento" placeholder="Nuovo appuntamento" />' +
+          '<select id="campo-ricorrenza-appuntamento">' +
+            '<option value="nessuna">Non si ripete</option>' +
+            '<option value="settimanale">Ogni settimana</option>' +
+            '<option value="mensile">Ogni mese</option>' +
+          '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-appuntamento">➕ Aggiungi</button>' +
+        '</div>' +
+        '<h3 class="titolo-sezione">📌 Appuntamenti</h3>';
+
+    if (espanso.length === 0) {
+      html += '<p class="testo-secondario">Non hai ancora nessun appuntamento.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      espanso.forEach(function (e) {
+        html +=
+          '<li class="' + (e.data === oggiISO ? "riga-oggi" : "") + '">' +
+            '<span class="data-pillola">' + formattaData(e.data, { weekday: "short", day: "numeric", month: "short" }) + '</span>' +
+            (e.ricorrente ? '<span class="icona-ricorrenza">🔁</span>' : '') +
+            '<span class="testo-riga">' + escapeHtml(e.base.testo) + '</span>' +
+            '<button class="bottone-icona" data-elimina-appuntamento="' + e.base.id + '" title="' + (e.ricorrente ? "Elimina l'intera serie" : "Elimina") + '">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderFiltri(filtroAttuale, attributoDati) {
+    var html = '<div class="riga-filtri">';
+    html += '<button class="filtro-chip' + (filtroAttuale === "tutte" ? " filtro-chip-attivo" : "") + '" data-' + attributoDati + '="tutte">Tutte</button>';
+    CATEGORIE.forEach(function (c) {
+      html += '<button class="filtro-chip' + (filtroAttuale === c.id ? " filtro-chip-attivo" : "") + '" data-' + attributoDati + '="' + c.id + '">' + c.nome + '</button>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderAttivita() {
+    var elenco = stato.filtroAttivita === "tutte"
+      ? stato.attivita
+      : stato.attivita.filter(function (a) { return (a.categoria || "altro") === stato.filtroAttivita; });
+
+    var daFare = elenco.filter(function (a) { return !a.completata; });
+    var fatte = elenco.filter(function (a) { return a.completata; });
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>✅ Attività</h1>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-attivita" placeholder="Nuova attività" />' +
+          '<select id="campo-categoria-attivita">' + opzioniCategorie("altro") + '</select>' +
+          '<select id="campo-urgenza-attivita">' + opzioniUrgenza("piu-avanti") + '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-attivita">➕ Aggiungi</button>' +
+        '</div>' +
+        renderFiltri(stato.filtroAttivita, "filtro-attivita");
+
+    if (stato.attivita.length === 0) {
+      html += '<p class="testo-secondario">Nessuna attività: aggiungine una qui sopra.</p>';
+    } else if (elenco.length === 0) {
+      html += '<p class="testo-secondario">Nessuna attività in questa categoria.</p>';
+    }
+
+    if (daFare.length > 0) {
+      LIVELLI_URGENZA.forEach(function (livello) {
+        var gruppo = daFare.filter(function (a) { return (a.urgenza || "piu-avanti") === livello.id; });
+        if (gruppo.length === 0) return;
+        html +=
+          '<div class="sottotitolo-urgenza"><h3>' + livello.icona + ' ' + livello.nome + '</h3>' +
+          '<span class="conteggio-lieve">(' + gruppo.length + ')</span></div>' +
+          '<ul class="lista-pulita">';
+        gruppo.forEach(function (a) {
+          html +=
+            '<li>' +
+              '<button class="bottone-icona" data-toggle-attivita="' + a.id + '" title="Segna come fatta">⬜</button>' +
+              '<span class="pallino-urgenza ' + livello.classe + '"></span>' +
+              '<span class="testo-riga">' + escapeHtml(a.nome) + '</span>' +
+              chipCategoria(a.categoria) +
+              '<button class="bottone-icona" data-elimina-attivita="' + a.id + '" title="Elimina">🗑️</button>' +
+            '</li>';
+        });
+        html += '</ul>';
+      });
+    }
+
+    if (fatte.length > 0) {
+      html += '<h3 class="titolo-sezione">Completate</h3><ul class="lista-pulita">';
+      fatte.forEach(function (a) {
+        html +=
+          '<li>' +
+            '<button class="bottone-icona" data-toggle-attivita="' + a.id + '" title="Segna come da fare">✅</button>' +
+            '<span class="testo-riga testo-completato">' + escapeHtml(a.nome) + '</span>' +
+            chipCategoria(a.categoria) +
+            '<button class="bottone-icona" data-elimina-attivita="' + a.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function scadenzaOggiISO() {
+    return dataOggiISO();
+  }
+
+  function badgeScadenza(dataISO) {
+    if (!dataISO) return "";
+    var oggi = scadenzaOggiISO();
+    var giorni = Math.round((new Date(dataISO) - new Date(oggi)) / 86400000);
+    if (giorni < 0) return '<span class="badge-scadenza-passata">⚠️ scaduta il ' + formattaData(dataISO, { day: "numeric", month: "short" }) + '</span>';
+    if (giorni <= 30) return '<span class="badge-scadenza-vicina">rinnovo entro il ' + formattaData(dataISO, { day: "numeric", month: "short" }) + '</span>';
+    return '<span class="testo-secondario" style="margin:0;font-size:0.8rem;">rinnovo ' + formattaData(dataISO, { day: "numeric", month: "short", year: "numeric" }) + '</span>';
+  }
+
+  function renderDAT() {
+    var d = stato.saluteDAT;
+
+    if (stato.modificaDAT) {
+      return (
+        '<div class="scheda scheda-dat">' +
+          '<div class="scheda-salute-intestazione"><h1>🚫🩸 Disposizioni Anticipate di Trattamento (DAT)</h1></div>' +
+          '<span class="badge-niente-sangue">NIENTE SANGUE — Testimone di Geova</span>' +
+          '<p class="testo-secondario" style="margin-top:10px;">Le dichiarazioni legali fisse del documento (punti 2, 5 e 6) non si modificano da qui. Puoi aggiornare i dati anagrafici, la scelta di fine vita, le altre disposizioni sanitarie e i dati di contatto del fiduciario.</p>' +
+
+          '<div class="riga-dat"><span class="etichetta-dat">1. Nome e cognome</span><span class="valore-dat"><input type="text" id="dat-nome" value="' + escapeHtml(d.nome) + '" /></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">1. Nato/a a</span><span class="valore-dat"><input type="text" id="dat-nato-a" value="' + escapeHtml(d.natoA) + '" /></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">1. Data di nascita</span><span class="valore-dat"><input type="text" id="dat-data-nascita" value="' + escapeHtml(d.dataNascita) + '" /></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">3. Trattamenti di fine vita</span><span class="valore-dat opzioni-fine-vita">' +
+            '<label><input type="radio" name="dat-fine-vita" value="a"' + (d.fineVita !== "b" ? " checked" : "") + ' /> (a) G.A. — Non voglio che la mia vita venga prolungata se c\'è la ragionevole certezza medica che le mie condizioni sono senza speranza</label>' +
+            '<label><input type="radio" name="dat-fine-vita" value="b"' + (d.fineVita === "b" ? " checked" : "") + ' /> (b) Voglio che la mia vita venga prolungata il più possibile nei limiti delle pratiche mediche generalmente accettate, anche se questo significherà che potrei essere tenuto in vita per anni mediante l\'impiego di macchine</label>' +
+          '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">2. Posizione sul predeposito</span><span class="valore-dat"><textarea id="dat-posizione-predeposito" rows="5">' + escapeHtml(d.posizionePredeposito) + '</textarea></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">4. Altre disposizioni</span><span class="valore-dat"><textarea id="dat-altre-disposizioni" rows="8">' + escapeHtml(d.altreDisposizioni) + '</textarea></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Data documento</span><span class="valore-dat"><input type="text" id="dat-data-documento" value="' + escapeHtml(d.dataDocumento) + '" /></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat"><input type="text" id="dat-indirizzo" value="' + escapeHtml(d.indirizzo) + '" /></span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Firma (redigente)</span><span class="valore-dat"><input type="text" id="dat-firma-redigente" value="' + escapeHtml(d.firmaRedigente) + '" /></span></div>' +
+
+          '<div class="blocco-fiduciario"><h3>Fiduciario</h3>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Nome</span><span class="valore-dat"><input type="text" id="dat-fiduciario-nome" value="' + escapeHtml(d.fiduciarioNome) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Nato/a a</span><span class="valore-dat"><input type="text" id="dat-fiduciario-nato" value="' + escapeHtml(d.fiduciarioNato) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat"><input type="text" id="dat-fiduciario-indirizzo" value="' + escapeHtml(d.fiduciarioIndirizzo) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Telefono</span><span class="valore-dat"><input type="text" id="dat-fiduciario-telefono" value="' + escapeHtml(d.fiduciarioTelefono) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Data e firma accettazione</span><span class="valore-dat"><textarea id="dat-fiduciario-data-firma" rows="2">' + escapeHtml(d.fiduciarioDataFirma) + '</textarea></span></div>' +
+          '</div>' +
+
+          '<div class="blocco-fiduciario"><h3>Fiduciario supplente</h3>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Nome</span><span class="valore-dat"><input type="text" id="dat-supplente-nome" value="' + escapeHtml(d.fiduciarioSupplenteNome) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Nato/a a</span><span class="valore-dat"><input type="text" id="dat-supplente-nato" value="' + escapeHtml(d.fiduciarioSupplenteNato) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat"><input type="text" id="dat-supplente-indirizzo" value="' + escapeHtml(d.fiduciarioSupplenteIndirizzo) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Telefono</span><span class="valore-dat"><input type="text" id="dat-supplente-telefono" value="' + escapeHtml(d.fiduciarioSupplenteTelefono) + '" /></span></div>' +
+            '<div class="riga-dat"><span class="etichetta-dat">Data e firma accettazione</span><span class="valore-dat"><textarea id="dat-supplente-data-firma" rows="2">' + escapeHtml(d.fiduciarioSupplenteDataFirma) + '</textarea></span></div>' +
+          '</div>' +
+
+          '<div class="riga-modulo" style="margin-top:16px;">' +
+            '<button class="bottone-primario" id="btn-salva-dat">💾 Salva</button>' +
+            '<button class="bottone-icona" id="btn-annulla-dat" style="border:1px solid var(--bordo);">Annulla</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    return (
+      '<div class="scheda scheda-dat">' +
+        '<div class="scheda-salute-intestazione"><h1>🚫🩸 Disposizioni Anticipate di Trattamento (DAT)</h1></div>' +
+        '<p class="testo-secondario" style="margin-top:2px;">e indicazione del fiduciario — Documento redatto in conformità alla Legge del 22 dicembre 2017, n. 219</p>' +
+
+        '<h3 class="titolo-sezione" style="margin-top:18px;">📄 Pagina 1 di 2</h3>' +
+
+        '<p class="valore-dat" style="margin:0 0 10px;"><strong>1.</strong> Io sottoscritto/a <strong>' + escapeHtml(d.nome) + '</strong>, nato/a a ' + escapeHtml(d.natoA) + ', il ' + escapeHtml(d.dataNascita) + ', redigo questo documento allo scopo di esprimere le mie volontà in materia di trattamenti sanitari e di indicare un fiduciario qualora io sia incapace di intendere e di volere.</p>' +
+
+        '<p class="valore-dat" style="margin:0 0 10px;"><strong>2.</strong> Sono Testimone di Geova, e dispongo che in NESSUN CASO MI SIANO PRATICATE TRASFUSIONI di sangue intero, di globuli rossi, di globuli bianchi, di piastrine o di plasma, neanche qualora gli operatori sanitari ritengano che siano necessarie per salvarmi la vita (Atti 15:28, 29).</p>' +
+
+        '<p class="valore-dat" style="margin:0 0 10px;"><strong>Aggiornamento 2026 — ' + escapeHtml(d.posizionePredeposito) + '</strong></p>' +
+
+        '<p class="valore-dat" style="margin:14px 0 4px;"><strong>3.</strong> In merito ai trattamenti di fine vita: [apporre le proprie iniziali a una delle due voci]</p>' +
+        '<p class="valore-dat" style="margin:0 0 6px;"><span class="iniziali-scelta">G.A.</span>(a) Non voglio che la mia vita venga prolungata se c\'è la ragionevole certezza medica che le mie condizioni sono senza speranza.</p>' +
+        '<p class="valore-dat opzione-non-scelta" style="margin:0 0 10px;">(b) Voglio che la mia vita venga prolungata il più possibile nei limiti delle pratiche mediche generalmente accettate, anche se questo significherà che potrei essere tenuto in vita per anni mediante l\'impiego di macchine.</p>' +
+
+        '<p class="valore-dat" style="margin:0 0 4px;"><strong>4.</strong> In merito ad altre disposizioni di tipo sanitario, specifico quanto segue:</p>' +
+        '<div class="riga-dat"><span class="valore-dat">' + escapeHtml(d.altreDisposizioni) + '</span></div>' +
+
+        '<h3 class="titolo-sezione">📄 Pagina 2 di 2</h3>' +
+
+        '<p class="valore-dat" style="margin:0 0 10px;"><strong>5.</strong> Non concedo a nessuno (nemmeno al fiduciario che ho indicato) l\'autorità di ignorare o annullare le disposizioni che ho esposto in questo documento. I miei familiari, parenti o amici potrebbero non essere d\'accordo con me, ma questo non interferisce con il mio rifiuto delle emotrasfusioni o con le altre disposizioni.</p>' +
+
+        '<p class="valore-dat" style="margin:0 0 10px;"><strong>6.</strong> A eccezione delle questioni summenzionate, indico di seguito il mio fiduciario affinché decida per me in merito a questioni sanitarie. Gli conferisco pieni poteri e l\'autorità di accettare o rifiutare a nome mio i trattamenti sanitari (incluse la nutrizione e l\'idratazione artificiali), consultarsi con i medici, ricevere copia dei miei referti e adire le vie legali per assicurarsi che le mie volontà vengano rispettate. Qualora il mio fiduciario non sia disponibile, disposto a svolgere le sue funzioni o in grado di farlo, indico un fiduciario supplente affinché agisca con la stessa autorità.</p>' +
+
+        '<div class="riga-dat"><span class="etichetta-dat">Data documento</span><span class="valore-dat">' + escapeHtml(d.dataDocumento) + '</span></div>' +
+        '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat">' + escapeHtml(d.indirizzo) + '</span></div>' +
+        '<div class="riga-dat"><span class="etichetta-dat">Firma (redigente)</span><span class="valore-dat">' + escapeHtml(d.firmaRedigente) + '</span></div>' +
+
+        '<div class="blocco-fiduciario"><h3>Fiduciario</h3>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Nome e cognome</span><span class="valore-dat">' + escapeHtml(d.fiduciarioNome) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Nato/a a</span><span class="valore-dat">' + escapeHtml(d.fiduciarioNato) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat">' + escapeHtml(d.fiduciarioIndirizzo) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Telefono</span><span class="valore-dat">' + escapeHtml(d.fiduciarioTelefono) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Data e firma accettazione</span><span class="valore-dat">' + escapeHtml(d.fiduciarioDataFirma) + '</span></div>' +
+        '</div>' +
+
+        '<div class="blocco-fiduciario"><h3>Fiduciario supplente</h3>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Nome e cognome</span><span class="valore-dat">' + escapeHtml(d.fiduciarioSupplenteNome) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Nato/a a</span><span class="valore-dat">' + escapeHtml(d.fiduciarioSupplenteNato) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Indirizzo</span><span class="valore-dat">' + escapeHtml(d.fiduciarioSupplenteIndirizzo) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Telefono</span><span class="valore-dat">' + escapeHtml(d.fiduciarioSupplenteTelefono) + '</span></div>' +
+          '<div class="riga-dat"><span class="etichetta-dat">Data e firma accettazione</span><span class="valore-dat">' + escapeHtml(d.fiduciarioSupplenteDataFirma) + '</span></div>' +
+        '</div>' +
+
+        '<div style="text-align:center; margin-top:18px;">' +
+          '<span class="badge-niente-sangue" style="font-size:1rem; padding:8px 20px;">🚫 NIENTE SANGUE</span>' +
+          '<p class="testo-secondario" style="margin-top:8px;">Disposizioni anticipate di trattamenti sanitari (DAT) e indicazione del fiduciario — documento firmato all\'interno.</p>' +
+        '</div>' +
+
+        '<button class="bottone-primario" id="btn-modifica-dat" style="margin-top:10px;">✏️ Modifica dati</button>' +
+      '</div>'
+    );
+  }
+
+  function attivaModificaDAT() {
+    stato.modificaDAT = true;
+    render();
+  }
+
+  function annullaModificaDAT() {
+    stato.modificaDAT = false;
+    render();
+  }
+
+  function salvaDAT() {
+    var fineVitaEl = document.querySelector('input[name="dat-fine-vita"]:checked');
+    stato.saluteDAT = {
+      nome: document.getElementById("dat-nome").value.trim(),
+      natoA: document.getElementById("dat-nato-a").value.trim(),
+      dataNascita: document.getElementById("dat-data-nascita").value.trim(),
+      indirizzo: document.getElementById("dat-indirizzo").value.trim(),
+      dataDocumento: document.getElementById("dat-data-documento").value.trim(),
+      fineVita: fineVitaEl ? fineVitaEl.value : stato.saluteDAT.fineVita,
+      posizionePredeposito: document.getElementById("dat-posizione-predeposito").value.trim(),
+      altreDisposizioni: document.getElementById("dat-altre-disposizioni").value.trim(),
+      firmaRedigente: document.getElementById("dat-firma-redigente").value.trim(),
+      fiduciarioNome: document.getElementById("dat-fiduciario-nome").value.trim(),
+      fiduciarioNato: document.getElementById("dat-fiduciario-nato").value.trim(),
+      fiduciarioIndirizzo: document.getElementById("dat-fiduciario-indirizzo").value.trim(),
+      fiduciarioTelefono: document.getElementById("dat-fiduciario-telefono").value.trim(),
+      fiduciarioDataFirma: document.getElementById("dat-fiduciario-data-firma").value.trim(),
+      fiduciarioSupplenteNome: document.getElementById("dat-supplente-nome").value.trim(),
+      fiduciarioSupplenteNato: document.getElementById("dat-supplente-nato").value.trim(),
+      fiduciarioSupplenteIndirizzo: document.getElementById("dat-supplente-indirizzo").value.trim(),
+      fiduciarioSupplenteTelefono: document.getElementById("dat-supplente-telefono").value.trim(),
+      fiduciarioSupplenteDataFirma: document.getElementById("dat-supplente-data-firma").value.trim()
+    };
+    scrivi("agenda-salute-dat", stato.saluteDAT);
+    sincronizzaSubito();
+    stato.modificaDAT = false;
+    render();
+  }
+
+  function renderSalute() {
+    var visiteOrdinate = stato.saluteVisite.slice().sort(function (a, b) { return a.data.localeCompare(b.data); });
+    var oggiISO = dataOggiISO();
+    var terapieOrdinate = stato.saluteTerapie.slice().sort(function (a, b) { return (a.orario || "").localeCompare(b.orario || ""); });
+
+    var html = renderDAT();
+
+    html +=
+      '<div class="scheda">' +
+        '<div class="scheda-salute-intestazione"><h1>💊 Salute e terapie</h1></div>' +
+        '<p class="testo-secondario">Visite, esami e terapie quotidiane, con le scadenze di ricette e impegnative.</p>' +
+
+        '<h3 class="titolo-sezione">🩺 Visite ed esami</h3>' +
+        '<div class="riga-modulo">' +
+          '<input type="date" id="campo-data-visita" />' +
+          '<input type="text" id="campo-testo-visita" placeholder="Es. Visita cardiologica, esame del sangue..." />' +
+          '<select id="campo-tipo-visita">' +
+            '<option value="visita">Visita</option>' +
+            '<option value="esame">Esame</option>' +
+            '<option value="dentista">Dentista</option>' +
+          '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-visita">➕ Aggiungi</button>' +
+        '</div>';
+
+    if (visiteOrdinate.length === 0) {
+      html += '<p class="testo-secondario">Nessuna visita o esame in programma.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      visiteOrdinate.forEach(function (v) {
+        html +=
+          '<li class="' + (v.data === oggiISO ? "riga-oggi" : "") + '">' +
+            '<span class="data-pillola">' + formattaData(v.data, { weekday: "short", day: "numeric", month: "short" }) + '</span>' +
+            '<span class="badge-salute">' + (v.tipo === "esame" ? "Esame" : v.tipo === "dentista" ? "Dentista" : "Visita") + '</span>' +
+            '<span class="testo-riga">' + escapeHtml(v.testo) + '</span>' +
+            '<button class="bottone-icona" data-elimina-visita="' + v.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html +=
+        '<h3 class="titolo-sezione">⏰ Farmaci e terapie quotidiane</h3>' +
+        '<p class="testo-secondario">Orari delle terapie e scadenza per il rinnovo di ricette/impegnative (facoltativa).</p>' +
+        '<div class="riga-modulo">' +
+          '<input type="time" id="campo-orario-terapia" />' +
+          '<input type="text" id="campo-nome-terapia" placeholder="Nome del farmaco/terapia" />' +
+          '<label style="display:inline-flex; align-items:center; gap:6px; font-weight:normal;"><input type="checkbox" id="campo-continuativo-terapia" /> Continuativo (tutti i giorni, senza scadenza)</label>' +
+          '<input type="date" id="campo-scadenza-terapia" title="Scadenza ricetta/impegnativa (facoltativa)" />' +
+          '<button class="bottone-primario" id="btn-aggiungi-terapia">➕ Aggiungi</button>' +
+        '</div>';
+
+    if (terapieOrdinate.length === 0) {
+      html += '<p class="testo-secondario">Nessuna terapia salvata.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      terapieOrdinate.forEach(function (t) {
+        html +=
+          '<li>' +
+            '<span class="orario-terapia">' + (t.orario ? escapeHtml(t.orario) : "—") + '</span>' +
+            '<span class="testo-riga">' + escapeHtml(t.nome) + '</span>' +
+            (t.continuativo ? '<span class="badge-salute">Continuativo</span>' : (t.scadenzaRicetta ? badgeScadenza(t.scadenzaRicetta) : "")) +
+            '<button class="bottone-icona" data-elimina-terapia="' + t.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderFinanze() {
+    var scadenzeOrdinate = stato.finanzeScadenze.slice().sort(function (a, b) { return a.data.localeCompare(b.data); });
+    var movimentiOrdinati = stato.finanzeMovimenti.slice().sort(function (a, b) { return b.data.localeCompare(a.data); });
+
+    var totaleEntrate = stato.finanzeMovimenti
+      .filter(function (m) { return m.tipo === "entrata"; })
+      .reduce(function (s, m) { return s + Number(m.importo || 0); }, 0);
+    var totaleUscite = stato.finanzeMovimenti
+      .filter(function (m) { return m.tipo === "uscita"; })
+      .reduce(function (s, m) { return s + Number(m.importo || 0); }, 0);
+    var saldo = totaleEntrate - totaleUscite;
+
+    var etichetteCategoriaScadenza = {
+      bolletta: "Bolletta", affitto: "Affitto/Condominio", bollo: "Bollo/Assicurazione auto",
+      documento: "Documento", altro: "Altro",
+    };
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>💶 Finanze e scadenze</h1>' +
+        '<p class="testo-secondario">Bollette, documenti in scadenza (carta d\'identità, patente, passaporto...) e un bilancio essenziale.</p>' +
+
+        '<h3 class="titolo-sezione">📋 Scadenze e documenti</h3>' +
+        '<div class="riga-modulo">' +
+          '<input type="date" id="campo-data-scadenza" />' +
+          '<input type="text" id="campo-testo-scadenza" placeholder="Es. Bolletta luce, rinnovo carta d\'identità..." />' +
+          '<select id="campo-categoria-scadenza">' +
+            '<option value="bolletta">Bolletta</option>' +
+            '<option value="affitto">Affitto/Condominio</option>' +
+            '<option value="bollo">Bollo/Assicurazione auto</option>' +
+            '<option value="documento">Documento</option>' +
+            '<option value="altro">Altro</option>' +
+          '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-scadenza">➕ Aggiungi</button>' +
+        '</div>';
+
+    if (scadenzeOrdinate.length === 0) {
+      html += '<p class="testo-secondario">Nessuna scadenza salvata.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      scadenzeOrdinate.forEach(function (s) {
+        html +=
+          '<li>' +
+            '<span class="badge-finanza">' + (etichetteCategoriaScadenza[s.categoria] || "Altro") + '</span>' +
+            '<span class="testo-riga">' + escapeHtml(s.testo) + '</span>' +
+            badgeScadenza(s.data) +
+            '<button class="bottone-icona" data-elimina-scadenza="' + s.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html +=
+        '<h3 class="titolo-sezione">💰 Bilancio</h3>' +
+        '<div class="riga-modulo">' +
+          '<input type="date" id="campo-data-movimento" />' +
+          '<input type="text" id="campo-descrizione-movimento" placeholder="Descrizione (es. Spesa, Pensione...)" />' +
+          '<input type="number" id="campo-importo-movimento" placeholder="Importo €" step="0.01" min="0" style="max-width:120px;" />' +
+          '<select id="campo-tipo-movimento">' +
+            '<option value="uscita">Uscita</option>' +
+            '<option value="entrata">Entrata</option>' +
+          '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-movimento">➕ Aggiungi</button>' +
+        '</div>' +
+        '<div class="riepilogo-bilancio">' +
+          '<div class="cella-bilancio"><p class="etichetta">Entrate</p><p class="valore">+' + totaleEntrate.toFixed(2) + ' €</p></div>' +
+          '<div class="cella-bilancio uscita"><p class="etichetta">Uscite</p><p class="valore">−' + totaleUscite.toFixed(2) + ' €</p></div>' +
+          '<div class="cella-bilancio"><p class="etichetta">Saldo</p><p class="valore" style="color:' + (saldo >= 0 ? "var(--finanze)" : "var(--urgenza-oggi)") + '">' + (saldo >= 0 ? "+" : "") + saldo.toFixed(2) + ' €</p></div>' +
+        '</div>';
+
+    if (movimentiOrdinati.length === 0) {
+      html += '<p class="testo-secondario">Nessun movimento registrato.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      movimentiOrdinati.forEach(function (m) {
+        html +=
+          '<li>' +
+            '<span class="data-pillola">' + formattaData(m.data, { day: "numeric", month: "short" }) + '</span>' +
+            '<span class="testo-riga">' + escapeHtml(m.descrizione) + '</span>' +
+            '<span class="importo ' + (m.tipo === "entrata" ? "importo-entrata" : "importo-uscita") + '">' +
+              (m.tipo === "entrata" ? "+" : "−") + Number(m.importo).toFixed(2) + ' €' +
+            '</span>' +
+            '<button class="bottone-icona" data-elimina-movimento="' + m.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderCasa() {
+    var spesaDaComprare = stato.casaSpesa.filter(function (s) { return !s.comprato; });
+    var spesaComprata = stato.casaSpesa.filter(function (s) { return s.comprato; });
+    var commissioniDaFare = stato.casaCommissioni.filter(function (c) { return !c.completata; });
+    var commissioniFatte = stato.casaCommissioni.filter(function (c) { return c.completata; });
+
+    var etichetteTipoCommissione = {
+      manutenzioneAuto: "Manutenzione auto", manutenzioneCasa: "Manutenzione casa",
+      pulizie: "Pulizie di fondo", contatori: "Lettura contatori",
+      commissione: "Commissione/Telefonata", altro: "Altro",
+    };
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>🏡 Casa e commissioni</h1>' +
+        '<p class="testo-secondario">Lista della spesa, manutenzioni e commissioni quotidiane.</p>' +
+
+        '<h3 class="titolo-sezione">🛒 Lista della spesa</h3>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-spesa" placeholder="Aggiungi un articolo" />' +
+          '<button class="bottone-primario" id="btn-aggiungi-spesa">➕ Aggiungi</button>' +
+        '</div>';
+
+    if (stato.casaSpesa.length === 0) {
+      html += '<p class="testo-secondario">La lista della spesa è vuota.</p>';
+    } else {
+      html += '<ul class="lista-pulita lista-spesa">';
+      spesaDaComprare.forEach(function (s) {
+        html +=
+          '<li>' +
+            '<button class="bottone-icona" data-toggle-spesa="' + s.id + '" title="Segna come comprato">⬜</button>' +
+            '<span class="testo-riga">' + escapeHtml(s.testo) + '</span>' +
+            '<button class="bottone-icona" data-elimina-spesa="' + s.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      spesaComprata.forEach(function (s) {
+        html +=
+          '<li class="spesa-comprata">' +
+            '<button class="bottone-icona" data-toggle-spesa="' + s.id + '" title="Segna da comprare">✅</button>' +
+            '<span class="testo-riga">' + escapeHtml(s.testo) + '</span>' +
+            '<button class="bottone-icona" data-elimina-spesa="' + s.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html +=
+        '<h3 class="titolo-sezione">🔧 Manutenzioni e commissioni</h3>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-commissione" placeholder="Es. Tagliando auto, pulire terrazzo..." />' +
+          '<select id="campo-tipo-commissione">' +
+            '<option value="manutenzioneCasa">Manutenzione casa</option>' +
+            '<option value="manutenzioneAuto">Manutenzione auto</option>' +
+            '<option value="pulizie">Pulizie di fondo</option>' +
+            '<option value="contatori">Lettura contatori</option>' +
+            '<option value="commissione">Commissione/Telefonata</option>' +
+            '<option value="altro">Altro</option>' +
+          '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-commissione">➕ Aggiungi</button>' +
+        '</div>';
+
+    if (stato.casaCommissioni.length === 0) {
+      html += '<p class="testo-secondario">Nessuna manutenzione o commissione in elenco.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      commissioniDaFare.forEach(function (c) {
+        html +=
+          '<li>' +
+            '<button class="bottone-icona" data-toggle-commissione="' + c.id + '" title="Segna come fatta">⬜</button>' +
+            '<span class="testo-riga">' + escapeHtml(c.testo) + '</span>' +
+            '<span class="badge-casa">' + (etichetteTipoCommissione[c.tipo] || "Altro") + '</span>' +
+            '<button class="bottone-icona" data-elimina-commissione="' + c.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      if (commissioniFatte.length > 0) {
+        html += '</ul><h3 class="titolo-sezione">Completate</h3><ul class="lista-pulita">';
+        commissioniFatte.forEach(function (c) {
+          html +=
+            '<li>' +
+              '<button class="bottone-icona" data-toggle-commissione="' + c.id + '" title="Segna come da fare">✅</button>' +
+              '<span class="testo-riga testo-completato">' + escapeHtml(c.testo) + '</span>' +
+              '<span class="badge-casa">' + (etichetteTipoCommissione[c.tipo] || "Altro") + '</span>' +
+              '<button class="bottone-icona" data-elimina-commissione="' + c.id + '" title="Elimina">🗑️</button>' +
+            '</li>';
+        });
+      }
+      html += '</ul>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderDiario() {
+    var html =
+      '<div class="scheda">' +
+        '<h1>📝 Diario personale</h1>' +
+        '<p class="testo-secondario">Scrivi qui i tuoi pensieri di oggi.</p>' +
+        '<textarea id="campo-diario" rows="8" placeholder="Cosa vuoi ricordare oggi?"></textarea>' +
+        '<button class="bottone-primario" id="btn-salva-diario">💾 Salva pagina</button>';
+
+    if (stato.diario.length > 0) {
+      html += '<h3 class="titolo-sezione">Pagine scritte</h3><ul class="lista-diario">';
+      stato.diario.forEach(function (p) {
+        html +=
+          '<li class="pagina-diario">' +
+            '<div class="pagina-diario-testata">' +
+              '<span class="data-pillola">' + formattaData(p.data, { day: "numeric", month: "long", year: "numeric" }) + '</span>' +
+              '<button class="bottone-icona" data-elimina-diario="' + p.id + '" title="Elimina">🗑️</button>' +
+            '</div>' +
+            '<p class="pagina-diario-testo">' + escapeHtml(p.testo) + '</p>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderNote() {
+    var elenco = stato.filtroNote === "tutte"
+      ? stato.note
+      : stato.note.filter(function (n) { return (n.categoria || "altro") === stato.filtroNote; });
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>📌 Note rapide</h1>' +
+        '<p class="testo-secondario">Appunti veloci da ricordare.</p>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-nota" placeholder="Scrivi una nota..." />' +
+          '<select id="campo-categoria-nota">' + opzioniCategorie("altro") + '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-nota">➕ Aggiungi</button>' +
+        '</div>' +
+        renderFiltri(stato.filtroNote, "filtro-note");
+
+    if (stato.note.length === 0) {
+      html += '<p class="testo-secondario">Nessuna nota salvata.</p>';
+    } else if (elenco.length === 0) {
+      html += '<p class="testo-secondario">Nessuna nota in questa categoria.</p>';
+    } else {
+      html += '<div class="griglia-note">';
+      elenco.forEach(function (n) {
+        html +=
+          '<div class="nota-adesiva">' +
+            '<p>' + escapeHtml(n.testo) + '</p>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+              chipCategoria(n.categoria) +
+              '<button class="bottone-icona" data-elimina-nota="' + n.id + '" title="Elimina">🗑️</button>' +
+            '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderContatti() {
+    var elenco = stato.filtroContatti === "tutte"
+      ? stato.contatti
+      : stato.contatti.filter(function (c) { return (c.categoria || "altro") === stato.filtroContatti; });
+
+    var ordinati = elenco.slice().sort(function (a, b) {
+      if (!!a.emergenza !== !!b.emergenza) return a.emergenza ? -1 : 1;
+      return a.nome.localeCompare(b.nome, "it");
+    });
+
+    var html =
+      '<div class="scheda">' +
+        '<h1>👤 Contatti</h1>' +
+        '<p class="testo-secondario">Nomi e numeri che vuoi avere sempre a portata di mano.</p>' +
+        '<div class="riga-modulo">' +
+          '<input type="text" id="campo-nome-contatto" placeholder="Nome" />' +
+          '<input type="tel" id="campo-telefono-contatto" placeholder="Telefono (facoltativo)" />' +
+          '<select id="campo-categoria-contatto">' + opzioniCategorie("altro") + '</select>' +
+          '<button class="bottone-primario" id="btn-aggiungi-contatto">➕ Aggiungi</button>' +
+        '</div>' +
+        '<input type="text" id="campo-note-contatto" placeholder="Nota (facoltativa, es. ruolo o indirizzo)" style="width:100%;margin-bottom:10px;" />' +
+        '<label style="display:flex;align-items:center;gap:8px;margin-bottom:20px;cursor:pointer;">' +
+          '<input type="checkbox" id="campo-emergenza-contatto" style="width:auto;padding:0;" />' +
+          '<span class="testo-secondario" style="margin:0;">⚠️ Contatto di emergenza</span>' +
+        '</label>' +
+        renderFiltri(stato.filtroContatti, "filtro-contatti");
+
+    if (stato.contatti.length === 0) {
+      html += '<p class="testo-secondario">Nessun contatto salvato.</p>';
+    } else if (ordinati.length === 0) {
+      html += '<p class="testo-secondario">Nessun contatto in questa categoria.</p>';
+    } else {
+      html += '<ul class="lista-pulita">';
+      ordinati.forEach(function (c) {
+        html +=
+          '<li>' +
+            '<div style="flex:1;">' +
+              '<div class="testo-riga" style="font-weight:600;">' + escapeHtml(c.nome) + '</div>' +
+              (c.telefono ? '<a href="tel:' + escapeHtml(c.telefono) + '" style="color:var(--pino);text-decoration:none;font-size:0.85rem;">📞 ' + escapeHtml(c.telefono) + '</a>' : '') +
+              (c.note ? '<div class="testo-secondario" style="margin:2px 0 0;font-size:0.85rem;">' + escapeHtml(c.note) + '</div>' : '') +
+            '</div>' +
+            (c.emergenza ? '<span class="badge-emergenza">⚠️ Emergenza</span>' : '') +
+            chipCategoria(c.categoria) +
+            '<button class="bottone-icona" data-elimina-contatto="' + c.id + '" title="Elimina">🗑️</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderCestino() {
+    var html =
+      '<div class="scheda">' +
+        '<h1>🗑️ Cestino</h1>' +
+        '<p class="testo-secondario">Gli elementi eliminati restano qui 30 giorni, poi vengono rimossi automaticamente.</p>';
+
+    if (stato.cestino.length === 0) {
+      html += '<p class="testo-secondario">Il cestino è vuoto.</p>';
+    } else {
+      html += '<button class="bottone-primario" id="btn-svuota-cestino" style="background:var(--urgenza-oggi);">🗑️ Svuota tutto il cestino</button>';
+      html += '<ul class="lista-pulita">';
+      stato.cestino.forEach(function (e) {
+        html +=
+          '<li>' +
+            '<span class="chip-categoria" style="background:var(--ambra-lieve);color:#6b4110;">' + etichettaTipo(e.tipo) + '</span>' +
+            '<span class="testo-riga">' + escapeHtml(riepilogoElemento(e)) + '</span>' +
+            '<span class="testo-secondario" style="margin:0;font-size:0.8rem;">' + formattaData(e.eliminatoIl.slice(0, 10), { day: "numeric", month: "short" }) + '</span>' +
+            '<button class="bottone-icona" data-ripristina="' + e.id + '" title="Ripristina">♻️</button>' +
+            '<button class="bottone-icona" data-elimina-definitivo="' + e.id + '" title="Elimina definitivamente">❌</button>' +
+          '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function testoStatoSincronizzazione() {
+    if (!refDatiCloud) return '⚠️ Sincronizzazione automatica non disponibile su questo dispositivo';
+    if (statoSincronizzazione === "connesso") return '✅ Sincronizzazione automatica attiva';
+    if (statoSincronizzazione === "non disponibile") return '⚠️ Sincronizzazione automatica non riuscita (controlla la connessione internet)';
+    return '⏳ Sincronizzazione automatica: in attesa del primo collegamento';
+  }
+
+  function renderBackup() {
+    return (
+      '<div class="scheda">' +
+        '<h1>💾 Backup</h1>' +
+        '<p class="testo-secondario" style="font-weight:600;">' + testoStatoSincronizzazione() + '</p>' +
+        '<p class="testo-secondario">Salva una copia di tutti i tuoi dati in un file, così puoi conservarli o trasferirli su un altro computer.</p>' +
+        '<button class="bottone-primario" id="btn-esporta-backup">⬇️ Scarica backup</button>' +
+        '<h3 class="titolo-sezione">Ripristina da un backup</h3>' +
+        '<p class="testo-secondario">Attenzione: importando un backup, i dati attuali (attività, appuntamenti, diario, note, contatti, cestino) verranno sostituiti.</p>' +
+        '<label for="campo-importa-backup" class="bottone-primario etichetta-file">📂 Scegli il file di backup</label>' +
+        '<input type="file" id="campo-importa-backup" class="input-file-nascosto" />' +
+        '<p class="testo-secondario" id="nome-file-scelto" style="margin-top:8px;">Nessun file scelto.</p>' +
+        '<h3 class="titolo-sezione">Importa solo appuntamenti</h3>' +
+        '<p class="testo-secondario">Aggiunge appuntamenti da un file, senza cancellare o sostituire nulla di quello che hai già.</p>' +
+        '<label for="campo-importa-appuntamenti" class="bottone-primario etichetta-file">📥 Scegli il file di appuntamenti</label>' +
+        '<input type="file" id="campo-importa-appuntamenti" class="input-file-nascosto" />' +
+        '<p class="testo-secondario" id="nome-file-appuntamenti-scelto" style="margin-top:8px;">Nessun file scelto.</p>' +
+      '</div>'
+    );
+  }
+
+  /* ===== Azioni ===== */
+
+  function vaiA(sezione) {
+    stato.sezione = sezione;
+    render();
+  }
+
+  function aggiungiAppuntamento() {
+    var data = document.getElementById("campo-data-appuntamento").value;
+    var testo = document.getElementById("campo-testo-appuntamento").value.trim();
+    var ricorrenza = document.getElementById("campo-ricorrenza-appuntamento").value;
+    if (!data || !testo) return;
+    stato.appuntamenti.push({ id: Date.now(), data: data, testo: testo, ricorrenza: ricorrenza });
+    scrivi("agenda-appuntamenti", stato.appuntamenti);
+    render();
+  }
+
+  function eliminaAppuntamento(id) {
+    var voce = stato.appuntamenti.filter(function (a) { return a.id === id; })[0];
+    if (voce) cestinaElemento("appuntamento", voce);
+    stato.appuntamenti = stato.appuntamenti.filter(function (a) { return a.id !== id; });
+    scrivi("agenda-appuntamenti", stato.appuntamenti);
+    render();
+  }
+
+  // Aggiunge appuntamenti da un file esterno SENZA cancellare o sostituire i dati esistenti.
+  // Salta eventuali doppioni (stessa data + stesso testo già presenti).
+  function importaSoloAppuntamenti(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var dati;
+      try {
+        dati = JSON.parse(e.target.result);
+      } catch (err) {
+        window.alert("Il file selezionato non è valido.");
+        return;
+      }
+      var nuovi = (dati && dati.appuntamenti) || [];
+      if (!Array.isArray(nuovi) || nuovi.length === 0) {
+        window.alert("Nessun appuntamento trovato nel file.");
+        return;
+      }
+      var aggiunti = 0, saltati = 0;
+      nuovi.forEach(function (n) {
+        var esisteGia = stato.appuntamenti.some(function (a) {
+          return a.data === n.data && a.testo === n.testo;
+        });
+        if (esisteGia) { saltati++; return; }
+        stato.appuntamenti.push({
+          id: Date.now() + Math.floor(Math.random() * 1000),
+          data: n.data,
+          testo: n.testo,
+          ricorrenza: n.ricorrenza || "nessuna",
+        });
+        aggiunti++;
+      });
+      scrivi("agenda-appuntamenti", stato.appuntamenti);
+      window.alert("Aggiunti " + aggiunti + " appuntamenti." + (saltati > 0 ? " (" + saltati + " già presenti, saltati)" : ""));
+      render();
+    };
+    reader.readAsText(file);
+  }
+
+  function aggiungiArticoloSpesa() {
+    var campo = document.getElementById("campo-spesa");
+    var testo = campo.value.trim();
+    if (!testo) return;
+    stato.casaSpesa.push({ id: Date.now(), testo: testo, comprato: false });
+    scrivi("agenda-casa-spesa", stato.casaSpesa);
+    render();
+  }
+
+  function toggleArticoloSpesa(id) {
+    stato.casaSpesa = stato.casaSpesa.map(function (s) {
+      return s.id === id ? Object.assign({}, s, { comprato: !s.comprato }) : s;
+    });
+    scrivi("agenda-casa-spesa", stato.casaSpesa);
+    render();
+  }
+
+  function eliminaArticoloSpesa(id) {
+    var voce = stato.casaSpesa.filter(function (s) { return s.id === id; })[0];
+    if (voce) cestinaElemento("articoloSpesa", voce);
+    stato.casaSpesa = stato.casaSpesa.filter(function (s) { return s.id !== id; });
+    scrivi("agenda-casa-spesa", stato.casaSpesa);
+    render();
+  }
+
+  function aggiungiCommissione() {
+    var campo = document.getElementById("campo-commissione");
+    var testo = campo.value.trim();
+    var tipo = document.getElementById("campo-tipo-commissione").value;
+    if (!testo) return;
+    stato.casaCommissioni.push({ id: Date.now(), testo: testo, tipo: tipo, completata: false });
+    scrivi("agenda-casa-commissioni", stato.casaCommissioni);
+    render();
+  }
+
+  function toggleCommissione(id) {
+    stato.casaCommissioni = stato.casaCommissioni.map(function (c) {
+      return c.id === id ? Object.assign({}, c, { completata: !c.completata }) : c;
+    });
+    scrivi("agenda-casa-commissioni", stato.casaCommissioni);
+    render();
+  }
+
+  function eliminaCommissione(id) {
+    var voce = stato.casaCommissioni.filter(function (c) { return c.id === id; })[0];
+    if (voce) cestinaElemento("commissioneCasa", voce);
+    stato.casaCommissioni = stato.casaCommissioni.filter(function (c) { return c.id !== id; });
+    scrivi("agenda-casa-commissioni", stato.casaCommissioni);
+    render();
+  }
+
+  function aggiungiScadenza() {
+    var data = document.getElementById("campo-data-scadenza").value;
+    var testo = document.getElementById("campo-testo-scadenza").value.trim();
+    var categoria = document.getElementById("campo-categoria-scadenza").value;
+    if (!data || !testo) return;
+    stato.finanzeScadenze.push({ id: Date.now(), data: data, testo: testo, categoria: categoria });
+    scrivi("agenda-finanze-scadenze", stato.finanzeScadenze);
+    render();
+  }
+
+  function eliminaScadenza(id) {
+    var voce = stato.finanzeScadenze.filter(function (s) { return s.id === id; })[0];
+    if (voce) cestinaElemento("scadenzaFinanza", voce);
+    stato.finanzeScadenze = stato.finanzeScadenze.filter(function (s) { return s.id !== id; });
+    scrivi("agenda-finanze-scadenze", stato.finanzeScadenze);
+    render();
+  }
+
+  function aggiungiMovimento() {
+    var data = document.getElementById("campo-data-movimento").value || dataOggiISO();
+    var descrizione = document.getElementById("campo-descrizione-movimento").value.trim();
+    var importo = parseFloat(document.getElementById("campo-importo-movimento").value);
+    var tipo = document.getElementById("campo-tipo-movimento").value;
+    if (!descrizione || isNaN(importo) || importo < 0) return;
+    stato.finanzeMovimenti.push({ id: Date.now(), data: data, descrizione: descrizione, importo: importo, tipo: tipo });
+    scrivi("agenda-finanze-movimenti", stato.finanzeMovimenti);
+    render();
+  }
+
+  function eliminaMovimento(id) {
+    var voce = stato.finanzeMovimenti.filter(function (m) { return m.id === id; })[0];
+    if (voce) cestinaElemento("movimentoFinanza", voce);
+    stato.finanzeMovimenti = stato.finanzeMovimenti.filter(function (m) { return m.id !== id; });
+    scrivi("agenda-finanze-movimenti", stato.finanzeMovimenti);
+    render();
+  }
+
+  function aggiungiVisita() {
+    var data = document.getElementById("campo-data-visita").value;
+    var testo = document.getElementById("campo-testo-visita").value.trim();
+    var tipo = document.getElementById("campo-tipo-visita").value;
+    if (!data || !testo) return;
+    stato.saluteVisite.push({ id: Date.now(), data: data, testo: testo, tipo: tipo });
+    scrivi("agenda-salute-visite", stato.saluteVisite);
+    render();
+  }
+
+  function eliminaVisita(id) {
+    var voce = stato.saluteVisite.filter(function (v) { return v.id === id; })[0];
+    if (voce) cestinaElemento("visitaSalute", voce);
+    stato.saluteVisite = stato.saluteVisite.filter(function (v) { return v.id !== id; });
+    scrivi("agenda-salute-visite", stato.saluteVisite);
+    render();
+  }
+
+  function aggiungiTerapia() {
+    var orario = document.getElementById("campo-orario-terapia").value;
+    var nome = document.getElementById("campo-nome-terapia").value.trim();
+    var continuativo = document.getElementById("campo-continuativo-terapia").checked;
+    var scadenzaRicetta = document.getElementById("campo-scadenza-terapia").value;
+    if (!nome) return;
+    stato.saluteTerapie.push({ id: Date.now(), orario: orario, nome: nome, continuativo: continuativo, scadenzaRicetta: continuativo ? null : (scadenzaRicetta || null) });
+    scrivi("agenda-salute-terapie", stato.saluteTerapie);
+    sincronizzaSubito();
+    render();
+  }
+
+  function eliminaTerapia(id) {
+    var voce = stato.saluteTerapie.filter(function (t) { return t.id === id; })[0];
+    if (voce) cestinaElemento("terapia", voce);
+    stato.saluteTerapie = stato.saluteTerapie.filter(function (t) { return t.id !== id; });
+    scrivi("agenda-salute-terapie", stato.saluteTerapie);
+    render();
+  }
+
+  function aggiungiAttivita() {
+    var campo = document.getElementById("campo-attivita");
+    var testo = campo.value.trim();
+    var categoria = document.getElementById("campo-categoria-attivita").value;
+    var urgenza = document.getElementById("campo-urgenza-attivita").value;
+    if (!testo) return;
+    stato.attivita.push({ id: Date.now(), nome: testo, completata: false, categoria: categoria, urgenza: urgenza });
+    scrivi("agenda-attivita", stato.attivita);
+    render();
+  }
+
+  function toggleAttivita(id) {
+    stato.attivita = stato.attivita.map(function (a) {
+      return a.id === id ? Object.assign({}, a, { completata: !a.completata }) : a;
+    });
+    scrivi("agenda-attivita", stato.attivita);
+    render();
+  }
+
+  function eliminaAttivita(id) {
+    var voce = stato.attivita.filter(function (a) { return a.id === id; })[0];
+    if (voce) cestinaElemento("attivita", voce);
+    stato.attivita = stato.attivita.filter(function (a) { return a.id !== id; });
+    scrivi("agenda-attivita", stato.attivita);
+    render();
+  }
+
+  function salvaDiario() {
+    var campo = document.getElementById("campo-diario");
+    var testo = campo.value.trim();
+    if (!testo) return;
+    stato.diario.unshift({ id: Date.now(), data: new Date().toISOString(), testo: testo });
+    scrivi("agenda-diario", stato.diario);
+    render();
+  }
+
+  function eliminaDiario(id) {
+    var voce = stato.diario.filter(function (p) { return p.id === id; })[0];
+    if (voce) cestinaElemento("diario", voce);
+    stato.diario = stato.diario.filter(function (p) { return p.id !== id; });
+    scrivi("agenda-diario", stato.diario);
+    render();
+  }
+
+  function aggiungiNota() {
+    var campo = document.getElementById("campo-nota");
+    var testo = campo.value.trim();
+    var categoria = document.getElementById("campo-categoria-nota").value;
+    if (!testo) return;
+    stato.note.unshift({ id: Date.now(), testo: testo, categoria: categoria });
+    scrivi("agenda-note", stato.note);
+    render();
+  }
+
+  function eliminaNota(id) {
+    var voce = stato.note.filter(function (n) { return n.id === id; })[0];
+    if (voce) cestinaElemento("nota", voce);
+    stato.note = stato.note.filter(function (n) { return n.id !== id; });
+    scrivi("agenda-note", stato.note);
+    render();
+  }
+
+  function aggiungiContatto() {
+    var nome = document.getElementById("campo-nome-contatto").value.trim();
+    var telefono = document.getElementById("campo-telefono-contatto").value.trim();
+    var note = document.getElementById("campo-note-contatto").value.trim();
+    var categoria = document.getElementById("campo-categoria-contatto").value;
+    var emergenza = document.getElementById("campo-emergenza-contatto").checked;
+    if (!nome) return;
+    stato.contatti.push({ id: Date.now(), nome: nome, telefono: telefono, note: note, categoria: categoria, emergenza: emergenza });
+    scrivi("agenda-contatti", stato.contatti);
+    render();
+  }
+
+  function eliminaContatto(id) {
+    var voce = stato.contatti.filter(function (c) { return c.id === id; })[0];
+    if (voce) cestinaElemento("contatto", voce);
+    stato.contatti = stato.contatti.filter(function (c) { return c.id !== id; });
+    scrivi("agenda-contatti", stato.contatti);
+    render();
+  }
+
+  function esportaBackup() {
+    var pacchetto = {
+      versione: 1,
+      esportatoIl: new Date().toISOString(),
+      attivita: stato.attivita,
+      appuntamenti: stato.appuntamenti,
+      diario: stato.diario,
+      note: stato.note,
+      contatti: stato.contatti,
+      cestino: stato.cestino,
+      saluteVisite: stato.saluteVisite,
+      saluteTerapie: stato.saluteTerapie,
+      saluteDAT: stato.saluteDAT,
+      finanzeScadenze: stato.finanzeScadenze,
+      finanzeMovimenti: stato.finanzeMovimenti,
+      casaSpesa: stato.casaSpesa,
+      casaCommissioni: stato.casaCommissioni,
+    };
+    var blob = new Blob([JSON.stringify(pacchetto, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "agenda-giovanni-backup-" + dataOggiISO() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    window.alert(
+      "Backup scaricato.\n\n" +
+      "Esportato il: " + new Date().toLocaleString("it-IT") + "\n" +
+      "Appuntamenti contenuti: " + stato.appuntamenti.length
+    );
+  }
+
+  function importaBackup(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var dati;
+      try {
+        dati = JSON.parse(e.target.result);
+      } catch (err) {
+        window.alert("Il file selezionato non è un backup valido.");
+        return;
+      }
+      var conferma = window.confirm(
+        "Vuoi davvero sostituire i dati attuali con quelli del backup? L'operazione non si può annullare."
+      );
+      if (!conferma) return;
+
+      stato.attivita = dati.attivita || [];
+      stato.appuntamenti = dati.appuntamenti || [];
+      stato.diario = dati.diario || [];
+      stato.note = dati.note || [];
+      stato.contatti = dati.contatti || [];
+      stato.cestino = dati.cestino || [];
+      stato.saluteVisite = dati.saluteVisite || [];
+      stato.saluteTerapie = dati.saluteTerapie || [];
+      stato.saluteDAT = Object.assign({}, DAT_PREDEFINITO, dati.saluteDAT || {});
+      stato.finanzeScadenze = dati.finanzeScadenze || [];
+      stato.finanzeMovimenti = dati.finanzeMovimenti || [];
+      stato.casaSpesa = dati.casaSpesa || [];
+      stato.casaCommissioni = dati.casaCommissioni || [];
+
+      scrivi("agenda-attivita", stato.attivita);
+      scrivi("agenda-appuntamenti", stato.appuntamenti);
+      scrivi("agenda-diario", stato.diario);
+      scrivi("agenda-note", stato.note);
+      scrivi("agenda-contatti", stato.contatti);
+      scrivi("agenda-cestino", stato.cestino);
+      scrivi("agenda-salute-visite", stato.saluteVisite);
+      scrivi("agenda-salute-terapie", stato.saluteTerapie);
+      scrivi("agenda-salute-dat", stato.saluteDAT);
+      scrivi("agenda-finanze-scadenze", stato.finanzeScadenze);
+      scrivi("agenda-finanze-movimenti", stato.finanzeMovimenti);
+      scrivi("agenda-casa-spesa", stato.casaSpesa);
+      scrivi("agenda-casa-commissioni", stato.casaCommissioni);
+
+      window.alert(
+        "Backup ripristinato con successo.\n\n" +
+        "Esportato il: " + (dati.esportatoIl ? new Date(dati.esportatoIl).toLocaleString("it-IT") : "sconosciuto") + "\n" +
+        "Appuntamenti contenuti: " + stato.appuntamenti.length
+      );
+      render();
+    };
+    reader.readAsText(file);
+  }
+
+  /* ===== Collegamento eventi (rifatto ad ogni render) ===== */
+
+  function collegaEventi() {
+    radice.querySelectorAll("[data-vai]").forEach(function (el) {
+      el.addEventListener("click", function () { vaiA(el.getAttribute("data-vai")); });
+    });
+
+    var btnChiudiPromemoria = document.getElementById("btn-chiudi-promemoria");
+    if (btnChiudiPromemoria) {
+      btnChiudiPromemoria.addEventListener("click", function () {
+        stato.mostraPromemoria = false;
+        render();
+      });
+    }
+
+    radice.querySelectorAll("[data-filtro-attivita]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        stato.filtroAttivita = el.getAttribute("data-filtro-attivita");
+        render();
+      });
+    });
+
+    radice.querySelectorAll("[data-filtro-note]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        stato.filtroNote = el.getAttribute("data-filtro-note");
+        render();
+      });
+    });
+
+    radice.querySelectorAll("[data-filtro-contatti]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        stato.filtroContatti = el.getAttribute("data-filtro-contatti");
+        render();
+      });
+    });
+
+    var btnContatto = document.getElementById("btn-aggiungi-contatto");
+    if (btnContatto) {
+      btnContatto.addEventListener("click", aggiungiContatto);
+      document.getElementById("campo-nome-contatto").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiContatto();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-contatto]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaContatto(Number(el.getAttribute("data-elimina-contatto")));
+      });
+    });
+
+    var btnSpesa = document.getElementById("btn-aggiungi-spesa");
+    if (btnSpesa) {
+      btnSpesa.addEventListener("click", aggiungiArticoloSpesa);
+      document.getElementById("campo-spesa").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiArticoloSpesa();
+      });
+    }
+    radice.querySelectorAll("[data-toggle-spesa]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        toggleArticoloSpesa(Number(el.getAttribute("data-toggle-spesa")));
+      });
+    });
+    radice.querySelectorAll("[data-elimina-spesa]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaArticoloSpesa(Number(el.getAttribute("data-elimina-spesa")));
+      });
+    });
+
+    var btnCommissione = document.getElementById("btn-aggiungi-commissione");
+    if (btnCommissione) {
+      btnCommissione.addEventListener("click", aggiungiCommissione);
+      document.getElementById("campo-commissione").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiCommissione();
+      });
+    }
+    radice.querySelectorAll("[data-toggle-commissione]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        toggleCommissione(Number(el.getAttribute("data-toggle-commissione")));
+      });
+    });
+    radice.querySelectorAll("[data-elimina-commissione]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaCommissione(Number(el.getAttribute("data-elimina-commissione")));
+      });
+    });
+
+    radice.querySelectorAll("[data-ripristina]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        ripristinaElemento(el.getAttribute("data-ripristina"));
+      });
+    });
+    radice.querySelectorAll("[data-elimina-definitivo]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaDefinitivo(el.getAttribute("data-elimina-definitivo"));
+      });
+    });
+    var btnSvuotaCestino = document.getElementById("btn-svuota-cestino");
+    if (btnSvuotaCestino) btnSvuotaCestino.addEventListener("click", svuotaCestino);
+
+    var btnEseguiAssistente = document.getElementById("btn-esegui-assistente");
+    if (btnEseguiAssistente) {
+      btnEseguiAssistente.addEventListener("click", function () { eseguiComandoAssistente(); });
+      var campoComandoAssistente = document.getElementById("campo-comando-assistente");
+      if (campoComandoAssistente) {
+        campoComandoAssistente.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") { e.preventDefault(); eseguiComandoAssistente(); }
+        });
+      }
+    }
+    radice.querySelectorAll("[data-comando-rapido]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eseguiComandoAssistente(el.getAttribute("data-comando-rapido"));
+      });
+    });
+
+    var btnEsportaBackup = document.getElementById("btn-esporta-backup");
+    if (btnEsportaBackup) btnEsportaBackup.addEventListener("click", esportaBackup);
+
+    var campoImportaBackup = document.getElementById("campo-importa-backup");
+    if (campoImportaBackup) {
+      campoImportaBackup.addEventListener("change", function (e) {
+        var file = e.target.files[0];
+        var nomeFile = document.getElementById("nome-file-scelto");
+        if (file && nomeFile) nomeFile.textContent = "✅ File scelto: " + file.name;
+        if (file) importaBackup(file);
+      });
+    }
+
+    var campoImportaAppuntamenti = document.getElementById("campo-importa-appuntamenti");
+    if (campoImportaAppuntamenti) {
+      campoImportaAppuntamenti.addEventListener("change", function (e) {
+        var file = e.target.files[0];
+        var nomeFile = document.getElementById("nome-file-appuntamenti-scelto");
+        if (file && nomeFile) nomeFile.textContent = "✅ File scelto: " + file.name;
+        if (file) importaSoloAppuntamenti(file);
+      });
+    }
+
+    var btnAppuntamento = document.getElementById("btn-aggiungi-appuntamento");
+    if (btnAppuntamento) {
+      btnAppuntamento.addEventListener("click", aggiungiAppuntamento);
+      document.getElementById("campo-testo-appuntamento").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiAppuntamento();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-appuntamento]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaAppuntamento(Number(el.getAttribute("data-elimina-appuntamento")));
+      });
+    });
+
+    var btnModificaDAT = document.getElementById("btn-modifica-dat");
+    if (btnModificaDAT) btnModificaDAT.addEventListener("click", attivaModificaDAT);
+    var btnSalvaDAT = document.getElementById("btn-salva-dat");
+    if (btnSalvaDAT) btnSalvaDAT.addEventListener("click", salvaDAT);
+    var btnAnnullaDAT = document.getElementById("btn-annulla-dat");
+    if (btnAnnullaDAT) btnAnnullaDAT.addEventListener("click", annullaModificaDAT);
+
+    var btnVisita = document.getElementById("btn-aggiungi-visita");
+    if (btnVisita) {
+      btnVisita.addEventListener("click", aggiungiVisita);
+      document.getElementById("campo-testo-visita").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiVisita();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-visita]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaVisita(Number(el.getAttribute("data-elimina-visita")));
+      });
+    });
+
+    var btnTerapia = document.getElementById("btn-aggiungi-terapia");
+    if (btnTerapia) {
+      btnTerapia.addEventListener("click", aggiungiTerapia);
+      document.getElementById("campo-nome-terapia").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiTerapia();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-terapia]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaTerapia(Number(el.getAttribute("data-elimina-terapia")));
+      });
+    });
+
+    var btnScadenza = document.getElementById("btn-aggiungi-scadenza");
+    if (btnScadenza) {
+      btnScadenza.addEventListener("click", aggiungiScadenza);
+      document.getElementById("campo-testo-scadenza").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiScadenza();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-scadenza]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaScadenza(Number(el.getAttribute("data-elimina-scadenza")));
+      });
+    });
+
+    var btnMovimento = document.getElementById("btn-aggiungi-movimento");
+    if (btnMovimento) {
+      btnMovimento.addEventListener("click", aggiungiMovimento);
+      document.getElementById("campo-descrizione-movimento").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiMovimento();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-movimento]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaMovimento(Number(el.getAttribute("data-elimina-movimento")));
+      });
+    });
+
+    var btnAttivita = document.getElementById("btn-aggiungi-attivita");
+    if (btnAttivita) {
+      btnAttivita.addEventListener("click", aggiungiAttivita);
+      document.getElementById("campo-attivita").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiAttivita();
+      });
+    }
+    radice.querySelectorAll("[data-toggle-attivita]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        toggleAttivita(Number(el.getAttribute("data-toggle-attivita")));
+      });
+    });
+    radice.querySelectorAll("[data-elimina-attivita]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaAttivita(Number(el.getAttribute("data-elimina-attivita")));
+      });
+    });
+
+    var btnDiario = document.getElementById("btn-salva-diario");
+    if (btnDiario) btnDiario.addEventListener("click", salvaDiario);
+    radice.querySelectorAll("[data-elimina-diario]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaDiario(Number(el.getAttribute("data-elimina-diario")));
+      });
+    });
+
+    var btnNota = document.getElementById("btn-aggiungi-nota");
+    if (btnNota) {
+      btnNota.addEventListener("click", aggiungiNota);
+      document.getElementById("campo-nota").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") aggiungiNota();
+      });
+    }
+    radice.querySelectorAll("[data-elimina-nota]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        eliminaNota(Number(el.getAttribute("data-elimina-nota")));
+      });
+    });
+  }
+
+  render();
+
+  // Aggiorna data e ora nel menu ogni minuto, senza ridisegnare tutta la pagina
+  // (così non si perde quello che si sta scrivendo in un campo di testo)
+  setInterval(function () {
+    var elOrologio = document.getElementById("orologio-menu");
+    if (elOrologio) elOrologio.innerHTML = testoOrologio();
+  }, 60000);
+})();
+</script>
+</body>
+</html>
