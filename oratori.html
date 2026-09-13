@@ -585,6 +585,7 @@
           <label>Discorsi disponibili — seleziona tutti quelli che può tenere</label>
           <div class="disc-check-grid" id="discCheckGrid"></div>
         </div>
+        <div class="form-group full"><label>Nota</label><input type="text" id="dbNota" placeholder="es. Discorsi solo in francese"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -621,6 +622,10 @@
         <div class="form-group"><label>📱 Tel. CDP</label><input type="tel" id="cCdpTel"></div>
         <div class="form-group full"><label>👤 CCA</label><input type="text" id="cCca"></div>
         <div class="form-group"><label>📱 Tel. CCA</label><input type="tel" id="cCcaTel"></div>
+        <div class="form-group full" style="border-top:1px solid var(--cream-dark);padding-top:10px;margin-top:4px;"><label>🎙 Assistente Discorsi Pubblici 1</label><input type="text" id="cAss1"></div>
+        <div class="form-group"><label>📱 Tel. Assistente 1</label><input type="tel" id="cAss1Tel"></div>
+        <div class="form-group full"><label>🎙 Assistente Discorsi Pubblici 2</label><input type="text" id="cAss2"></div>
+        <div class="form-group"><label>📱 Tel. Assistente 2</label><input type="tel" id="cAss2Tel"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -955,7 +960,7 @@ const ORATORI_DEFAULT = [
   {nome:"Paolo",cognome:"Zangirolami",congregazione:"Magenta Naviglio",discorsi:[9,24,72,73,107],telefono:"3407156290"},
   {nome:"Luigi",cognome:"Delrossi",congregazione:"Mortara Belvedere",discorsi:[16,38,125,130,142,170,183,188],telefono:"3486038435"},
   {nome:"Marco",cognome:"Guidace",congregazione:"Mortara Belvedere",discorsi:[24,123,172,178,179,188,192],telefono:"3282875985"},
-  {nome:"Michele",cognome:"Sarnacchiaro",congregazione:"Mortara Belvedere",discorsi:[19,23,24,28,68,100,113,115,131,133,135,161,175],telefono:"3921499446"},
+  {nome:"Michele",cognome:"Sarnacchiaro",congregazione:"Mortara Belvedere",discorsi:[19,23,24,28,68,100,113,115,131,133,135,161,175],telefono:"3921499446",nota:"Non usare 19, 23 e 175"},
   {nome:"Roberto",cognome:"Zaretti",congregazione:"Mortara Belvedere",discorsi:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,53,54,60,68,69,72,75,76,80,81,90,95,100,113,123],telefono:"3333031944"},
   {nome:"Carlo",cognome:"Coldesina",congregazione:"Mortara Stadio",discorsi:[11,35,43,45,48,73,78,79,81,118,123],telefono:"3383212355"},
   {nome:"Leonardo",cognome:"Colli",congregazione:"Mortara Stadio",discorsi:[1,36,50,138,170,171,178],telefono:"3394391851"},
@@ -969,12 +974,12 @@ const ORATORI_DEFAULT = [
   {nome:"Luca",cognome:"Fargione",congregazione:"Mortara Stazione",discorsi:[7,18,55,57,72,76,95,177],telefono:"3398262703"},
   {nome:"Mattia",cognome:"Guidace",congregazione:"Mortara Stazione",discorsi:[17,175,177],telefono:"3270717253"},
   {nome:"Andrea",cognome:"Negrini",congregazione:"Mortara Stazione",discorsi:[4,22,23,30,43,49,67,80,114,132,160],telefono:"3332101383"},
-  {nome:"Angelo",cognome:"Brunetti",congregazione:"Trecate",discorsi:[70,78,138,170],telefono:"3477849397"},
+  {nome:"Angelo",cognome:"Brunetti",congregazione:"Trecate",discorsi:[70,78,138,170],telefono:"3477849397",nota:"70 e 78: aggiornamento in corso"},
   {nome:"Davide",cognome:"Correale",congregazione:"Trecate",discorsi:[62],telefono:"3206471437"},
-  {nome:"Daniele",cognome:"Gozzi",congregazione:"Trecate",discorsi:[22,32,153,171,176,192,193],telefono:"3486298323"},
+  {nome:"Daniele",cognome:"Gozzi",congregazione:"Trecate",discorsi:[22,32,153,171,176,192,193],telefono:"3486298323",nota:"Disponibile in zona Cerano, Galliate e Vigevano"},
   {nome:"Davide",cognome:"Mutta",congregazione:"Trecate",discorsi:[68,70,160,179,187],telefono:"3496646751"},
   {nome:"Roberto",cognome:"Laomedonte",congregazione:"Trecate",discorsi:[4,7,8,11,15,16,21,22,31,37,38,53,60,71,72,74,81,83,88,99,113,118,121,122,123,166],telefono:"3393999885"},
-  {nome:"Stefano",cognome:"Palego",congregazione:"Trecate",discorsi:[65,131],telefono:"3394292974"},
+  {nome:"Stefano",cognome:"Palego",congregazione:"Trecate",discorsi:[65,131],telefono:"3394292974",nota:"Non disponibile al sabato"},
   {nome:"Massimiliano",cognome:"Berlanda",congregazione:"Vanzaghello Ticino",discorsi:[80,116,152,179,187],telefono:"3497363759"},
   {nome:"Armando",cognome:"Caiazza",congregazione:"Vanzaghello Ticino",discorsi:[29,30,65,68],telefono:"3398811180"},
   {nome:"Samuel",cognome:"Daddato",congregazione:"Vanzaghello Ticino",discorsi:[32,56,153],telefono:"3464993783"},
@@ -983,7 +988,7 @@ const ORATORI_DEFAULT = [
   {nome:"Enzo",cognome:"Sommella",congregazione:"Vanzaghello Ticino",discorsi:[50,62,76,156,187],telefono:"3924051638"},
   {nome:"Daniele",cognome:"Benetti",congregazione:"Vigevano Castello",discorsi:[77,90,115,130,176,185],telefono:"3280576802"},
   {nome:"Massimiliano",cognome:"Berta",congregazione:"Vigevano Castello",discorsi:[1,24,40,53,118,153,161,173,190],telefono:"3472215380"},
-  {nome:"Ciro",cognome:"Bianchi",congregazione:"Vigevano Castello",discorsi:[1,9,30,67,99,116,136,142,174,178,187],telefono:"3392998600"},
+  {nome:"Ciro",cognome:"Bianchi",congregazione:"Vigevano Castello",discorsi:[1,9,30,67,99,116,136,142,174,178,187],telefono:"3392998600",nota:"Discorsi solo in francese"},
   {nome:"Giorgio",cognome:"Cancelli",congregazione:"Vigevano Castello",discorsi:[3,5,6,57,78,101,104,113,121,176,179,181,182,183,193],telefono:"3338820824"},
   {nome:"Giorgio",cognome:"Ferrati",congregazione:"Vigevano Castello",discorsi:[3,4,7,9,15,32,46,80],telefono:"3293222672"},
   {nome:"Giancarlo",cognome:"Girardi",congregazione:"Vigevano Castello",discorsi:[8,59,77,123,132,160,161,170,172,174,190,192],telefono:"3490614705"},
@@ -1023,21 +1028,21 @@ const ORATORI_DEFAULT = [
 const CONG_DEFAULT = [
   {nome:"Arconate",giorno:"Domenica",orario:"10.00",citta:"",cdp:"Michele Paganini",cdpTel:"3516782266",cca:"Dario Muscia",ccaTel:"3493514562"},
   {nome:"Bareggio",giorno:"Sabato",orario:"16.00",citta:"26 km",cdp:"Adriano Trovato",cdpTel:"3381363024",cca:"Aldo Murante",ccaTel:"3474149076"},
-  {nome:"Castano Primo Stazione",giorno:"Domenica",orario:"10.00",citta:"",cdp:"Michele Dolce",cdpTel:"3351424844",cca:"Alessandro Zangirolami",ccaTel:"3403235663"},
+  {nome:"Castano Primo Stazione",giorno:"Domenica",orario:"10.00",citta:"",cdp:"Michele Dolce",cdpTel:"3351424844",cca:"Alessandro Zangirolami",ccaTel:"3403235663",ass1:"Lorenzo Borghi",ass1Tel:"3756147888"},
   {nome:"Cerano",giorno:"Sabato",orario:"20.00",citta:"1 km",cdp:"Giovanni Affuso",cdpTel:"3427694027",cca:"Daniele Bellan",ccaTel:"3478169498"},
   {nome:"Corbetta Stadio",giorno:"Sabato",orario:"18.30",citta:"18 km",cdp:"Aurelio Giunta",cdpTel:"3403658803",cca:"Giuseppe Busacca",ccaTel:"3284280083"},
   {nome:"Cornaredo",giorno:"Domenica",orario:"17.00",citta:"45 km",cdp:"Andrea Nicosia",cdpTel:"3295621866",cca:"Marco Farinelli",ccaTel:"3938696985"},
   {nome:"Cuggiono",giorno:"Sabato",orario:"17.30",citta:"18 km",cdp:"Luca Baraterio",cdpTel:"3351418841",cca:"Alex Scremin",ccaTel:"3479190151"},
-  {nome:"Galliate",giorno:"Sabato",orario:"17.00",citta:"7 km",cdp:"Claudio Cocciolo",cdpTel:"3403606204",cca:"Claudio Cocciolo",ccaTel:"3403606204"},
+  {nome:"Galliate",giorno:"Sabato",orario:"17.00",citta:"7 km",cdp:"Claudio Cocciolo",cdpTel:"3403606204",cca:"Claudio Cocciolo",ccaTel:"3403606204",ass1:"Davide Orrico",ass1Tel:"3470002663"},
   {nome:"Magenta Naviglio",giorno:"Domenica",orario:"17.30",citta:"14 km",cdp:"Gianni Ciocca",cdpTel:"3929636818",cca:"Matteo Sinatra",ccaTel:"3338896106"},
   {nome:"Mortara Belvedere",giorno:"Sabato",orario:"17.00",citta:"26 km",cdp:"Fabio Campisi",cdpTel:"3465193675",cca:"Michele Sarnacchiaro",ccaTel:"3921499446"},
   {nome:"Mortara Stadio",giorno:"Domenica",orario:"16.30",citta:"26 km",cdp:"Alessandro Rocchini",cdpTel:"3280427433",cca:"Lapenna Davide",ccaTel:"3476855042"},
   {nome:"Mortara Stazione",giorno:"Domenica",orario:"10.00",citta:"",cdp:"Gianluca Bovolenta",cdpTel:"3280727820",cca:"Mattia Guidace",ccaTel:"3270717253"},
   {nome:"Trecate",giorno:"Domenica",orario:"17.00",citta:"1 km",cdp:"Massimiliano Osetto",cdpTel:"3771931174",cca:"Davide Correale",ccaTel:"3206471437"},
   {nome:"Vanzaghello Ticino",giorno:"Sabato",orario:"17.30",citta:"26 km",cdp:"Pietro Mannaracchio",cdpTel:"3386341933",cca:"Massimiliano Berlanda",ccaTel:"3497363759"},
-  {nome:"Vigevano Castello",giorno:"Sabato",orario:"17.30",citta:"18 km",cdp:"Giorgio Cancelli",cdpTel:"3338820824",cca:"Daniele Benetti",ccaTel:"3280576802"},
+  {nome:"Vigevano Castello",giorno:"Sabato",orario:"17.30",citta:"18 km",cdp:"Giorgio Cancelli",cdpTel:"3338820824",cca:"Daniele Benetti",ccaTel:"3280576802",ass1:"Lemuel Campisi",ass1Tel:"3406398853"},
   {nome:"Vigevano Parco",giorno:"Domenica",orario:"10.00",citta:"12 km",cdp:"Massimiliano Cannilla",cdpTel:"3932949263",cca:"Ivan Tiziano",ccaTel:"3462177009"},
-  {nome:"Vigevano Ticino",giorno:"Domenica",orario:"10.00",citta:"18 km",cdp:"Fabio Allevi",cdpTel:"3392094790",cca:"Fabio Allevi",ccaTel:"3392094790"},
+  {nome:"Vigevano Ticino",giorno:"Domenica",orario:"10.00",citta:"18 km",cdp:"Fabio Allevi",cdpTel:"3392094790",cca:"Fabio Allevi",ccaTel:"3392094790",ass1:"Michele Di Lorenzo",ass1Tel:"3936049625",ass2:"Mauro Nocelli",ass2Tel:"3391956737"},
   {nome:"Vittuone",giorno:"Domenica",orario:"10.00",citta:"23 km",cdp:"Pedro Lorenzini",cdpTel:"3483458340",cca:"Ruben Corradin",ccaTel:"3464133745"},
   {nome:"Abbiategrasso",giorno:"Domenica",orario:"10.00",citta:"24 km",cdp:"",cdpTel:"",cca:"",ccaTel:""}
 ];
@@ -1062,21 +1067,52 @@ let state = {
 };
 
 const STORAGE_KEY = 'oratoriAppV4';
-// Versione elenco oratori: cambia questa data ogni volta che aggiorni gli oratori
+// Versione elenco oratori: cambia questa data/sigla ogni volta che aggiorni gli oratori
 // -> tutti i dispositivi rigenerano l'elenco dai default e si risincronizzano da soli
-const ORATORI_DB_VERSION = '2026-09-03';
+const ORATORI_DB_VERSION = '2026-09-03b';
+// Versione dati congregazioni (CDP/CCA/Assistenti): stesso meccanismo, ma per state.congregazioni
+const CONG_VERSION = '2026-09-03b';
 function salvaStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+// Unisce le congregazioni salvate con CONG_DEFAULT: un campo salvato "vince" solo se
+// è stato davvero impostato (anche vuoto, per permettere di correggerlo/cancellarlo);
+// se il campo non è mai stato salvato si usa il valore aggiornato di CONG_DEFAULT.
+function mergeCongregazioni(savedCg){
+  savedCg = savedCg||[];
+  return CONG_DEFAULT.map(function(cdef){
+    var sc=savedCg.find(function(x){return x.nome===cdef.nome;});
+    var uc=function(campo){ return (sc&&sc[campo]!==undefined) ? sc[campo] : (cdef[campo]||''); };
+    return {
+      nome:cdef.nome,
+      giorno:uc('giorno')||cdef.giorno,
+      orario:uc('orario'),
+      citta:uc('citta'),
+      cdp:uc('cdp'),
+      cdpTel:uc('cdpTel'),
+      cca:uc('cca'),
+      ccaTel:uc('ccaTel'),
+      ass1:uc('ass1'),
+      ass1Tel:uc('ass1Tel'),
+      ass2:uc('ass2'),
+      ass2Tel:uc('ass2Tel')
+    };
+  });
+}
 function caricaStorage(){
   const s=localStorage.getItem(STORAGE_KEY);
   if(s){ try{ Object.assign(state,JSON.parse(s)); }catch(e){} }
-  // Precarica congregazioni se mancanti o incomplete
   if(!state.oratoriAnnuale) state.oratoriAnnuale=[];
-  if(!state.congregazioni||!state.congregazioni.length) state.congregazioni = CONG_DEFAULT.map(c=>({...c}));
   if(!state.oratoriDb||!state.oratoriDb.length) state.oratoriDb = ORATORI_DEFAULT.map(o=>({...o, discorsi:[...o.discorsi]}));
   // Versioning: se la versione dell'elenco oratori e' cambiata, rigenera dai default aggiornati
   if(state.oratoriDbVersion !== ORATORI_DB_VERSION){
     state.oratoriDb = ORATORI_DEFAULT.map(o=>({...o, discorsi:[...o.discorsi]}));
     state.oratoriDbVersion = ORATORI_DB_VERSION;
+    salvaStorage();
+  }
+  // Congregazioni: sempre passate dal merge, così CDP/CCA/Assistenti restano aggiornati
+  // (una correzione manuale resta valida; un campo mai toccato prende il nuovo default)
+  if(state.congVersion !== CONG_VERSION || !state.congregazioni || !state.congregazioni.length){
+    state.congregazioni = mergeCongregazioni(state.congregazioni);
+    state.congVersion = CONG_VERSION;
     salvaStorage();
   }
   if(!state.grigliaEntrata) state.grigliaEntrata={};
@@ -1854,22 +1890,10 @@ function pushOratoriDbSuCloud(){
 }
 function ripristinaDati(d){
   if(d.state) Object.assign(state,d.state);
-  // Congregazioni: merge cloud/saved con CONG_DEFAULT
-  // Usa valore salvato se non vuoto, altrimenti CONG_DEFAULT
-  var savedCg=state.congregazioni||[];
-  state.congregazioni=CONG_DEFAULT.map(function(cdef){
-    var sc=savedCg.find(function(x){return x.nome===cdef.nome;})||{};
-    return {
-      nome:cdef.nome,
-      giorno:sc.giorno||cdef.giorno,
-      orario:sc.orario||cdef.orario,
-      citta:sc.citta||cdef.citta,
-      cdp:sc.cdp||cdef.cdp,
-      cdpTel:sc.cdpTel||cdef.cdpTel,
-      cca:(sc.cca!==undefined&&sc.cca!=='')?sc.cca:cdef.cca,
-      ccaTel:(sc.ccaTel!==undefined&&sc.ccaTel!=='')?sc.ccaTel:cdef.ccaTel
-    };
-  });
+  // Congregazioni: stesso merge di caricaStorage(), così CDP/CCA/Assistenti restano
+  // sempre aggiornati anche se il cloud ha una versione vecchia
+  state.congregazioni=mergeCongregazioni(state.congregazioni);
+  state.congVersion=CONG_VERSION;
   if(!state.grigliaEntrata) state.grigliaEntrata={};
   if(!state.grigliaCerano) state.grigliaCerano={};
   // Versioning: se il cloud ha una versione vecchia dell'elenco oratori,
@@ -2174,13 +2198,14 @@ function renderOratoriDb(){
     var chips=(o.discorsi||[]).length
       ?(o.discorsi||[]).map(function(n){return '<span class="disc-chip" title="'+(SCHEMI_MAP[n]||'')+'">'+n+'</span>';}).join('')
       :'<span style="font-size:.75rem;color:var(--text-muted)">Nessun discorso assegnato</span>';
+    var notaHtml=o.nota?'<div style="font-size:.75rem;color:#922b21;font-weight:600;margin-top:4px;">📝 '+o.nota+'</div>':'';
     var chk=selMode?'<input type="checkbox" class="db-chk" data-idx="'+i+'" onchange="aggiornaContaSelezionati()" onclick="event.stopPropagation()" style="width:18px;height:18px;margin-right:2px;cursor:pointer;accent-color:var(--teal);flex-shrink:0;">':'';
     var azioni=selMode?'':'<div style="display:flex;gap:5px;flex-shrink:0;margin-top:2px"><button class="action-btn edit" onclick="editOratoreDb('+i+')">✏</button><button class="action-btn del" onclick="deleteOratoreDb('+i+')">🗑</button></div>';
     var isCerano=(o.congregazione||'').trim().toLowerCase()==='cerano';
     var itemClass='list-item'+(isCerano?' cerano-item':'');
     var nomeClass='list-item-name'+(isCerano?' cerano-nome':'');
     var congClass='list-item-sub'+(isCerano?' cerano-cong':'');
-    return '<div class="'+itemClass+'" style="cursor:'+(selMode?'pointer':'default')+';" '+(selMode?'onclick="toggleCheckDb('+i+',event)"':'')+'>'      +chk      +'<div class="list-num-badge">'+(i+1)+'</div>'      +'<div style="flex:1">'        +'<div class="'+nomeClass+'">'+o.nome+' '+o.cognome+'</div>'        +'<div class="'+congClass+'">'+(o.congregazione||'—')+'</div>'        +'<div class="disc-chips">'+chips+'</div>'      +'</div>'      +azioni    +'</div>';
+    return '<div class="'+itemClass+'" style="cursor:'+(selMode?'pointer':'default')+';" '+(selMode?'onclick="toggleCheckDb('+i+',event)"':'')+'>'      +chk      +'<div class="list-num-badge">'+(i+1)+'</div>'      +'<div style="flex:1">'        +'<div class="'+nomeClass+'">'+o.nome+' '+o.cognome+'</div>'        +'<div class="'+congClass+'">'+(o.congregazione||'—')+'</div>'        +'<div class="disc-chips">'+chips+'</div>'        +notaHtml      +'</div>'      +azioni    +'</div>';
   }).join('');
 }
 function toggleModalitaDb(){
@@ -2223,10 +2248,12 @@ function renderCongList(){
     var dB=c.citta?'<span style="font-size:.75rem;color:var(--text-muted);margin-left:6px;">📍 '+c.citta+'</span>':'';
     var cdp=c.cdp?'<div style="font-size:.79rem;margin-top:4px;color:var(--text-muted);">🎙 <strong>CDP:</strong> '+c.cdp+(c.cdpTel?' &nbsp;<a href="tel:+39'+c.cdpTel+'" style="color:var(--teal);text-decoration:none;">📱 '+c.cdpTel+'</a>':'')+'</div>':'';
     var cca=c.cca?'<div style="font-size:.79rem;margin-top:2px;color:var(--text-muted);">👤 <strong>CCA:</strong> '+c.cca+(c.ccaTel?' &nbsp;<a href="tel:+39'+c.ccaTel+'" style="color:var(--teal);text-decoration:none;">📱 '+c.ccaTel+'</a>':'')+'</div>':'';
+    var ass1=c.ass1?'<div style="font-size:.79rem;margin-top:2px;color:var(--text-muted);">🎙 <strong>Assistente:</strong> '+c.ass1+(c.ass1Tel?' &nbsp;<a href="tel:+39'+c.ass1Tel+'" style="color:var(--teal);text-decoration:none;">📱 '+c.ass1Tel+'</a>':'')+'</div>':'';
+    var ass2=c.ass2?'<div style="font-size:.79rem;margin-top:2px;color:var(--text-muted);">🎙 <strong>Assistente:</strong> '+c.ass2+(c.ass2Tel?' &nbsp;<a href="tel:+39'+c.ass2Tel+'" style="color:var(--teal);text-decoration:none;">📱 '+c.ass2Tel+'</a>':'')+'</div>':'';
     return '<div class="list-item" style="align-items:flex-start;">'
       +'<div class="list-num-badge" style="margin-top:3px;">'+(i+1)+'</div>'
       +'<div style="flex:1"><div class="list-item-name">'+c.nome+'</div>'
-      +'<div style="margin-top:3px;">'+gB+oB+dB+'</div>'+cdp+cca+'</div>'
+      +'<div style="margin-top:3px;">'+gB+oB+dB+'</div>'+cdp+cca+ass1+ass2+'</div>'
       +'<div style="display:flex;gap:5px;flex-shrink:0;margin-top:2px;">'
       +'<button class="action-btn edit" onclick="editCong('+i+')" title="Modifica">✏</button>'
       +'<button class="action-btn del" onclick="deleteCong('+i+')" title="Elimina">🗑</button>'
@@ -2709,6 +2736,7 @@ function openOratoreDbModal(){
   state.editOratoreDbIndex=null;
   document.getElementById('modalOratoreDbTitle').textContent='Nuovo Oratore nel Database';
   document.getElementById('dbNome').value=''; document.getElementById('dbCognome').value='';
+  document.getElementById('dbNota').value='';
   buildCongSelectDb(); buildDiscCheckGrid([]);
   document.getElementById('modalOratoreDb').classList.add('open');
 }
@@ -2716,6 +2744,7 @@ function editOratoreDb(idx){
   state.editOratoreDbIndex=idx; const o=state.oratoriDb[idx];
   document.getElementById('modalOratoreDbTitle').textContent='Modifica Oratore';
   document.getElementById('dbNome').value=o.nome; document.getElementById('dbCognome').value=o.cognome;
+  document.getElementById('dbNota').value=o.nota||'';
   buildCongSelectDb(); document.getElementById('dbCong').value=o.congregazione||'';
   buildDiscCheckGrid(o.discorsi||[]);
   document.getElementById('modalOratoreDb').classList.add('open');
@@ -2747,7 +2776,7 @@ function salvaOratoreDb(){
   if(cong==='__altra__') cong=prompt('Inserisci il nome della congregazione:')||'';
   const discorsi=[...document.querySelectorAll('#discCheckGrid input:checked')].map(cb=>parseInt(cb.value)).sort((a,b)=>a-b);
   const vecchio=state.editOratoreDbIndex!==null?state.oratoriDb[state.editOratoreDbIndex]:{};
-  const o={nome,cognome,congregazione:cong,discorsi,telefono:vecchio.telefono||''};
+  const o={nome,cognome,congregazione:cong,discorsi,telefono:vecchio.telefono||'',nota:document.getElementById('dbNota').value.trim()};
   if(state.editOratoreDbIndex!==null) state.oratoriDb[state.editOratoreDbIndex]=o;
   else state.oratoriDb.push(o);
   state.oratoriDb.sort((a,b)=>a.cognome.localeCompare(b.cognome));
@@ -2787,6 +2816,10 @@ function openAddCongModal(){
   document.getElementById('cGiorno').value='';
   document.getElementById('cOrario').value='';
   document.getElementById('cCitta').value='';
+  document.getElementById('cCdp').value=''; document.getElementById('cCdpTel').value='';
+  document.getElementById('cCca').value=''; document.getElementById('cCcaTel').value='';
+  document.getElementById('cAss1').value=''; document.getElementById('cAss1Tel').value='';
+  document.getElementById('cAss2').value=''; document.getElementById('cAss2Tel').value='';
   document.getElementById('modalCong').classList.add('open');
 }
 function editCong(idx){
@@ -2801,6 +2834,10 @@ function editCong(idx){
   document.getElementById('cCdpTel').value=c.cdpTel||'';
   document.getElementById('cCca').value=c.cca||'';
   document.getElementById('cCcaTel').value=c.ccaTel||'';
+  document.getElementById('cAss1').value=c.ass1||'';
+  document.getElementById('cAss1Tel').value=c.ass1Tel||'';
+  document.getElementById('cAss2').value=c.ass2||'';
+  document.getElementById('cAss2Tel').value=c.ass2Tel||'';
   document.getElementById('modalCong').classList.add('open');
 }
 function salvaCong(){
@@ -2814,7 +2851,11 @@ function salvaCong(){
     cdp: document.getElementById('cCdp').value.trim(),
     cdpTel: document.getElementById('cCdpTel').value.trim().replace(/\s/g,''),
     cca: document.getElementById('cCca').value.trim(),
-    ccaTel: document.getElementById('cCcaTel').value.trim().replace(/\s/g,'')
+    ccaTel: document.getElementById('cCcaTel').value.trim().replace(/\s/g,''),
+    ass1: document.getElementById('cAss1').value.trim(),
+    ass1Tel: document.getElementById('cAss1Tel').value.trim().replace(/\s/g,''),
+    ass2: document.getElementById('cAss2').value.trim(),
+    ass2Tel: document.getElementById('cAss2Tel').value.trim().replace(/\s/g,'')
   };
   if(_editCongIdx !== null){
     state.congregazioni[_editCongIdx] = obj;
@@ -3285,8 +3326,11 @@ function applicaModaleCalEntrata(){
   buildGrigliaEntrata();
 }
 // Chiudi modale cliccando fuori
-document.getElementById('modaleCalEntrata').addEventListener('click',function(e){
-  if(e.target===this) chiudiModaleCalEntrata();
+document.addEventListener('DOMContentLoaded', function(){
+  var mce=document.getElementById('modaleCalEntrata');
+  if(mce) mce.addEventListener('click',function(e){
+    if(e.target===mce) chiudiModaleCalEntrata();
+  });
 });
 
 function aggiornaStiloSelOratore(sel){
