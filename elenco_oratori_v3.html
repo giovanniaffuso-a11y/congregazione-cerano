@@ -383,10 +383,15 @@ async function syncDown(){
             return;
           }
         }
-        // Sovrascrive con la versione del cloud
-        S.or=rec.or;
-        if(rec.cg&&rec.cg.length>0) S.cg=rec.cg;
-        if(rec.agg) S.agg=rec.agg;
+        // Applica i dati del cloud passando dal merge con ODEF/CDEF
+        // (così discorsi, note e assistenti restano sempre aggiornati anche se il cloud è una versione vecchia)
+        mergeData(rec.or, rec.cg);
+        if(rec.srcVer===SRC_VER){
+          S.agg=rec.agg||SRC_DATE;
+        } else {
+          S.agg=SRC_DATE;
+        }
+        S.srcVer=SRC_VER;
         S.f='Tutte';
         sv(false);
         S.ts=cloudTs;
@@ -456,6 +461,12 @@ function updateSyncBadge(){
     el.style.color='#C87A3A';
   }
 }
+
+// SRC_VER: aggiornata da Claude ogni volta che i dati vengono ricostruiti da un nuovo PDF.
+// Serve a far avanzare automaticamente la data "Aggiornamento" mostrata in alto,
+// senza che tu debba più cambiarla a mano ogni volta.
+var SRC_VER='2026-09-03';
+var SRC_DATE='3 Settembre 2026';
 
 var CDEF=[
   {n:'Arconate',g:'Domenica',o:'10:00',cdp:'Paganini Michele',ct:'3516782266',cca:'Muscia Dario',cc:'3493514562'},
@@ -615,13 +626,8 @@ function sv(autoSync){
   }
   updateSyncBadge();
 }
-function ld(){
-  var s=localStorage.getItem(SK);
-  var saved={};
-  if(s){try{saved=JSON.parse(s);}catch(e){}}
-  // Oratori: sempre freschi dai default (con tutti i discorsi)
-  // ma preserva eventuali modifiche manuali (telefono, email) se presenti
-  var savedOr=saved.or||[];
+function mergeData(savedOr, savedCg){
+  savedOr = savedOr||[];
   S.or=ODEF.map(function(o){
     var trovato=savedOr.find(function(x){return x.id===o.id;});
     if(trovato){
@@ -634,28 +640,45 @@ function ld(){
     }
     return Object.assign({},o,{d:o.d.slice()});
   });
-  // Congregazioni: merge saved con CDEF — CDEF ha priorità per cdp/cca se saved è vuoto
-  if(saved.cg&&saved.cg.length>=CDEF.length){
+  // Congregazioni: merge saved con CDEF — se l'utente ha corretto/svuotato un campo,
+  // quella scelta viene rispettata; solo se il campo non è mai stato salvato si usa il default CDEF.
+  if(savedCg&&savedCg.length>=CDEF.length){
     S.cg=CDEF.map(function(cdef){
-      var saved_c=saved.cg.find(function(x){return x.n===cdef.n;})||{};
+      var saved_c=savedCg.find(function(x){return x.n===cdef.n;});
+      var uc=function(campo){ return (saved_c&&saved_c[campo]!==undefined) ? saved_c[campo] : (cdef[campo]||''); };
       return {
         n: cdef.n,
-        g: saved_c.g||cdef.g,
-        o: saved_c.o||cdef.o,
-        cdp: saved_c.cdp||cdef.cdp,
-        ct: saved_c.ct||cdef.ct,
+        g: uc('g')||cdef.g,
+        o: uc('o'),
+        cdp: uc('cdp'),
+        ct: uc('ct'),
         cca: cdef.cca,
         cc: cdef.cc,
-        ass1: saved_c.ass1||cdef.ass1||'',
-        ass1t: saved_c.ass1t||cdef.ass1t||'',
-        ass2: saved_c.ass2||cdef.ass2||'',
-        ass2t: saved_c.ass2t||cdef.ass2t||''
+        ass1: uc('ass1'),
+        ass1t: uc('ass1t'),
+        ass2: uc('ass2'),
+        ass2t: uc('ass2t')
       };
     });
   } else {
     S.cg=CDEF.map(function(c){return Object.assign({},c);});
   }
-  S.agg=saved.agg||'3 Settembre 2026';
+}
+function ld(){
+  var s=localStorage.getItem(SK);
+  var saved={};
+  if(s){try{saved=JSON.parse(s);}catch(e){}}
+  // Oratori e congregazioni: sempre freschi dai default (discorsi, note, assistenti)
+  // ma preserva eventuali modifiche manuali (telefono, email, coordinatori) se presenti
+  mergeData(saved.or, saved.cg);
+  // Data aggiornamento: si aggiorna da sola quando arriva un nuovo PDF (SRC_VER cambia).
+  // Se l'utente l'ha cambiata a mano dopo l'ultimo aggiornamento sorgente, la mantiene.
+  if(saved.srcVer===SRC_VER){
+    S.agg=saved.agg||SRC_DATE;
+  } else {
+    S.agg=SRC_DATE;
+  }
+  S.srcVer=SRC_VER;
   S.f=saved.f||'Tutte';
   document.getElementById('sagg').textContent=S.agg;
 }
@@ -708,7 +731,10 @@ function rl(){
     var list=bc[cn]||[];
     var ci=S.cg.find(function(c){return c.n===cn;})||{};
     h+='<div class="sec-cong">';
-    h+='<div class="sec-nome">'+eh(cn)+'</div>';
+    h+='<div class="sec-nome" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">';
+    h+='<span>'+eh(cn)+'</span>';
+    h+='<button style="background:#1A6BA0;color:#fff;border:none;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0" onclick="oC(\''+eh(cn)+'\')">✏ Coordinatori/Assistenti</button>';
+    h+='</div>';
 
     // CDP strip
     if(ci.cdp){
@@ -737,8 +763,8 @@ function rl(){
       });
       h+='</div>';
     }
-    if(!ci.cdp&&!ci.cca){
-      h+='<div style="margin-bottom:8px"><button style="background:none;border:1px dashed #A8CCEA;border-radius:6px;padding:4px 12px;font-size:11px;color:#1A6BA0;cursor:pointer" onclick="oC(\''+eh(cn)+'\')">+ Aggiungi coordinatori</button></div>';
+    if(!ci.cdp&&!ci.cca&&!ci.ass1){
+      h+='<div style="font-size:11px;color:#1A6BA0;font-style:italic;margin-bottom:8px">Nessun coordinatore/assistente inserito — usa il bottone sopra</div>';
     }
 
     // Oratori della congregazione
@@ -770,9 +796,7 @@ function rl(){
       if(o.nota) h+='<div class="disc-box" style="background:#F5E0D0"><span class="disc-label">Nota:</span><span class="disc-nums">'+eh(o.nota)+'</span></div>';
       h+='</div>';
     });
-    h+='<div style="text-align:right;margin-top:2px;margin-bottom:4px">';
-    h+='<button style="background:none;border:none;font-size:11px;color:#9A7060;cursor:pointer;text-decoration:underline" onclick="oC(\''+eh(cn)+'\')">✏ Modifica coordinatori</button>';
-    h+='</div></div>';
+    h+='</div>';
   });
   document.getElementById('lista').innerHTML=h;
 }
@@ -823,7 +847,7 @@ function dl(id){
 function oC(nm){
   eCn=nm;
   var c=S.cg.find(function(x){return x.n===nm;})||{};
-  document.getElementById('cd-titolo').textContent='Coordinatori — '+nm;
+  document.getElementById('cd-titolo').textContent='Coordinatori e Assistenti — '+nm;
   document.getElementById('cdp-n').value=c.cdp||'';
   document.getElementById('cdp-t').value=c.ct||'';
   document.getElementById('cca-n').value=c.cca||'';
