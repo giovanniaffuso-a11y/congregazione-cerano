@@ -116,16 +116,18 @@ textarea{resize:vertical;min-height:48px}
           <input type="date" id="data" oninput="genera()" onchange="genera()">
         </div>
         <div class="field"><label>Oratore (scegli dall'elenco)</label><select id="oratoreSel" onchange="onOratore()"></select></div>
+        <button type="button" id="btnModSV" onclick="modificaSV()" style="display:none;margin:2px 0 10px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-weight:600;cursor:pointer">✎ Modifica nome e discorso</button>
         <div class="row2">
           <div class="field"><label>Oratore</label><input type="text" id="oratore" placeholder="Nome Cognome" oninput="genera()"></div>
           <div class="field"><label>Congregazione</label><input type="text" id="cong" placeholder="in automatico" oninput="genera()"></div>
         </div>
-        <div class="field"><label>Discorso n° (tra quelli dell'oratore)</label><select id="discSel" onchange="onDisc()"><option value="">— scegli prima l'oratore —</option></select></div>
+        <div class="field"><label>Video (se previsto prima del Discorso Finale)</label><input type="text" id="video" placeholder="es. La buona notizia secondo Gesù — episodio 2" oninput="genera()"></div>
+        <div class="field"><label id="temaLabel">Tema del discorso (Discorso Finale)</label><input type="text" id="tema" placeholder="si compila col n° del discorso" oninput="genera()"></div>
+        <div class="field" id="discSelWrap"><label>Discorso n° (tra quelli dell'oratore)</label><select id="discSel" onchange="onDisc()"><option value="">— scegli prima l'oratore —</option></select></div>
         <div class="row2">
-          <div class="field"><label>Schema n°</label><input type="text" id="schema" placeholder="es. 67" oninput="onSchemaInput()"></div>
+          <div class="field" id="schemaWrap"><label>Schema n°</label><input type="text" id="schema" placeholder="es. 67" oninput="onSchemaInput()"></div>
           <div class="field"><label>Cantico n°</label><select id="cantico" onchange="genera()"></select></div>
         </div>
-        <div class="field"><label>Tema del discorso</label><input type="text" id="tema" placeholder="si compila col n° del discorso" oninput="genera()"></div>
 
         <div class="fsec">🎤 Incarichi della settimana <span class="tag">Messaggi 1 e 2</span></div>
         <div class="row2">
@@ -261,6 +263,7 @@ var ODEF=[
   {id:'ce6',c:'Orrico',n:'Giuseppe',r:'Anziano',cg:'Cerano',t:'3391099256',e:'gorrico@jwpub.org',d:[16,53,180]},
   {id:'ce4',c:'Innocenti',n:'Mario',r:'Anziano',cg:'Cerano',t:'3389011086',e:'innocentim5@jwpub.org',d:[1,16,72,145,192]},
   {id:'ce5',c:'Marinoni',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3381999668',e:'mdaniele@jwpub.org',d:[54,65,69,84,171,174,179]},
+  {id:'sv1',c:'',n:'Sorvegliante viaggiante',r:'Sorvegliante viaggiante',cg:'',t:'',e:'',d:[]},
   {id:'cs1',c:'Barbuto',n:'Alessio',r:'Anziano',cg:'Corbetta Stadio',t:'3495403040',e:'BarbutoAlessio@jwpub.org',d:[26,54,73]},
   {id:'cs2',c:'Busacca',n:'Giuseppe',r:'Anziano',cg:'Corbetta Stadio',t:'3284280083',e:'busacca80@jwpub.org',d:[76,138,143,172]},
   {id:'cs3',c:'Giunta',n:'Aurelio',r:'Anziano',cg:'Corbetta Stadio',t:'3403658803',e:'GAurelio5@jwpub.org',d:[62,68,157]},
@@ -427,7 +430,8 @@ function popolaOratori(){
   var html='<option value="">— scegli oratore —</option>';
   for(var i=0;i<ord.length;i++){
     var o=ord[i];
-    var et=(o.c+" "+o.n+" ("+o.cg+")").replace(/</g,"&lt;");
+    var base=(o.c+" "+o.n).replace(/\s+/g," ").trim();
+    var et=(o.cg?(base+" ("+o.cg+")"):base).replace(/</g,"&lt;");
     html+='<option value="'+o.id+'">'+et+'</option>';
   }
   html+='<option value="__manual__">✎ Altro (digito a mano)…</option>';
@@ -443,8 +447,17 @@ function onOratore(){
   }
   var o=trovaOratore(id);
   if(!o){genera();return;}
-  document.getElementById("oratore").value=o.n+" "+o.c;
-  document.getElementById("cong").value=o.cg;
+  var btnMod=document.getElementById("btnModSV");
+  if(id==="sv1"){
+    document.getElementById("oratore").value="";
+    document.getElementById("cong").value="";
+    if(btnMod){btnMod.style.display="inline-block";}
+    document.getElementById("oratore").focus();
+  }else{
+    document.getElementById("oratore").value=o.n+" "+o.c;
+    document.getElementById("cong").value=o.cg;
+    if(btnMod){btnMod.style.display="none";}
+  }
   var h='<option value="">— n° discorso —</option>';
   if(o.d&&o.d.length){for(var j=0;j<o.d.length;j++){h+='<option value="'+o.d[j]+'">'+o.d[j]+'</option>';}}
   ds.innerHTML=h;
@@ -513,6 +526,15 @@ function setFerma(btn){
   genera();
 }
 
+function modificaSV(){
+  document.getElementById("oratore").value="";
+  document.getElementById("cong").value="";
+  document.getElementById("video").value="";
+  document.getElementById("tema").value="";
+  genera();
+  document.getElementById("oratore").focus();
+}
+
 function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
 function nomeSel(id){
   var sel=document.getElementById(id);
@@ -566,15 +588,20 @@ function genera(){
   document.getElementById("to2").textContent=lett||"—";
 
   /* 1 - Presidente */
+  var video=val("video");
   var schemaTema=(schema?("Schema "+schema):"")+(schema&&tema?" \u2014 ":"")+(tema||"");
   var m1="Ciao "+(nomeProprio(pres)||"")+",\n";
   m1+="per l'Adunanza Pubblica di "+data+" il presidente sei tu.\n\n";
   m1+=riga("Oratore: ",oratore);
   m1+=riga("Congregazione: ",cong);
+  if(video){
+    m1+="\n"+riga("Discorso Pubblico - Video: ",video);
+    m1+="\nDiscorso finale\n";
+  }
   m1+=riga("Schema n. ",schema);
   m1+=riga("Tema: ",tema);
   m1+=riga("Cantico n. ",cantico);
-  m1+=riga("Discorso per la prossima settimana: ",prox);
+  m1+="\n"+riga("Discorso per la prossima settimana: ",prox);
   m1+="\nPer qualsiasi impossibilit\u00e0 a fare il Presidente chiamami pure, cos\u00ec provvedo alla sostituzione. Grazie.";
 
   /* 2 - Lettore TdG */
@@ -585,6 +612,10 @@ function genera(){
   /* 3 - Bellan */
   var m3="Ciao Daniele,\npromemoria oratore di "+data+":\n\n";
   m3+=riga("Oratore: ",oratore);
+  if(video){
+    m3+="\n"+riga("Discorso Pubblico - Video: ",video);
+    m3+="\nDiscorso finale\n";
+  }
   m3+=(schemaTema?(schemaTema.replace("Schema ","Schema n. ")+"\n"):"");
   m3+=riga("Cellulare oratore: ",cell);
   m3+=riga("Presidente: ",nomeIntero(pres));
@@ -633,7 +664,7 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
 
 function salvaSettimana(){
   try{
-    var d={data:val("data"),oratore:val("oratore"),cong:val("cong"),schema:val("schema"),cantico:val("cantico"),tema:val("tema"),prox:val("prox"),cell:val("cell"),pres:document.getElementById("presidente").value,lett:document.getElementById("lettore").value,presManual:val("presManual"),lettManual:val("lettManual"),imgMode:imgMode,fermaMode:fermaMode};
+    var d={data:val("data"),oratore:val("oratore"),cong:val("cong"),schema:val("schema"),cantico:val("cantico"),tema:val("tema"),video:val("video"),prox:val("prox"),cell:val("cell"),pres:document.getElementById("presidente").value,lett:document.getElementById("lettore").value,presManual:val("presManual"),lettManual:val("lettManual"),imgMode:imgMode,fermaMode:fermaMode};
     localStorage.setItem(STORAGE_KEY_SETT,JSON.stringify(d));
   }catch(e){}
 }
@@ -641,7 +672,7 @@ function caricaSettimana(){
   try{
     var s=localStorage.getItem(STORAGE_KEY_SETT);if(!s)return;
     var d=JSON.parse(s);
-    ["data","oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
+    ["data","oratore","cong","schema","cantico","tema","video","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
     if(d.pres)document.getElementById("presidente").value=d.pres;
     if(d.lett)document.getElementById("lettore").value=d.lett;
     if(d.imgMode){var b=document.querySelector('#segImg button[data-img="'+d.imgMode+'"]');if(b)setImg(b);}
@@ -651,7 +682,7 @@ function caricaSettimana(){
 }
 
 function pulisci(){
-  ["oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){var el=document.getElementById(k);if(el)el.value="";});
+  ["oratore","cong","schema","cantico","tema","video","prox","cell","presManual","lettManual"].forEach(function(k){var el=document.getElementById(k);if(el)el.value="";});
   document.getElementById("presidente").value="";
   document.getElementById("lettore").value="";
   document.getElementById("presManualWrap").style.display="none";
