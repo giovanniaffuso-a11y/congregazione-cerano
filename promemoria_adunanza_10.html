@@ -124,7 +124,7 @@ textarea{resize:vertical;min-height:48px}
         <div class="field"><label>Video (se previsto prima del Discorso Finale)</label><input type="text" id="video" placeholder="es. La buona notizia secondo Gesù — episodio 2" oninput="genera()"></div>
         <div class="field"><label id="temaLabel">Tema del discorso (Discorso Finale)</label><input type="text" id="tema" placeholder="si compila col n° del discorso" oninput="genera()"></div>
         <div class="field" id="discSelWrap"><label>Discorso n° (tra quelli dell'oratore)</label><select id="discSel" onchange="onDisc()"><option value="">— scegli prima l'oratore —</option></select></div>
-        <button type="button" id="btnSpeciale" onclick="apriSpeciale()" style="margin:2px 0 10px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-weight:600;cursor:pointer;font-size:.85rem">🎬 Non ha un numero? È il Discorso Speciale (video, ogni ~6 mesi)</button>
+        <button type="button" id="btnSpeciale" onclick="apriSpeciale()" style="margin:2px 0 10px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-weight:600;cursor:pointer;font-size:.85rem">🎬 Non ha un numero? È il Discorso Speciale (ogni ~6 mesi)</button>
         <div class="row2">
           <div class="field" id="schemaWrap"><label>Schema n°</label><input type="text" id="schema" placeholder="es. 67" oninput="onSchemaInput()"></div>
           <div class="field"><label>Cantico n°</label><select id="cantico" onchange="genera()"></select></div>
@@ -237,7 +237,7 @@ textarea{resize:vertical;min-height:48px}
 <div class="overlay" id="ovlSpec" onclick="if(event.target===this)chiudiSpeciale()"></div>
 <div class="modal" id="modalSpeciale" style="max-width:480px">
   <h2>🎬 Discorso Speciale</h2>
-  <div class="sub">Si tiene circa ogni sei mesi: è un discorso pubblico in video, senza numero di schema. Scrivi (o correggi) il tema di questa volta.</div>
+  <div class="sub">Si tiene circa ogni sei mesi: è un discorso pubblico senza numero di schema. Scrivi (o correggi) il tema di questa volta.</div>
   <div class="field">
     <label>Tema del Discorso Speciale</label>
     <input type="text" id="temaSpeciale" placeholder="es. Come può esserti d'aiuto la Bibbia">
@@ -555,7 +555,7 @@ function modificaSV(){
   document.getElementById("oratore").focus();
 }
 
-/* ===== Discorso Speciale (video, ogni ~6 mesi) ===== */
+/* ===== Discorso Speciale (ogni ~6 mesi) ===== */
 var STORAGE_KEY_SPEC="promAdunanza_temaSpeciale";
 function apriSpeciale(){
   var ultimo="";
@@ -593,6 +593,17 @@ function nomeSel(id){
 }
 
 function riga(etichetta,valore){return valore?(etichetta+valore+"\n"):"";}
+/* Video vero (es. visita del sorvegliante) → "Discorso Pubblico - Video:" + "Discorso finale".
+   Discorso Speciale (tasto 🎬) → solo "Discorso Speciale: tema", senza "Video" e senza "Discorso finale". */
+function rigaDiscorsoOVideo(video){
+  if(!video)return "";
+  var pref="DISCORSO SPECIALE";
+  if(video.indexOf(pref)===0){
+    var t=video.slice(pref.length).replace(/^[\s–-]+/,"");
+    return "\n"+riga("Discorso Speciale: ",t);
+  }
+  return "\n"+riga("Discorso Pubblico - Video: ",video)+"\nDiscorso finale\n";
+}
 
 function nomeProprio(full){if(!full)return "";var p=full.trim().split(/\s+/);return p[p.length-1];}
 function primaParola(s){if(!s)return "";return s.trim().split(/\s+/)[0];}
@@ -643,10 +654,7 @@ function genera(){
   m1+="per l'Adunanza Pubblica di "+data+" il presidente sei tu.\n\n";
   m1+=riga("Oratore: ",oratore);
   m1+=riga("Congregazione: ",cong);
-  if(video){
-    m1+="\n"+riga("Discorso Pubblico - Video: ",video);
-    m1+="\nDiscorso finale\n";
-  }
+  m1+=rigaDiscorsoOVideo(video);
   m1+=riga("Schema n. ",schema);
   m1+=riga("Tema: ",tema);
   m1+=riga("Cantico n. ",cantico);
@@ -661,10 +669,7 @@ function genera(){
   /* 3 - Bellan */
   var m3="Ciao Daniele,\npromemoria oratore di "+data+":\n\n";
   m3+=riga("Oratore: ",oratore);
-  if(video){
-    m3+="\n"+riga("Discorso Pubblico - Video: ",video);
-    m3+="\nDiscorso finale\n";
-  }
+  m3+=rigaDiscorsoOVideo(video);
   m3+=(schemaTema?(schemaTema.replace("Schema ","Schema n. ")+"\n"):"");
   m3+=riga("Cellulare oratore: ",cell);
   m3+=riga("Presidente: ",nomeIntero(pres));
