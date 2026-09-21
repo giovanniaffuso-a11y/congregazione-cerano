@@ -721,7 +721,10 @@ function caricaSettimana(){
   try{
     var s=localStorage.getItem(STORAGE_KEY_SETT);if(!s)return;
     var d=JSON.parse(s);
-    ["data","oratore","cong","schema","cantico","tema","video","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
+    /* "video" NON va ricaricato in automatico: è un campo eccezionale
+       (Discorso Speciale / visita del sorvegliante), deve restare vuoto
+       ogni volta che riapri l'app e va compilato solo apposta */
+    ["data","oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
     if(d.pres)document.getElementById("presidente").value=d.pres;
     if(d.lett)document.getElementById("lettore").value=d.lett;
     if(d.imgMode){var b=document.querySelector('#segImg button[data-img="'+d.imgMode+'"]');if(b)setImg(b);}
