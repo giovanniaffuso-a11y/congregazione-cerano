@@ -456,6 +456,11 @@ function trovaOratore(id){for(var i=0;i<ODEF.length;i++){if(ODEF[i].id===id)retu
 function onOratore(){
   var id=document.getElementById("oratoreSel").value;
   var ds=document.getElementById("discSel");
+  /* ogni volta che cambi oratore si riparte puliti: niente Video/Tema/Schema
+     rimasti da una settimana precedente (es. il Discorso Speciale) */
+  document.getElementById("video").value="";
+  document.getElementById("tema").value="";
+  document.getElementById("schema").value="";
   if(id===""||id==="__manual__"){
     ds.innerHTML='<option value="">— scegli prima l\'oratore —</option>';
     genera();return;
