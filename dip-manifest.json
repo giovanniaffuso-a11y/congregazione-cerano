@@ -1,0 +1,14 @@
+{
+  "id": "./dip.html",
+  "name": "DIP 2026",
+  "short_name": "DIP 2026",
+  "start_url": "./dip.html",
+  "scope": "./dip",
+  "display": "standalone",
+  "background_color": "#b45309",
+  "theme_color": "#b45309",
+  "icons": [
+    { "src": "dip-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "dip-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

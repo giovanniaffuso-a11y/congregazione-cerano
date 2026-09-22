@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIP 2026</title>
+<link rel="manifest" href="dip-manifest.json">
+<meta name="theme-color" content="#b45309">
+<link rel="icon" href="dip-192.png">
+<style>
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#b45309;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:20px;box-sizing:border-box}
+a{background:#fff;color:#b45309;font-weight:700;font-size:1.2rem;padding:16px 28px;border-radius:14px;text-decoration:none}
+p{opacity:.85;max-width:320px;line-height:1.4}
+</style></head><body>
+<h1>DIP 2026</h1>
+<a id="apri" href="https://script.google.com/macros/s/AKfycbyeBmIORnSHR62l0jIkV4CBV_XPSLaiVrAarafWkaCBlL_EJ2R3ky4-nljk5JNwEZ0a/exec">Apri DIP 2026</a>
+<p id="nota">Per avere l'icona: tocca i tre puntini ⋮ di Chrome e scegli "Installa app".</p>
+<script>
+var URL_DIP="https://script.google.com/macros/s/AKfycbyeBmIORnSHR62l0jIkV4CBV_XPSLaiVrAarafWkaCBlL_EJ2R3ky4-nljk5JNwEZ0a/exec";
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
+if(window.matchMedia('(display-mode: standalone)').matches){document.getElementById('nota').textContent='Apertura in corso…';location.replace(URL_DIP);}
+</script>
+</body></html>
