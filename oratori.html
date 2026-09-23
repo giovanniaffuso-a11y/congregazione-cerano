@@ -961,7 +961,7 @@ const ORATORI_DEFAULT = [
   {nome:"Luigi",cognome:"Delrossi",congregazione:"Mortara Belvedere",discorsi:[16,38,125,130,142,170,183,188],telefono:"3486038435"},
   {nome:"Marco",cognome:"Guidace",congregazione:"Mortara Belvedere",discorsi:[24,123,172,178,179,188,192],telefono:"3282875985"},
   {nome:"Michele",cognome:"Sarnacchiaro",congregazione:"Mortara Belvedere",discorsi:[19,23,24,28,68,100,113,115,131,133,135,161,175],telefono:"3921499446",nota:"Non usare 19, 23 e 175"},
-  {nome:"Roberto",cognome:"Zaretti",congregazione:"Mortara Belvedere",discorsi:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,53,54,60,68,69,72,75,76,80,81,90,95,100,113,123],telefono:"3333031944"},
+  {nome:"Roberto",cognome:"Zaretti",congregazione:"Mortara Belvedere",discorsi:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,54,60,68,69,72,75,76,80,81,90,95,100,113,123],telefono:"3333031944"},
   {nome:"Carlo",cognome:"Coldesina",congregazione:"Mortara Stadio",discorsi:[11,35,43,45,48,73,78,79,81,118,123],telefono:"3383212355"},
   {nome:"Leonardo",cognome:"Colli",congregazione:"Mortara Stadio",discorsi:[1,36,50,138,170,171,178],telefono:"3394391851"},
   {nome:"Alessandro",cognome:"Fattori Zini",congregazione:"Mortara Stadio",discorsi:[23,31,54,68],telefono:"3488992682"},
@@ -1022,7 +1022,8 @@ const ORATORI_DEFAULT = [
   {nome:"Pedro",cognome:"Lorenzini",congregazione:"Vittuone",discorsi:[100],telefono:"3483458340"},
   {nome:"Domenico",cognome:"Ruffa",congregazione:"Vittuone",discorsi:[31,71,95],telefono:"3384226857"},
   {nome:"Romel",cognome:"Taverna",congregazione:"Vittuone",discorsi:[1,12,13,16,17,22,27,29,33,35,36,53,54,56,66,86,89,98,100,113,114,123,135,142,159],telefono:"3397714938"},
-  {nome:"Giovanni",cognome:"Affuso",congregazione:"Cerano",discorsi:[1,2,3,5,6,12,13,14,15,18,19,20,21,22,29,32,34,35,38,39,40,41,42,47,49,51,57,67,68,70,71,77,78,79,84,94,97,98,103,112,118,121,122,129,131,132,134,139,142,144,146,149,151,153,159,162,163,164,165,166,167,169,171,172,173,174,175,177,178,179,180,181,182,183,185,188,189,190,191,192,194],telefono:"3427694027"}
+  {nome:"Giovanni",cognome:"Affuso",congregazione:"Cerano",discorsi:[1,2,3,5,6,12,13,14,15,18,19,20,21,22,29,32,34,35,38,39,40,41,42,47,49,51,57,67,68,70,71,77,78,79,84,94,97,98,103,112,118,121,122,129,131,132,134,139,142,144,146,149,151,153,159,162,163,164,165,166,167,169,171,172,173,174,175,177,178,179,180,181,182,183,185,188,189,190,191,192,194],telefono:"3427694027"},
+  {nome:"Jacopo",cognome:"Cancelli",congregazione:"Mortara Belvedere",discorsi:[6,7,23],telefono:"3714204155"}
 ];
 
 const CONG_DEFAULT = [
@@ -1069,7 +1070,7 @@ let state = {
 const STORAGE_KEY = 'oratoriAppV4';
 // Versione elenco oratori: cambia questa data/sigla ogni volta che aggiorni gli oratori
 // -> tutti i dispositivi rigenerano l'elenco dai default e si risincronizzano da soli
-const ORATORI_DB_VERSION = '2026-09-03b';
+const ORATORI_DB_VERSION = '2026-09-23'; // 23/09: tolto 53 a Zaretti (telefonata), aggiunto Cancelli Jacopo
 // Versione dati congregazioni (CDP/CCA/Assistenti): stesso meccanismo, ma per state.congregazioni
 const CONG_VERSION = '2026-09-03b';
 function salvaStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
