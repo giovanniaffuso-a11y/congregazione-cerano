@@ -385,7 +385,7 @@ async function syncDown(){
         }
         // Applica i dati del cloud passando dal merge con ODEF/CDEF
         // (così discorsi, note e assistenti restano sempre aggiornati anche se il cloud è una versione vecchia)
-        mergeData(rec.or, rec.cg);
+        mergeData(rec.or, rec.cg, rec.del);
         if(rec.srcVer===SRC_VER){
           S.agg=rec.agg||SRC_DATE;
         } else {
@@ -551,6 +551,7 @@ var ODEF=[
   {id:'mb2',c:'Delrossi',n:'Luigi',r:'Anziano',cg:'Mortara Belvedere',t:'3486038435',e:'vecio51@jwpub.org',d:[16,38,125,130,142,170,183,188]},
   {id:'mb3',c:'Guidace',n:'Marco',r:'Anziano',cg:'Mortara Belvedere',t:'3282875985',e:'marcog14@jwpub.org',d:[24,123,172,178,179,188,192]},
   {id:'mb4',c:'Sarnacchiaro',n:'Michele',r:'Anziano',cg:'Mortara Belvedere',t:'3921499446',e:'mick3drshj@jwpub.org',d:[19,23,24,28,68,100,113,115,131,133,135,161,175],nota:'Non usare 19, 23 e 175'},
+  {id:'mb7',c:'Cancelli',n:'Jacopo',r:'Anziano',cg:'Mortara Belvedere',t:'3714204155',e:'jacopocancelli@jwpub.org',d:[6,7,23]},
   {id:'mb6',c:'Zaretti',n:'Roberto',r:'Anziano',cg:'Mortara Belvedere',t:'3333031944',e:'robertoz17@jwpub.org',d:[2,3,4,6,9,15,17,18,19,21,22,23,33,38,44,48,49,51,52,53,54,60,68,69,72,75,76,80,81,90,95,100,113,123]},
   {id:'ms1',c:'Coldesina',n:'Carlo',r:'Anziano',cg:'Mortara Stadio',t:'3383212355',e:'CarloColdesina61@jwpub.org',d:[11,35,43,45,48,73,78,79,81,118,123]},
   {id:'ms2',c:'Colli',n:'Leonardo',r:'Anziano',cg:'Mortara Stadio',t:'3394391851',e:'ColliLeonardo1@jwpub.org',d:[1,36,50,138,170,171,178]},
@@ -614,7 +615,7 @@ var ODEF=[
   {id:'vi8',c:'Taverna',n:'Romel',r:'Anziano',cg:'Vittuone',t:'3397714938',e:'RomelT@jwpub.org',d:[1,12,13,16,17,22,27,29,33,35,36,53,54,56,66,86,89,98,100,113,114,123,135,142,159]}
 ];
 
-var S={or:[],cg:[],agg:'3 Settembre 2026',f:'Tutte'};
+var S={or:[],cg:[],del:[],agg:'3 Settembre 2026',f:'Tutte'};
 var eId=null,eCn=null;
 
 function sv(autoSync){
@@ -626,10 +627,15 @@ function sv(autoSync){
   }
   updateSyncBadge();
 }
-function mergeData(savedOr, savedCg){
+function mergeData(savedOr, savedCg, savedDel){
   savedOr = savedOr||[];
-  S.or=ODEF.map(function(o){
+  S.del = (savedDel||[]).slice();
+  S.or=ODEF.filter(function(o){ return S.del.indexOf(o.id)<0; }).map(function(o){
     var trovato=savedOr.find(function(x){return x.id===o.id;});
+    if(trovato && trovato.man){
+      // Oratore modificato a mano con "Modifica": si rispettano i dati inseriti
+      return Object.assign({},o,trovato,{d:(trovato.d||[]).slice()});
+    }
     if(trovato){
       return Object.assign({},o,{
         d: o.d.slice(), // discorsi sempre aggiornati da ODEF
@@ -639,6 +645,11 @@ function mergeData(savedOr, savedCg){
       });
     }
     return Object.assign({},o,{d:o.d.slice()});
+  });
+  // Oratori aggiunti a mano (non presenti nell'elenco di base): vanno conservati
+  savedOr.forEach(function(x){
+    var inBase=ODEF.some(function(o){return o.id===x.id;});
+    if(!inBase && S.del.indexOf(x.id)<0) S.or.push(Object.assign({},x,{d:(x.d||[]).slice()}));
   });
   // Congregazioni: merge saved con CDEF — se l'utente ha corretto/svuotato un campo,
   // quella scelta viene rispettata; solo se il campo non è mai stato salvato si usa il default CDEF.
@@ -670,7 +681,7 @@ function ld(){
   if(s){try{saved=JSON.parse(s);}catch(e){}}
   // Oratori e congregazioni: sempre freschi dai default (discorsi, note, assistenti)
   // ma preserva eventuali modifiche manuali (telefono, email, coordinatori) se presenti
-  mergeData(saved.or, saved.cg);
+  mergeData(saved.or, saved.cg, saved.del);
   // Data aggiornamento: si aggiorna da sola quando arriva un nuovo PDF (SRC_VER cambia).
   // Se l'utente l'ha cambiata a mano dopo l'ultimo aggiornamento sorgente, la mantiene.
   if(saved.srcVer===SRC_VER){
@@ -833,7 +844,7 @@ function sO(){
   if(!c||!n){alert('Cognome e nome obbligatori');return;}
   var d=document.getElementById('or-d').value.split(/[\s,]+/).map(function(x){return parseInt(x);}).filter(function(x){return !isNaN(x)&&x>0;});
   d.sort(function(a,b){return a-b;});
-  var obj={id:eId||('o'+Date.now()),c:c,n:n,r:document.getElementById('or-r').value,cg:document.getElementById('or-cg').value,t:document.getElementById('or-t').value.trim(),e:document.getElementById('or-e').value.trim(),d:d,nota:document.getElementById('or-nota').value.trim()};
+  var obj={id:eId||('o'+Date.now()),c:c,n:n,r:document.getElementById('or-r').value,cg:document.getElementById('or-cg').value,t:document.getElementById('or-t').value.trim(),e:document.getElementById('or-e').value.trim(),d:d,nota:document.getElementById('or-nota').value.trim(),man:true};
   if(eId){var i=S.or.findIndex(function(x){return x.id===eId;});if(i>=0)S.or[i]=obj;}
   else S.or.push(obj);
   sv();cm('mo-or');rl();
@@ -841,7 +852,10 @@ function sO(){
 function dl(id){
   var o=S.or.find(function(x){return x.id===id;});if(!o)return;
   if(!confirm('Eliminare '+o.c+' '+o.n+'?'))return;
-  S.or=S.or.filter(function(x){return x.id!==id;});sv();rl();
+  S.or=S.or.filter(function(x){return x.id!==id;});
+  if(!S.del)S.del=[];
+  if(ODEF.some(function(x){return x.id===id;}) && S.del.indexOf(id)<0) S.del.push(id);
+  sv();rl();
 }
 
 function oC(nm){
@@ -934,6 +948,7 @@ function imp(inp){
   r.readAsText(f);
 }
 function resetAll(){
+  S.del=[];
   S.or=ODEF.map(function(o){return Object.assign({},o,{d:o.d.slice()});});
   S.cg=CDEF.map(function(c){return Object.assign({},c);});
   sv();cm('mo-bk');rP();rl();
