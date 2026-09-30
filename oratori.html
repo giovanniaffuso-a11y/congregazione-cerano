@@ -1548,6 +1548,9 @@ function sincronizzaGrigliaRef(){
       var o=db[parseInt(oi)];
       if(o){ cel.orRef=(o.cognome||'').trim()+'|'+(o.nome||'').trim(); cambiato=true; }
     }
+    // Se la casella non ha la congregazione, la prende dalla scheda dell'oratore nel database
+    var oc=db[parseInt(cel.orIdx)];
+    if(oc && !cel.cong && oc.congregazione){ cel.cong=oc.congregazione; cambiato=true; }
   }
   if(cambiato){ salvaStorage(); }
 }
