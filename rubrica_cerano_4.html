@@ -689,6 +689,13 @@ function loadData() {
     localStorage.setItem('rubrica_data_version', 'v11');
     localStorage.setItem('rubrica_mig_202610b', '1');
   }
+  if (localStorage.getItem('rubrica_mig_202610c') !== '1') {
+    rimuoviContattiOtt2026(data);
+    data.forEach(c => { if (c.name === 'Recchia Franco') c.notes = 'Anziano | Assistente Gruppo Marinoni'; });
+    localStorage.setItem('rubrica_pro_v2', JSON.stringify(data));
+    localStorage.setItem('rubrica_data_version', 'v11');
+    localStorage.setItem('rubrica_mig_202610c', '1');
+  }
   const dark = localStorage.getItem('rubrica_dark') === '1';
   if (dark) applyDark(true);
   document.getElementById('printDate').textContent = new Date().toLocaleDateString('it-IT');
@@ -696,6 +703,29 @@ function loadData() {
 
 function mkInitial() {
   return applicaGruppiOtt2026(INITIAL_FULL.map(c => Object.assign({fav:false}, c)));
+}
+
+function rimuoviContattiOtt2026(arr) {
+  // Cazzolla Sheila (deceduta), Mandica Giovanni e Mandica Susanna (non più in congregazione)
+  ['Cazzolla Sheila','Mandica Giovanni','Mandica Susanna'].forEach(n => {
+    const i = arr.findIndex(c => c.name === n); if (i >= 0) arr.splice(i, 1);
+  });
+  return arr;
+}
+
+// ─── SORVEGLIANTE / ASSISTENTE DEL GRUPPO ───────────────────────────────────
+// Sorvegliante = l'anziano che dà il nome al gruppo (es. Gruppo Marinoni → Marinoni Daniele).
+// Assistente = il servitore di ministero del gruppo; se non c'è, l'altro anziano del gruppo
+// (es. Gruppo Marinoni → Recchia Franco).
+function sorvDi(grp) {
+  const anz = data.filter(c => c.group === grp && c.role === 'Anziano');
+  const cognome = grp.replace('Gruppo ', '').toLowerCase();
+  return anz.find(c => c.name.toLowerCase().startsWith(cognome)) || anz[0];
+}
+function assDi(grp) {
+  const sorv = sorvDi(grp);
+  return data.find(c => c.group === grp && c.role === 'Servitore')
+      || data.find(c => c.group === grp && c.role === 'Anziano' && c !== sorv);
 }
 
 // ─── AGGIORNAMENTO GRUPPI DI SERVIZIO (PDF "Gruppi servizio" ott. 2026) ─────
@@ -718,7 +748,9 @@ function applicaGruppiOtt2026(arr) {
   const R = {'Bocchino Dario':'Servitore','Petrillo Cristina':'Proclamatrice','Ferraresi Cristina':'PioReg','Belvisi Anna':'PioReg'};
   Object.entries(R).forEach(([n,r]) => { const c = trova(n); if (c) c.role = r; });
   // 3) Non presenti nei gruppi attuali → "Non assegnato" (contatti NON cancellati)
-  ['Cazzolla Sheila','Lucente Carmela','Mandica Giovanni','Mandica Susanna'].forEach(n => { const c = trova(n); if (c) c.group = ''; });
+  ['Lucente Carmela'].forEach(n => { const c = trova(n); if (c) c.group = ''; });
+  rimuoviContattiOtt2026(arr);
+  { const c = trova('Recchia Franco'); if (c) c.notes = 'Anziano | Assistente Gruppo Marinoni'; }
   // 4) Nuovi proclamatori presenti nel PDF
   const nuovi = [
     ['Bondi Maria','Proclamatrice','Gruppo Marinoni'],['Bruno Alessandro','Proclamatore','Gruppo Orrico'],
@@ -892,8 +924,8 @@ function render() {
     [...grpOrder, 'Non assegnato'].forEach(grp => {
       if (!byGrp[grp]) return;
       const col  = grpColors[grp] || '#64748b';
-      const sorv = data.find(c => c.group===grp && c.role==='Anziano');
-      const ass  = data.find(c => c.group===grp && c.role==='Servitore');
+      const sorv = sorvDi(grp);
+      const ass  = assDi(grp);
       const header = document.createElement('div');
       header.style.cssText = `margin:14px 0 8px;padding:14px 16px;border-radius:16px;background:${col}18;border-left:5px solid ${col}`;
       header.innerHTML = `
@@ -1301,8 +1333,8 @@ function toast(msg) {
 // ─── STAMPA GRUPPO ───────────────────────────────────────────────────────────
 function stampaGruppo(grp) {
   const membri = data.filter(c => c.group === grp).sort((a,b) => a.name.localeCompare(b.name,'it'));
-  const sorv   = membri.find(c => c.role === 'Anziano');
-  const ass    = membri.find(c => c.role === 'Servitore');
+  const sorv   = sorvDi(grp);
+  const ass    = assDi(grp);
   const hdr    = localStorage.getItem('hdr_sub') || 'Congregazione di Cerano — Circoscrizione Lombardia 4';
   const rows   = membri.map(c => `
     <tr>
@@ -1405,13 +1437,13 @@ function editGruppo(grp) {
   const anziani = data.filter(c => c.role === 'Anziano');
   const sEl = document.getElementById('grpSorv');
   sEl.innerHTML = '<option value="">— seleziona —</option>' +
-    anziani.map(c => `<option value="${c.name}" ${(c.group===grp&&c.role==='Anziano')?'selected':''}>${c.name}</option>`).join('');
+    anziani.map(c => `<option value="${c.name}" ${(sorvDi(grp)===c)?'selected':''}>${c.name}</option>`).join('');
 
   // Popola select assistente (servitori)
-  const servitori = data.filter(c => c.role === 'Servitore');
+  const servitori = data.filter(c => c.role === 'Servitore').concat(data.filter(c => c.role === 'Anziano'));
   const aEl = document.getElementById('grpAss');
   aEl.innerHTML = '<option value="">— seleziona —</option>' +
-    servitori.map(c => `<option value="${c.name}" ${(c.group===grp&&c.role==='Servitore')?'selected':''}>${c.name}</option>`).join('');
+    servitori.map(c => `<option value="${c.name}" ${(assDi(grp)===c)?'selected':''}>${c.name}${c.role==='Anziano'?' (anziano)':''}</option>`).join('');
 
   // Lista membri
   const membri = data.filter(c => c.group === grp);

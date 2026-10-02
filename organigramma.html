@@ -259,7 +259,7 @@ const DEF = {
     {id:10,name:"Affuso G.",  role:"Responsabile Uscieri / Microfonisti / Coordinatore Discorsi Pubblici"},
     {id:11,name:"Mazzotta M.",role:"Assistente Pulizie"},
     {id:12,name:"Catalano R.",role:"Servitore di Ministero"},
-    {id:13,name:"Mandica G.", role:"Servitore di Ministero"},
+    {id:13,name:"Bocchino D.", role:"Assistente Contabilità"},
     {id:14,name:"Palano G.",  role:"Servitore di Ministero"}
   ],
   reparti:[
@@ -405,6 +405,17 @@ function toast(msg,ok=true){
 function toggleSec(hd){ hd.classList.toggle('collapsed'); hd.nextElementSibling.classList.toggle('collapsed'); }
 function togglePanel(id){ document.getElementById(id).classList.toggle('open'); }
 function saveData(){ localStorage.setItem('org_data',JSON.stringify(data)); }
+
+// ═══ AGGIORNAMENTO OTTOBRE 2026 (una tantum) ═══
+// Mandica G. non è più servitore di ministero; Bocchino D. nominato servitore di ministero.
+function fixOtt2026(){
+  if(localStorage.getItem('org_mig_202610')==='1'||!data||!data.servitori)return false;
+  data.servitori=data.servitori.filter(m=>m.name!=='Mandica G.');
+  if(!data.servitori.some(m=>m.name==='Bocchino D.'))
+    data.servitori.push({id:13,name:'Bocchino D.',role:'Assistente Contabilità'});
+  saveData();
+  return true;
+}
 function saveAndSync(){ saveData(); syncUp().catch(function(e){console.warn(e);}); }
 
 // ═══════════════════════════════
@@ -521,7 +532,7 @@ async function syncDown(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     const json=await res.json();
     const rec=json.record;
-    if(rec.data){data=rec.data;saveAndSync();render();}
+    if(rec.data){data=rec.data;if(fixOtt2026())localStorage.setItem('org_mig_202610','1');saveAndSync();render();}
     if(rec.hdr){hdr=rec.hdr;localStorage.setItem('org_header',JSON.stringify(hdr));loadHeader();}
     setSyncSt('✔ Dati caricati',true);toast('Sincronizzato dal cloud ✔');
   }catch(e){setSyncSt('❌ '+e.message,false);toast('Errore sync ❌',false);}
@@ -590,6 +601,7 @@ function importJSON(e){
 // ═══════════════════════════════
 applyDark(localStorage.getItem('org_dark')==='true');
 loadHeader();
+fixOtt2026();
 render();
 
 // ═══ AUTO-SYNC ALL'AVVIO ═══
