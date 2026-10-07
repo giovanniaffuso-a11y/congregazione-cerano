@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1f4e79">
-<title>Chi confida in Geova è felice — Assemblea 2026-2027</title>
+<title>Scuola di Ministero del Regno 2027 — Vigevano</title>
 <style>
   /* Nessun font o file esterno: la pagina funziona anche senza internet */
   :root {
@@ -53,8 +53,8 @@
     width: 100%; max-width: 520px; position: relative; background: rgba(255,255,255,0.45);
   }
   .cover h1 {
-    font-family: var(--serif); font-size: clamp(2.2rem, 7vw, 3.4rem); font-weight: 600;
-    color: var(--blu-scuro); line-height: 1.1; margin-bottom: 8px;
+    font-family: var(--serif); font-size: clamp(2rem, 6.5vw, 3rem); font-weight: 600;
+    color: var(--blu-scuro); line-height: 1.15; margin-bottom: 8px;
   }
   .cover-ref { font-size: 0.85rem; letter-spacing: 0.12em; color: var(--blu-medio); font-weight: 700; }
   .cover-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 18px 0; }
@@ -81,28 +81,26 @@
     border-radius: 10px; position: relative; overflow: hidden;
   }
   .day-header::after { content: ''; position: absolute; bottom: -20px; right: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.07); }
-  .day-header h2 { font-family: var(--serif); font-size: clamp(1.5rem, 5vw, 2.1rem); font-weight: 600; margin-bottom: 10px; }
+  .day-header h2 { font-family: var(--serif); font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 600; margin-bottom: 10px; }
   .day-header .day-verse { font-style: italic; font-size: 0.95rem; opacity: 0.9; line-height: 1.5; }
   .day-header .day-ref { font-size: 0.8rem; margin-top: 8px; letter-spacing: 0.08em; }
-  .day-header .day-ref a.bibbia { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); color: white; font-size: 0.85em; }
 
   .session-label { display: flex; align-items: center; gap: 12px; margin: 28px 0 14px; }
   .session-label::before, .session-label::after { content: ''; flex: 1; height: 1px; background: var(--blu-chiaro); }
   .session-label span { font-weight: 700; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blu-medio); }
 
   .item { background: white; border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; border-left: 4px solid var(--blu-chiaro); box-shadow: 0 2px 8px var(--ombra); }
-  .item.battesimo { border-left-color: var(--oro); }
   .item.discorso { border-left-color: var(--blu-scuro); }
   .item.simposio { border-left-color: #5b8fb9; }
   .item.cantico { border-left-color: var(--bordo); background: var(--crema); }
+  .item.pausa { border-left-color: var(--oro); background: #fdf8ea; }
   .item.finale { border-left-color: #c0392b; }
 
   .item-time { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; color: var(--blu-medio); text-transform: uppercase; margin-bottom: 4px; }
+  .item-num { display: inline-block; min-width: 22px; text-align: center; background: var(--blu-scuro); color: #fff; border-radius: 11px; padding: 1px 6px; margin-right: 6px; font-size: 0.7rem; }
   .item-type { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; margin-bottom: 6px; }
   .item-type.disc { background: #e6eef6; color: var(--blu-scuro); }
   .item-type.simp { background: #eef0f8; color: #3d4f8a; }
-  .item-type.batt { background: #fdf5e0; color: #8a6a00; }
-  .item-type.studio { background: #f5e8f0; color: #6a2060; }
   .item-title { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; line-height: 1.35; margin-bottom: 6px; }
   .item-refs { font-size: 0.82rem; color: #666; font-style: italic; line-height: 1.8; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 
@@ -111,8 +109,9 @@
   .sub-item::before { content: '●'; color: var(--blu-chiaro); font-size: 0.6rem; margin-top: 5px; flex-shrink: 0; }
   .sub-item-inner { flex: 1; }
   .sub-item-text { margin-bottom: 5px; font-weight: 700; color: var(--blu-scuro); }
+  .sub-item-num { font-size: 0.68rem; font-weight: 700; color: var(--blu-medio); letter-spacing: 0.08em; text-transform: uppercase; }
 
-  /* Domanda di ripasso */
+  /* Domanda della scheda didattica */
   .domanda { margin: 10px 0 6px; padding: 10px 12px; background: #fff8e6; border: 1px solid #ecd9a3; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; }
   .domanda-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8a6a00; margin-bottom: 4px; }
   .domanda .item-refs { margin: 4px 0 6px; }
@@ -127,6 +126,11 @@
   .note-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blu-medio); margin: 8px 0 5px; display: flex; align-items: center; gap: 6px; }
   .note-label::before { content: '✏️'; font-size: 0.85rem; }
 
+  .info-box { background: white; border-radius: 10px; padding: 16px 18px; margin-bottom: 20px; border: 1.5px solid var(--bordo); box-shadow: 0 2px 8px var(--ombra); font-size: 0.86rem; line-height: 1.55; }
+  .info-box summary { font-family: var(--serif); font-weight: 600; color: var(--blu-scuro); cursor: pointer; font-size: 0.98rem; }
+  .info-box ul { margin: 10px 0 0 18px; }
+  .info-box li { margin-bottom: 6px; }
+
   .day-notes-box { background: white; border-radius: 10px; padding: 20px; margin-top: 28px; border: 1.5px solid var(--bordo); box-shadow: 0 2px 8px var(--ombra); }
   .day-notes-box h3 { font-family: var(--serif); font-size: 1rem; color: var(--blu-scuro); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--crema-scuro); }
 
@@ -136,11 +140,7 @@
   .btn-save:hover { background: #d4b25c; }
   .btn-clear { background: rgba(255,255,255,0.15); color: white; }
   .btn-export { background: var(--blu-chiaro); color: #1a1a1a; }
-  .cloud-status { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.85); padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.08); display: flex; align-items: center; }
-  .cloud-status.ok { color: #a3d9a5; }
-  .cloud-status.saving { color: #f0d878; }
-  .cloud-status.error { color: #f0a0a0; }
-  .cloud-status.offline { color: #cfd8e3; }
+  .local-status { font-size: 0.72rem; font-weight: 700; color: #a3d9a5; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.08); display: flex; align-items: center; }
 
   .export-option { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--bordo); border-radius: 8px; background: var(--crema); color: var(--testo); font-family: var(--sans); font-weight: 700; font-size: 0.88rem; text-align: left; cursor: pointer; }
   .export-option:hover { background: var(--crema-scuro); border-color: var(--blu-medio); }
@@ -181,11 +181,11 @@
 <div id="coverPage">
   <div class="cover">
     <div class="cover-border">
-      <h1>“Chi confida in Geova è felice”</h1>
-      <div class="cover-ref">PROVERBI 16:20</div>
+      <h1>Scuola di Ministero del Regno</h1>
+      <div class="cover-ref">PER I SERVITORI DI MINISTERO · 2027</div>
       <div class="cover-divider"><span>🕊️</span></div>
-      <div class="cover-subtitle">Assemblea di circoscrizione 2026-2027</div>
-      <div class="cover-subtitle" style="font-weight:300;margin-top:2px;">con il sorvegliante di circoscrizione</div>
+      <div class="cover-subtitle">Domenica 4 aprile 2027</div>
+      <div class="cover-subtitle" style="font-weight:300;margin-top:2px;">Vigevano</div>
       <div class="cover-handwritten">Quaderno degli appunti</div>
       <div style="font-size:2.5rem;margin:6px 0;">📓</div>
       <div class="cover-name-row">
@@ -196,172 +196,259 @@
       <div style="margin-top:24px;">
         <button class="btn-save" onclick="openProgram()" style="font-size:1rem;padding:14px 32px;border-radius:8px;">📖 Apri il Programma</button>
       </div>
-      <div class="offline-badge" id="offlineBadge">📴 Funziona anche senza internet</div>
-      <p style="font-size:0.72rem;color:#999;margin-top:12px;font-style:italic;">Le scritture si aprono in JW Library</p>
+      <div class="offline-badge" id="offlineBadge">📴 Funziona senza internet</div>
+      <p style="font-size:0.72rem;color:#999;margin-top:12px;font-style:italic;">Gli appunti restano solo su questo dispositivo · Le scritture si aprono in JW Library</p>
     </div>
   </div>
 </div>
 
 <!-- ========== PROGRAMMA ========== -->
 <div id="programPage" style="display:none;">
-<div class="top-bar">🕊️ Assemblea di circoscrizione 2026-2027</div>
+<div class="top-bar">🕊️ Scuola di Ministero del Regno 2027</div>
 
-<div class="day-section" id="assemblea">
+<div class="day-section" id="scuola">
   <div class="day-header">
-    <h2>“Chi confida in Geova è felice”</h2>
-    <div class="day-verse">Assemblea di circoscrizione con il sorvegliante di circoscrizione</div>
-    <div class="day-ref">Proverbi 16:20</div>
+    <h2>Scuola di Ministero del Regno del 2027</h2>
+    <div class="day-verse">per i servitori di ministero</div>
+    <div class="day-ref">Domenica 4 aprile 2027 · Vigevano</div>
   </div>
 
-  <!-- ===== MATTINA ===== -->
-  <div class="session-label"><span>Mattina</span></div>
+  <details class="info-box">
+    <summary>🎒 Promemoria per la giornata</summary>
+    <ul>
+      <li>Portare la <b>Bibbia</b> e il <b>libro dei cantici</b>.</li>
+      <li>Indossare il <b>distintivo</b> per tutta la durata del corso.</li>
+      <li>Abbigliamento come per un discorso in congregazione: <b>giacca e cravatta</b> (o papillon).</li>
+      <li>Non vengono provveduti pasti: eventualmente portare un <b>pasto leggero</b>.</li>
+      <li>Niente registrazioni o trasmissioni; gli appunti personali <b>non vanno divulgati</b>.</li>
+    </ul>
+  </details>
 
-  <div class="item cantico"><div class="item-time">9:40</div><div class="item-title">Musica</div></div>
-  <div class="item cantico"><div class="item-time">9:50</div><div class="item-title">Cantico 31 e preghiera</div></div>
+  <!-- ===== SESSIONE 1 ===== -->
+  <div class="session-label"><span>Sessione 1</span></div>
+
+  <div class="item cantico"><div class="item-time">5 min</div><div class="item-title">Cantico 101 e preghiera</div></div>
 
   <div class="item discorso">
-    <div class="item-time">10:00</div>
+    <div class="item-time"><span class="item-num">1</span>15 min</div>
     <span class="item-type disc">Discorso</span>
-    <div class="item-title">Perché dobbiamo ‘confidare in Geova con tutto il nostro cuore’?</div>
+    <div class="item-title">Benvenuti alla Scuola di Ministero del Regno del 2027</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s1_benvenuti"></textarea>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time"><span class="item-num">2</span>25 min</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Siete uomini “pieni di spirito e sapienza”</div>
     <div class="domanda">
       <div class="domanda-label">❓ Domanda 1</div>
-      Come dimostriamo di ‘confidare in Geova con tutto il nostro cuore’?
-      <div class="item-refs">Proverbi 3:5, 6</div>
+      In che modo Geova considera l’opera svolta dai servitori di ministero?
+      <div class="item-refs">Atti 6:3</div>
     </div>
-    <div class="note-label">La mia risposta e i miei appunti</div>
-    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="mat_confidare_cuore"></textarea>
-  </div>
-
-  <div class="item simposio">
-    <div class="item-time">10:15</div>
-    <span class="item-type simp">Serie di discorsi</span>
-    <div class="item-title">Imitiamo coloro che ebbero fiducia in Geova</div>
     <div class="domanda">
       <div class="domanda-label">❓ Domanda 2</div>
-      Come possiamo imitare Barac, la sunamita e Daniele, Hanania, Misael e Azaria?
-      <div class="item-refs">Luca 16:10; Salmo 50:15; 119:112</div>
+      Che effetto positivo può avere il vostro esempio sulla congregazione?
+      <div class="item-refs">1 Tessalonicesi 1:2, 3</div>
     </div>
-    <div class="sub-items">
-      <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">Barac</div>
-        <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="mat_serie_barac"></textarea>
-      </div></div>
-      <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">La sunamita</div>
-        <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="mat_serie_sunamita"></textarea>
-      </div></div>
-      <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">Daniele, Hanania, Misael e Azaria</div>
-        <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="mat_serie_daniele"></textarea>
-      </div></div>
-    </div>
+    <div class="note-label">Le mie risposte e i miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s1_pieni_spirito"></textarea>
   </div>
-
-  <div class="item cantico"><div class="item-time">11:05</div><div class="item-title">Cantico 57 e annunci</div></div>
-
-  <div class="item discorso">
-    <div class="item-time">11:15</div>
-    <span class="item-type disc">Discorso</span>
-    <div class="item-title">Aiutiamo altri a confidare nel “Dio vivente e vero”</div>
-    <div class="domanda">
-      <div class="domanda-label">❓ Domanda 3</div>
-      Come possiamo iniziare conversazioni con persone che provengono da un contesto molto diverso dal nostro o che hanno un modo di pensare molto diverso dal nostro?
-      <div class="item-refs">1 Corinti 9:19-23</div>
-    </div>
-    <div class="note-label">La mia risposta e i miei appunti</div>
-    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="mat_dio_vivente"></textarea>
-  </div>
-
-  <div class="item battesimo">
-    <div class="item-time">11:35</div>
-    <span class="item-type batt">✦ Battesimo</span>
-    <div class="item-title">“Il Padre tuo che vede in segreto ti ricompenserà”</div>
-    <div class="note-label">I miei appunti</div>
-    <textarea class="note-area" placeholder="Nomi dei battezzandi, appunti..." data-key="mat_battesimo"></textarea>
-  </div>
-
-  <div class="item cantico"><div class="item-time">12:05</div><div class="item-title">Cantico 29</div></div>
-
-  <!-- ===== POMERIGGIO ===== -->
-  <div class="session-label"><span>Pomeriggio</span></div>
-
-  <div class="item cantico"><div class="item-time">13:20</div><div class="item-title">Musica</div></div>
-  <div class="item cantico"><div class="item-time">13:30</div><div class="item-title">Cantico 8 e preghiera</div></div>
-
-  <div class="item discorso">
-    <div class="item-time">13:35</div>
-    <span class="item-type disc">Discorso pubblico</span>
-    <div class="item-title">Di chi potete fidarvi veramente?</div>
-    <div class="note-label">I miei appunti</div>
-    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="pom_discorso_pubblico"></textarea>
-  </div>
-
-  <div class="item">
-    <div class="item-time">14:05</div>
-    <span class="item-type studio">Studio Torre di Guardia</span>
-    <div class="item-title">Studio Torre di Guardia</div>
-    <div class="note-label">I miei appunti</div>
-    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="pom_tdg"></textarea>
-  </div>
-
-  <div class="item cantico"><div class="item-time">14:35</div><div class="item-title">Cantico 135 e annunci</div></div>
 
   <div class="item simposio">
-    <div class="item-time">14:45</div>
+    <div class="item-time"><span class="item-num">3-6</span>4 × 25 min</div>
     <span class="item-type simp">Serie di discorsi</span>
-    <div class="item-title">Affidiamoci alla sapienza di Geova...</div>
-    <div class="domanda">
-      <div class="domanda-label">❓ Domanda 4</div>
-      Perché dobbiamo affidarci alla sapienza di Geova?
-      <div class="item-refs">Proverbi 3:13, 18; 16:3; 22:6; 1 Corinti 10:13</div>
-    </div>
+    <div class="item-title">Rafforziamo il nostro amore per…</div>
     <div class="sub-items">
       <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">...nel guidare i nostri figli</div>
+        <div class="sub-item-num">Parte 3</div>
+        <div class="sub-item-text">…Geova</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Come possiamo rafforzare il nostro amore per Geova?
+          <div class="item-refs">Romani 5:8; Efesini 5:1, 2</div>
+        </div>
         <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="pom_sapienza_figli"></textarea>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s1_amore_geova"></textarea>
       </div></div>
       <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">...quando facciamo progetti per il futuro</div>
+        <div class="sub-item-num">Parte 4</div>
+        <div class="sub-item-text">…Gesù</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Perché dovremmo meditare sull’esempio di Gesù?
+          <div class="item-refs">Efesini 3:17-19; 1 Pietro 1:8, 9</div>
+        </div>
         <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="pom_sapienza_progetti"></textarea>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s1_amore_gesu"></textarea>
       </div></div>
       <div class="sub-item"><div class="sub-item-inner">
-        <div class="sub-item-text">...davanti alle tentazioni</div>
+        <div class="sub-item-num">Parte 5</div>
+        <div class="sub-item-text">…gli altri fratelli nominati</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Cosa ci può aiutare a crescere nell’amore per gli altri fratelli nominati?
+          <div class="item-refs">Romani 12:10; 1 Tessalonicesi 2:11</div>
+        </div>
         <div class="note-label">I miei appunti</div>
-        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="pom_sapienza_tentazioni"></textarea>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s1_amore_nominati"></textarea>
+      </div></div>
+      <div class="sub-item"><div class="sub-item-inner">
+        <div class="sub-item-num">Parte 6</div>
+        <div class="sub-item-text">…i fratelli e le sorelle</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Perché l’ospitalità è essenziale per rafforzare il nostro amore per i fratelli e le sorelle?
+          <div class="item-refs">1 Timoteo 3:2; 1 Pietro 4:9</div>
+        </div>
+        <div class="note-label">I miei appunti</div>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s1_amore_fratelli"></textarea>
       </div></div>
     </div>
+  </div>
+
+  <div class="item pausa"><div class="item-time">15 min</div><div class="item-title">☕ Pausa</div></div>
+
+  <div class="item discorso">
+    <div class="item-time"><span class="item-num">7</span>20 min</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Assolvete le vostre responsabilità come servitori di ministero</div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 1</div>
+      Come potete continuare a soddisfare i requisiti scritturali per i servitori di ministero?
+      <div class="item-refs">1 Timoteo 3:8-10, 12</div>
+    </div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 2</div>
+      Come riuscite a trovare l’equilibrio fra le vostre responsabilità di congregazione e la vostra vita personale o familiare?
+    </div>
+    <div class="note-label">Le mie risposte e i miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s1_responsabilita"></textarea>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time"><span class="item-num">8</span>20 min</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Continuate a fare progressi come uomini spirituali</div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 1</div>
+      Come potete continuare a progredire spiritualmente?
+      <div class="item-refs">1 Timoteo 4:12, 15</div>
+    </div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 2</div>
+      Come potete mettere in pratica l’addestramento che ricevete?
+    </div>
+    <div class="note-label">Le mie risposte e i miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s1_progressi"></textarea>
+  </div>
+
+  <div class="item discorso">
+    <div class="item-time"><span class="item-num">9</span>25 min</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">‘Gettate su Geova tutte le vostre preoccupazioni’</div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 1</div>
+      Quali fattori possono contribuire a farci provare ansia?
+    </div>
+    <div class="domanda">
+      <div class="domanda-label">❓ Domanda 2</div>
+      Come possiamo ‘gettare su Geova tutte le nostre preoccupazioni’?
+      <div class="item-refs">1 Pietro 5:7</div>
+    </div>
+    <div class="note-label">Le mie risposte e i miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s1_preoccupazioni"></textarea>
+  </div>
+
+  <div class="item cantico"><div class="item-time">75 min</div><div class="item-title">Cantico 33 e pausa</div></div>
+
+  <!-- ===== SESSIONE 2 ===== -->
+  <div class="session-label"><span>Sessione 2</span></div>
+
+  <div class="item cantico"><div class="item-time">5 min</div><div class="item-title">Cantico 78</div></div>
+
+  <div class="item simposio">
+    <div class="item-time"><span class="item-num">10-13</span>4 × 20 min</div>
+    <span class="item-type simp">Serie di discorsi</span>
+    <div class="item-title">Siate ‘ferventi nello spirito’…</div>
+    <div class="sub-items">
+      <div class="sub-item"><div class="sub-item-inner">
+        <div class="sub-item-num">Parte 10</div>
+        <div class="sub-item-text">…sfruttando al meglio lo studio personale</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          In che modo lo studio personale ci aiuta a diventare insegnanti migliori?
+          <div class="item-refs">Atti 18:24, 25</div>
+        </div>
+        <div class="note-label">I miei appunti</div>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s2_studio_personale"></textarea>
+      </div></div>
+      <div class="sub-item"><div class="sub-item-inner">
+        <div class="sub-item-num">Parte 11</div>
+        <div class="sub-item-text">…facendo discorsi che spingono gli altri ad agire</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Cosa ci può aiutare a fare discorsi che spingono gli altri ad agire?
+          <div class="item-refs">Tito 1:9</div>
+        </div>
+        <div class="note-label">I miei appunti</div>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s2_discorsi"></textarea>
+      </div></div>
+      <div class="sub-item"><div class="sub-item-inner">
+        <div class="sub-item-num">Parte 12</div>
+        <div class="sub-item-text">…insegnando con entusiasmo</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          Perché è importante insegnare con entusiasmo?
+          <div class="item-refs">Isaia 50:4</div>
+        </div>
+        <div class="note-label">I miei appunti</div>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s2_entusiasmo"></textarea>
+      </div></div>
+      <div class="sub-item"><div class="sub-item-inner">
+        <div class="sub-item-num">Parte 13</div>
+        <div class="sub-item-text">…chiedendo e accettando consigli costruttivi</div>
+        <div class="domanda">
+          <div class="domanda-label">❓ Domanda</div>
+          A prescindere dalla nostra esperienza, perché dovremmo chiedere consigli in merito al nostro insegnamento?
+          <div class="item-refs">1 Timoteo 4:16</div>
+        </div>
+        <div class="note-label">I miei appunti</div>
+        <textarea class="note-area" placeholder="Appunti su questo punto..." data-key="s2_consigli"></textarea>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="item pausa"><div class="item-time">20 min</div><div class="item-title">☕ Pausa</div></div>
+
+  <div class="item discorso">
+    <div class="item-time"><span class="item-num">14</span>35 min</div>
+    <span class="item-type disc">Discorso</span>
+    <div class="item-title">Donne di grande fede</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s2_donne_fede"></textarea>
   </div>
 
   <div class="item finale">
-    <div class="item-time">15:30</div>
+    <div class="item-time"><span class="item-num">15</span>35 min</div>
     <span class="item-type disc">Discorso</span>
-    <div class="item-title">“Chi confida in Geova è felice”</div>
-    <div class="domanda">
-      <div class="domanda-label">❓ Domanda 5</div>
-      Perché dovremmo confidare sempre in Geova?
-      <div class="item-refs">Proverbi 16:20</div>
-    </div>
-    <div class="note-label">La mia risposta e i miei appunti</div>
-    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="pom_chi_confida"></textarea>
+    <div class="item-title">Cosa vede Gesù in noi?</div>
+    <div class="note-label">I miei appunti</div>
+    <textarea class="note-area" placeholder="Scrivi qui i tuoi appunti..." data-key="s2_cosa_vede_gesu"></textarea>
   </div>
 
-  <div class="item cantico"><div class="item-time">16:00</div><div class="item-title">Cantico 54 e preghiera</div></div>
+  <div class="item cantico"><div class="item-time">5 min</div><div class="item-title">Cantico 107 e preghiera</div></div>
 
   <div class="day-notes-box">
     <h3>📋 Note della giornata</h3>
-    <p style="font-size:0.8rem;color:#999;margin-bottom:10px;">(presenti, battezzati, annunci, promemoria ecc.)</p>
+    <p style="font-size:0.8rem;color:#999;margin-bottom:10px;">(cose da mettere in pratica, promemoria, ecc.)</p>
     <div class="note-label">Note generali</div>
     <textarea class="note-area" style="min-height:150px;" placeholder="Scrivi qui le note della giornata..." data-key="note_giornata"></textarea>
   </div>
 </div>
 
 <div class="save-bar">
-  <span id="cloudStatus" class="cloud-status">☁️ …</span>
+  <span class="local-status" id="localStatus">📴 Salvato sul dispositivo</span>
   <button class="btn-save" onclick="manualSave()">💾 Salva</button>
   <button class="btn-export" onclick="openExportMenu()">📤 Esporta</button>
   <button class="btn-clear" onclick="goToCover()">🏠 Copertina</button>
@@ -403,13 +490,14 @@
 // LINK ALLA BIBBIA (JW.org / JW Library)
 // ============================================================
 const BOOKS = {
-  'Proverbi':        { n: 20 },
-  'Salmo':           { n: 19 },
-  'Salmi':           { n: 19 },
-  'Matteo':          { n: 40 },
-  'Luca':            { n: 42 },
-  '1 Corinti':       { n: 46 },
-  '1 Tessalonicesi': { n: 52 }
+  'Isaia':           { n: 23 },
+  'Atti':            { n: 44 },
+  'Romani':          { n: 45 },
+  'Efesini':         { n: 49 },
+  '1 Tessalonicesi': { n: 52 },
+  '1 Timoteo':       { n: 54 },
+  'Tito':            { n: 56 },
+  '1 Pietro':        { n: 60 }
 };
 
 function jwUrl(bookName, chapter, verse) {
@@ -425,7 +513,6 @@ function makeLink(label, url) {
   return a;
 }
 
-// "Luca 16:10; Salmo 50:15; 119:112" → link; un capitolo senza libro usa l'ultimo libro visto
 function parseRefs(container) {
   if (!container || container.dataset.parsed) return;
   const text = container.textContent.trim();
@@ -446,16 +533,14 @@ function parseRefs(container) {
 }
 
 function applyAllLinks() {
-  document.querySelectorAll('.item-refs, .day-ref').forEach(parseRefs);
+  document.querySelectorAll('.item-refs').forEach(parseRefs);
 }
 
 // ============================================================
-// SALVATAGGIO LOCALE (funziona sempre, anche senza internet)
+// SALVATAGGIO SOLO SUL DISPOSITIVO (nessun invio su internet)
 // ============================================================
-const STORAGE_KEY = 'assemblea2027_appunti';
-const LOCAL_TS_KEY = 'assemblea2027_local_ts';
-const CLOUD_TS_KEY = 'assemblea2027_cloud_ts';
-const NAME_KEY = 'assemblea2027_nome';
+const STORAGE_KEY = 'smr2027_appunti';
+const NAME_KEY = 'smr2027_nome';
 
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
@@ -466,12 +551,19 @@ function collectNotes() {
   return data;
 }
 
-let notesLoaded = false; // evita di salvare "vuoto" prima di aver caricato gli appunti
+let notesLoaded = false;
+
+function setStatus(ok) {
+  const el = document.getElementById('localStatus');
+  if (!el) return;
+  el.textContent = ok ? '📴 Salvato sul dispositivo' : '⚠️ Non salvato';
+  el.style.color = ok ? '#a3d9a5' : '#f0a0a0';
+}
 
 function saveNotes(silent) {
   if (!notesLoaded) loadNotes();
   const ok = lsSet(STORAGE_KEY, JSON.stringify(collectNotes()));
-  lsSet(LOCAL_TS_KEY, String(Date.now()));
+  setStatus(ok);
   if (!silent) showToast(ok ? '✅ Appunti salvati sul dispositivo' : '⚠️ Errore nel salvataggio');
 }
 
@@ -487,157 +579,70 @@ function loadNotes() {
   } catch (e) {}
 }
 
-function hasLocalNotes() {
-  return Object.values(collectNotes()).some(v => v && v.trim());
-}
-
-// ============================================================
-// SINCRONIZZAZIONE TABLET ↔ COMPUTER (JSONBin.io)
-// Usa lo stesso spazio cloud del Congresso di luglio, ma gli appunti
-// dell'assemblea stanno in una sezione separata ("assemblea2027"):
-// gli appunti di luglio già presenti NON vengono cancellati.
-// ============================================================
-const JSONBIN_ID = '6a44eb13da38895dfe1b207b';
-const JSONBIN_KEY = '$2a$10$7/y/F.Of85te2gj5.mnoteOd2/ILu7i.iU6a4IQt5kHrLf8NlLjwW';
-const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_ID;
-const NS = 'assemblea2027';
-
-let cloudTimer = null;
-let pushing = false;
-
-function setCloudStatus(state, detail) {
-  const el = document.getElementById('cloudStatus');
-  if (!el) return;
-  const map = {
-    ok:      ['☁️ Sincronizzato', 'ok'],
-    saving:  ['☁️ Salvataggio…', 'saving'],
-    offline: ['📴 Senza internet – salvato qui', 'offline'],
-    error:   ['⚠️ ' + (detail || 'Non sincronizzato'), 'error']
-  };
-  const s = map[state] || ['☁️ …', ''];
-  el.textContent = s[0];
-  el.className = 'cloud-status ' + s[1];
-}
-
-function isOffline() { return navigator.onLine === false; }
-
-async function fetchRemote() {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const res = await fetch(JSONBIN_URL + '/latest', { headers: { 'X-Master-Key': JSONBIN_KEY }, signal: ctrl.signal, cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    return json.record || {};
-  } finally { clearTimeout(t); }
-}
-
-async function pushToCloud() {
-  saveNotes(true);
-  if (isOffline()) { setCloudStatus('offline'); return; }
-  if (pushing) return;
-  pushing = true;
-  setCloudStatus('saving');
-  try {
-    // Legge prima tutto il contenuto per NON cancellare gli appunti di luglio
-    const record = await fetchRemote();
-    const nameEl = document.getElementById('displayName');
-    const payload = { notes: collectNotes(), nome: nameEl ? nameEl.textContent : '', updatedAt: Date.now() };
-    record[NS] = payload;
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 10000);
-    const res = await fetch(JSONBIN_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
-      body: JSON.stringify(record),
-      signal: ctrl.signal
-    });
-    clearTimeout(t);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    lsSet(CLOUD_TS_KEY, String(payload.updatedAt));
-    setCloudStatus('ok');
-  } catch (e) {
-    setCloudStatus(isOffline() || e.name === 'AbortError' || e instanceof TypeError ? 'offline' : 'error', e.message);
-  } finally { pushing = false; }
-}
-
-async function pullFromCloud() {
-  if (isOffline()) { setCloudStatus('offline'); return; }
-  try {
-    const record = await fetchRemote();
-    const remote = record[NS];
-    const localTs = parseInt(lsGet(CLOUD_TS_KEY) || '0', 10);
-    const localEditTs = parseInt(lsGet(LOCAL_TS_KEY) || '0', 10);
-    if (remote && remote.updatedAt && remote.updatedAt > localTs && remote.updatedAt > localEditTs) {
-      // Sull'altro dispositivo ci sono appunti più recenti: li carico
-      document.querySelectorAll('.note-area').forEach(ta => {
-        if (ta.dataset.key && remote.notes && (ta.dataset.key in remote.notes)) ta.value = remote.notes[ta.dataset.key];
-      });
-      if (remote.nome) {
-        const nameEl = document.getElementById('displayName');
-        if (nameEl) { nameEl.textContent = remote.nome; lsSet(NAME_KEY, remote.nome); }
-      }
-      resizeAll();
-      saveNotes(true);
-      lsSet(CLOUD_TS_KEY, String(remote.updatedAt));
-      showToast('☁️ Appunti aggiornati dall\'altro dispositivo');
-      setCloudStatus('ok');
-    } else if (hasLocalNotes() && (!remote || localEditTs > (remote.updatedAt || 0))) {
-      // Qui ci sono appunti più recenti (es. scritti senza internet): li invio
-      pushToCloud();
-    } else {
-      setCloudStatus('ok');
-    }
-  } catch (e) {
-    setCloudStatus(isOffline() || e.name === 'AbortError' || e instanceof TypeError ? 'offline' : 'error', e.message);
-  }
-}
-
-function scheduleCloudPush() {
-  saveNotes(true); // salva subito sul dispositivo
-  setCloudStatus(isOffline() ? 'offline' : 'saving');
-  clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(pushToCloud, 1500);
-}
-
-// Il riquadro si allunga da solo mentre si scrive
-function autoResize(ta) {
-  ta.style.height = 'auto';
-  ta.style.height = (ta.scrollHeight + 2) + 'px';
-}
-function resizeAll() { document.querySelectorAll('.note-area').forEach(autoResize); }
-window.addEventListener('resize', resizeAll);
-
+let saveTimer = null;
 function attachNoteListeners() {
   document.querySelectorAll('.note-area').forEach(ta => {
     if (ta.dataset.listenerAttached) return;
     ta.dataset.listenerAttached = '1';
-    ta.addEventListener('input', () => autoResize(ta));
-    ta.addEventListener('input', scheduleCloudPush);
+    ta.addEventListener('focus', () => setTimeout(() => keepCaretVisible(ta), 300));
+    ta.addEventListener('input', () => { autoResize(ta); clearTimeout(saveTimer); saveTimer = setTimeout(() => saveNotes(true), 600); });
   });
 }
 
-function manualSave() {
-  clearTimeout(cloudTimer);
-  saveNotes();
-  pushToCloud();
+// Il riquadro si allunga da solo mentre si scrive
+function autoResize(ta) {
+  const y = window.scrollY;               // evita che la pagina salti
+  ta.style.height = 'auto';
+  ta.style.height = (ta.scrollHeight + 2) + 'px';
+  window.scrollTo(0, y);
+  if (document.activeElement === ta) keepCaretVisible(ta);
 }
 
-// Quando torna internet, sincronizza da solo
-window.addEventListener('online', () => {
-  if (document.getElementById('programPage').style.display !== 'none') pullFromCloud();
-});
-window.addEventListener('offline', () => setCloudStatus('offline'));
+// Tiene il cursore sopra la tastiera e sopra la barra "Salva" (tablet/telefono)
+function keepCaretVisible(ta) {
+  const vv = window.visualViewport;
+  const viewH = vv ? vv.height : window.innerHeight;
+  const bar = document.querySelector('.save-bar');
+  const barH = bar ? bar.offsetHeight : 0;
+  const lh = parseFloat(getComputedStyle(ta).lineHeight) || 26;
+  // posizione approssimativa della riga del cursore (misurata con una copia nascosta)
+  const m = getMirror(ta);
+  m.value = ta.value.slice(0, ta.selectionEnd);
+  const caretTop = ta.getBoundingClientRect().top + Math.min(m.scrollHeight, ta.offsetHeight);
+  const limit = viewH - barH - 16;
+  if (caretTop > limit) window.scrollBy(0, caretTop - limit + lh);
+}
+let _mirror = null;
+function getMirror(ta) {
+  if (!_mirror) {
+    _mirror = document.createElement('textarea');
+    _mirror.setAttribute('aria-hidden', 'true'); _mirror.tabIndex = -1;
+    _mirror.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;height:0;overflow:hidden;';
+    document.body.appendChild(_mirror);
+  }
+  const cs = getComputedStyle(ta);
+  ['width','fontFamily','fontSize','lineHeight','padding','border','boxSizing','letterSpacing','whiteSpace','wordWrap']
+    .forEach(p => { _mirror.style[p] = cs[p]; });
+  _mirror.style.height = '0px';
+  return _mirror;
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const a = document.activeElement;
+    if (a && a.classList && a.classList.contains('note-area')) setTimeout(() => keepCaretVisible(a), 50);
+  });
+}
+function resizeAll() { document.querySelectorAll('.note-area').forEach(autoResize); }
+window.addEventListener('resize', resizeAll);
 
-// Salva anche quando si chiude o si mette in secondo piano l'app
+function manualSave() { clearTimeout(saveTimer); saveNotes(); }
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && notesLoaded) saveNotes(true);
 });
-
-// Rete di sicurezza: ogni 60 secondi
 setInterval(() => {
-  if (document.getElementById('programPage').style.display !== 'none') { saveNotes(true); if (!isOffline()) pushToCloud(); }
-}, 60000);
+  if (document.getElementById('programPage').style.display !== 'none') saveNotes(true);
+}, 30000);
 
 // ============================================================
 // NAVIGAZIONE
@@ -648,7 +653,6 @@ function openProgram() {
   loadNotes();
   attachNoteListeners();
   resizeAll();
-  pullFromCloud();
   window.scrollTo(0, 0);
 }
 
@@ -669,7 +673,7 @@ function showToast(msg) {
 // NOME
 // ============================================================
 function loadName() {
-  const saved = lsGet(NAME_KEY) || lsGet('congresso2026_nome');
+  const saved = lsGet(NAME_KEY) || lsGet('assemblea2027_nome') || lsGet('congresso2026_nome');
   if (saved) document.getElementById('displayName').textContent = saved;
 }
 function openEditName() {
@@ -700,15 +704,15 @@ function downloadHTML() {
   const clone = document.documentElement.cloneNode(true);
   const live = document.querySelectorAll('.note-area');
   clone.querySelectorAll('.note-area').forEach((ta, i) => { if (live[i]) ta.textContent = live[i].value; });
-  // Copia "ferma": senza script, barra e finestre (così non si sincronizza e non sovrascrive nulla)
   clone.querySelectorAll('script, .save-bar, .modal-overlay, .toast').forEach(el => el.remove());
   const cover = clone.querySelector('#coverPage'); if (cover) cover.remove();
   const prog = clone.querySelector('#programPage'); if (prog) prog.style.display = 'block';
+  clone.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
   const html = '<!DOCTYPE html>\n' + clone.outerHTML;
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'Assemblea2026-2027_Appunti.html';
+  a.href = url; a.download = 'ScuolaMinistero2027_Appunti.html';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1500);
   closeExportMenu();
@@ -730,8 +734,7 @@ window.addEventListener('DOMContentLoaded', function () {
   loadNotes();
 });
 
-// Registra il "salvataggio offline" della pagina (file sw-offline.js nella stessa cartella).
-// Riguarda solo questa pagina: le altre app del cruscotto non vengono toccate.
+// Se la pagina è online (GitHub Pages), usa lo stesso sw-offline.js dell'assemblea
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('sw-offline.js', { scope: location.pathname })
