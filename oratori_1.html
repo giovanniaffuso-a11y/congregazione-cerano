@@ -196,6 +196,9 @@
     .panel{display:block!important;}
     #panel-database,#panel-congregazioni,#panel-dpin,#panel-dout,#panel-schemi,#panel-oratoridb{display:none!important;}
   }
+/* D-Out: tabella in un riquadro con barra laterale sempre visibile e nomi fissi in alto */
+#grigliaCeranoHead th{position:sticky;top:0;z-index:3;background:var(--navy);}
+@media print{#grigliaCeranoBox{max-height:none!important;overflow:visible!important;}}
 </style>
 </head>
 <body>
@@ -352,7 +355,7 @@
       </div>
       <div class="pin-subtitle" id="sottotitoloGriglia"></div>
       <div id="doutStats" style="margin-top:8px;"></div>
-      <div style="overflow-x:auto;margin-top:10px;">
+      <div id="grigliaCeranoBox" style="overflow:auto;max-height:70vh;margin-top:10px;">
         <table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:700px;">
           <thead><tr id="grigliaCeranoHead" style="background:var(--navy);color:#fff;"></tr></thead>
           <tbody id="grigliaCeranoBody"></tbody>
@@ -1629,6 +1632,15 @@ function sincronizzaGrigliaRef(){
       // Conversione una-tantum: crea l'ancora dalla posizione attuale (giusta adesso)
       var o=db[parseInt(oi)];
       if(o){ cel.orRef=(o.cognome||'').trim()+'|'+(o.nome||'').trim(); cambiato=true; }
+    }
+    // Date da oggi in poi: la congregazione segue quella attuale dell'oratore nel database
+    // (es. Bellan passato a Trecate). Le date passate restano come erano.
+    var pk=String(ck).split('_');
+    if(pk.length>=4){
+      var dCel=new Date(parseInt(pk[1]),parseInt(pk[2])-1,parseInt(pk[3]));
+      var oggi=new Date(); oggi.setHours(0,0,0,0);
+      var oAtt=db[parseInt(cel.orIdx)];
+      if(dCel>=oggi && oAtt && oAtt.congregazione && cel.cong!==oAtt.congregazione){ cel.cong=oAtt.congregazione; cambiato=true; }
     }
     // Se la casella non ha la congregazione, la prende dalla scheda dell'oratore nel database
     var oc=db[parseInt(cel.orIdx)];
