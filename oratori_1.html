@@ -928,7 +928,7 @@ const ORATORI_DEFAULT = [
   {nome:"Marco",cognome:"Ferrara",congregazione:"Castano Primo Stazione",discorsi:[15,18,70,123],telefono:"3934366766"},
   {nome:"Samuele",cognome:"Silvestri",congregazione:"Castano Primo Stazione",discorsi:[11,18,36,183,189],telefono:"3477728202"},
   {nome:"Alessandro",cognome:"Zangirolami",congregazione:"Castano Primo Stazione",discorsi:[3,16,68,137,179,180],telefono:"3403235663"},
-  {nome:"Davide",cognome:"Stippelli",congregazione:"Cerano",discorsi:[48,70,78],telefono:"3271704507"},
+  {nome:"Daniele",cognome:"Bellan",congregazione:"Trecate",discorsi:[3,7,8,15,59,70,73,74,115,171,176,177,178,179,183,188,189],telefono:"3478169498"},
   {nome:"Pablo",cognome:"Cazzolla",congregazione:"Cerano",discorsi:[2,33,56,153],telefono:"3469790015"},
   {nome:"Giuseppe",cognome:"Orrico",congregazione:"Cerano",discorsi:[16,53,180],telefono:"3391099256"},
   {nome:"Mario",cognome:"Innocenti",congregazione:"Cerano",discorsi:[1,16,72,192],telefono:"3389011086"},
@@ -955,6 +955,7 @@ const ORATORI_DEFAULT = [
   {nome:"Sergio",cognome:"Vezzoli",congregazione:"Cuggiono",discorsi:[60,99,116,123,173,193],telefono:"3406001763"},
   {nome:"Claudio",cognome:"Cocciolo",congregazione:"Galliate",discorsi:[1,2,3,8,9,13,18,28,29,33,63,68,73,76,79,98,100,115,138,143,159,171,177],telefono:"3403606204"},
   {nome:"Stefano",cognome:"Menegazzo",congregazione:"Galliate",discorsi:[24,132,160,162,171,187,188],telefono:"3386999176"},
+  {nome:"Davide",cognome:"Stippelli",congregazione:"Cerano",discorsi:[48,70,78],telefono:"3271704507"},
   {nome:"Antonio",cognome:"Strafezza",congregazione:"Galliate",discorsi:[6,49,114],telefono:"3296944627"},
   {nome:"Gionatan",cognome:"Bellavista",congregazione:"Magenta Naviglio",discorsi:[103,113],telefono:"3421698331"},
   {nome:"Gioele",cognome:"Giannino",congregazione:"Magenta Naviglio",discorsi:[108,147],telefono:"3665218208"},
@@ -1078,7 +1079,7 @@ let state = {
 const STORAGE_KEY = 'oratoriAppV4';
 // Versione elenco oratori: cambia questa data/sigla ogni volta che aggiorni gli oratori
 // -> tutti i dispositivi rigenerano l'elenco dai default e si risincronizzano da soli
-const ORATORI_DB_VERSION = '2026-11-01'; // 01/11: Bellan lascia Cerano, Stippelli Davide da Galliate a Cerano (CCA); // 30/09: aggiunto Dato Mattia (Pianoro, fuori circoscrizione); // 23/09: tolto 53 a Zaretti (telefonata), aggiunto Cancelli Jacopo
+const ORATORI_DB_VERSION = '2026-11-01c'; // 01/11: Bellan Daniele da Cerano a Trecate; 01/11: Stippelli Davide da Galliate a Cerano (CCA al posto di Bellan); // 30/09: aggiunto Dato Mattia (Pianoro, fuori circoscrizione); // 23/09: tolto 53 a Zaretti (telefonata), aggiunto Cancelli Jacopo
 // Versione dati congregazioni (CDP/CCA/Assistenti): stesso meccanismo, ma per state.congregazioni
 const CONG_VERSION = '2026-09-03b';
 function salvaStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -1107,8 +1108,8 @@ function mergeCongregazioni(savedCg){
   });
 }
 // Nov. 2026: Stippelli Davide nuovo CCA di Cerano al posto di Bellan Daniele.
-// Corregge i dati gia' salvati (locali o dal cloud) e aggiunge Stippelli alla griglia D-Out
-// in fondo, senza toccare lo storico di Bellan.
+// Corregge il CCA gia' salvato (locale o dal cloud) e aggiunge Stippelli in fondo alla
+// griglia D-Out, senza toccare Bellan e il suo storico.
 function cambioBellanStippelli(){
   (state.congregazioni||[]).forEach(function(c){
     if(c.nome==='Cerano' && /bellan/i.test(c.cca||'')){ c.cca='Davide Stippelli'; c.ccaTel='3271704507'; }
