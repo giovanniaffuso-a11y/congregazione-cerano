@@ -472,7 +472,7 @@ var CDEF=[
   {n:'Arconate',g:'Domenica',o:'10:00',cdp:'Paganini Michele',ct:'3516782266',cca:'Muscia Dario',cc:'3493514562'},
   {n:'Bareggio',g:'Sabato',o:'16:00',cdp:'Trovato Adriano',ct:'3381363024',cca:'Murante Aldo',cc:'3474149076'},
   {n:'Castano Primo Stazione',g:'Domenica',o:'10:00',cdp:'Dolce Michele',ct:'3351424844',cca:'Zangirolami Alessandro',cc:'3403235663',ass1:'Borghi Lorenzo',ass1t:'3756147888'},
-  {n:'Cerano',g:'Sabato',o:'20:00',cdp:'Affuso Giovanni',ct:'3427694027',cca:'Bellan Daniele',cc:'3478169498'},
+  {n:'Cerano',g:'Sabato',o:'20:00',cdp:'Affuso Giovanni',ct:'3427694027',cca:'Stippelli Davide',cc:'3271704507'},
   {n:'Corbetta Stadio',g:'Sabato',o:'18:30',cdp:'Giunta Aurelio',ct:'3403658803',cca:'Busacca Giuseppe',cc:'3284280083'},
   {n:'Cornaredo',g:'Domenica',o:'17:00',cdp:'Nicosia Andrea',ct:'3295621866',cca:'Farinelli Marco',cc:'3938696985'},
   {n:'Cuggiono',g:'Sabato',o:'17:30',cdp:'Baraterio Luca',ct:'3351418841',cca:'Scremin Alex',cc:'3479190151'},
@@ -510,7 +510,7 @@ var ODEF=[
   {id:'c5',c:'Ferrara',n:'Marco',r:'Anziano',cg:'Castano Primo Stazione',t:'3934366766',e:'3FerraraMarco@jwpub.org',d:[15,18,70,123]},
   {id:'c6',c:'Silvestri',n:'Samuele',r:'Anziano',cg:'Castano Primo Stazione',t:'3477728202',e:'SilvestriS@jwpub.org',d:[11,18,36,183,189]},
   {id:'c7',c:'Zangirolami',n:'Alessandro',r:'Anziano',cg:'Castano Primo Stazione',t:'3403235663',e:'Zangirolamia@jwpub.org',d:[3,16,68,137,179,180]},
-  {id:'ce2',c:'Bellan',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3478169498',e:'belland3@jwpub.org',d:[3,7,8,15,59,70,73,74,115,171,176,177,178,179,183,188,189]},
+  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Cerano',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
   {id:'ce3',c:'Cazzolla',n:'Pablo',r:'Anziano',cg:'Cerano',t:'3469790015',e:'1cazzollapablo@jwpub.org',d:[2,33,56,153]},
   {id:'ce6',c:'Orrico',n:'Giuseppe',r:'Anziano',cg:'Cerano',t:'3391099256',e:'gorrico@jwpub.org',d:[16,53,180]},
   {id:'ce4',c:'Innocenti',n:'Mario',r:'Anziano',cg:'Cerano',t:'3389011086',e:'innocentim5@jwpub.org',d:[1,16,72,192]},
@@ -537,7 +537,6 @@ var ODEF=[
   {id:'cu6',c:'Vezzoli',n:'Sergio',r:'Anziano',cg:'Cuggiono',t:'3406001763',e:'37VezzoliS@jwpub.org',d:[60,99,116,123,173,193]},
   {id:'g1',c:'Cocciolo',n:'Claudio',r:'Anziano',cg:'Galliate',t:'3403606204',e:'ccocciolo22@jwpub.org',d:[1,2,3,8,9,13,18,28,29,33,63,68,73,76,79,98,100,115,138,143,159,171,177]},
   {id:'g2',c:'Menegazzo',n:'Stefano',r:'Anziano',cg:'Galliate',t:'3386999176',e:'8StefanoM@jwpub.org',d:[24,132,160,162,171,187,188]},
-  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Galliate',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
   {id:'g5',c:'Strafezza',n:'Antonio',r:'Anziano',cg:'Galliate',t:'3296944627',e:'StrafezzaAntonio1@jwpub.org',d:[6,49,114]},
   {id:'mn0',c:'Bellavista',n:'Gionatan',r:'Anziano',cg:'Magenta Naviglio',t:'3421698331',e:'BellavistaG9@jwpub.org',d:[103,113]},
   {id:'mn2',c:'Giannino',n:'Gioele',r:'Anziano',cg:'Magenta Naviglio',t:'3665218208',e:'GianninoGioele@jwpub.org',d:[108,147]},
@@ -630,6 +629,8 @@ function sv(autoSync){
 function mergeData(savedOr, savedCg, savedDel){
   savedOr = savedOr||[];
   S.del = (savedDel||[]).slice();
+  // Nov. 2026: Bellan Daniele lascia Cerano (non va ripristinato dai dati salvati)
+  if(S.del.indexOf('ce2')<0) S.del.push('ce2');
   S.or=ODEF.filter(function(o){ return S.del.indexOf(o.id)<0; }).map(function(o){
     var trovato=savedOr.find(function(x){return x.id===o.id;});
     if(trovato && trovato.man){
@@ -646,6 +647,8 @@ function mergeData(savedOr, savedCg, savedDel){
     }
     return Object.assign({},o,{d:o.d.slice()});
   });
+  // Nov. 2026: Stippelli Davide ora appartiene a Cerano (anche se modificato a mano)
+  S.or.forEach(function(o){ if(o.id==='g4') o.cg='Cerano'; });
   // Oratori aggiunti a mano (non presenti nell'elenco di base): vanno conservati
   savedOr.forEach(function(x){
     var inBase=ODEF.some(function(o){return o.id===x.id;});

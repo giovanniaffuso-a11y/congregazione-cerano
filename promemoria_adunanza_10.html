@@ -110,7 +110,7 @@ textarea{resize:vertical;min-height:48px}
     <div class="card c-form">
       <div class="card-h">📝 Dati della settimana</div>
       <div class="card-b">
-        <div class="fsec">📅 Oratore in arrivo <span class="tag">vale per Presidente · Bellan · Barberi</span></div>
+        <div class="fsec">📅 Oratore in arrivo <span class="tag">vale per Presidente · Stippelli · Barberi</span></div>
         <div class="field">
           <label>Data adunanza</label>
           <input type="date" id="data" oninput="genera()" onchange="genera()">
@@ -124,7 +124,6 @@ textarea{resize:vertical;min-height:48px}
         <div class="field"><label>Video (se previsto prima del Discorso Finale)</label><input type="text" id="video" placeholder="es. La buona notizia secondo Gesù — episodio 2" oninput="genera()"></div>
         <div class="field"><label id="temaLabel">Tema del discorso (Discorso Finale)</label><input type="text" id="tema" placeholder="si compila col n° del discorso" oninput="genera()"></div>
         <div class="field" id="discSelWrap"><label>Discorso n° (tra quelli dell'oratore)</label><select id="discSel" onchange="onDisc()"><option value="">— scegli prima l'oratore —</option></select></div>
-        <button type="button" id="btnSpeciale" onclick="apriSpeciale()" style="margin:2px 0 10px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--teal);background:#fff;color:var(--teal);font-weight:600;cursor:pointer;font-size:.85rem">🎬 Non ha un numero? È il Discorso Speciale (ogni ~6 mesi)</button>
         <div class="row2">
           <div class="field" id="schemaWrap"><label>Schema n°</label><input type="text" id="schema" placeholder="es. 67" oninput="onSchemaInput()"></div>
           <div class="field"><label>Cantico n°</label><select id="cantico" onchange="genera()"></select></div>
@@ -148,7 +147,7 @@ textarea{resize:vertical;min-height:48px}
         <div class="field"><label>Discorso della prossima settimana</label><select id="proxSel" onchange="onProx()"></select></div>
         <div class="field"><input type="text" id="prox" placeholder="oppure scrivi il titolo a mano" oninput="genera()"></div>
 
-        <div class="fsec">📱 Solo per Bellan</div>
+        <div class="fsec">📱 Solo per Stippelli</div>
         <div class="field"><label>Cellulare dell'oratore</label><input type="text" id="cell" placeholder="numero dell'oratore" oninput="genera()"></div>
 
         <div class="fsec">🖼 Solo per Barberi</div>
@@ -192,7 +191,7 @@ textarea{resize:vertical;min-height:48px}
           <div class="msg-foot"><button class="copy" id="cp2" onclick="copia(2)">📋 Copia messaggio</button></div>
         </div>
         <div class="msg">
-          <div class="card-h m3"><span class="n">3</span> Bellan <span class="to">Daniele</span></div>
+          <div class="card-h m3"><span class="n">3</span> Stippelli <span class="to">Davide</span></div>
           <div class="preview" id="prev3"></div>
           <div class="msg-foot"><button class="copy" id="cp3" onclick="copia(3)">📋 Copia messaggio</button></div>
         </div>
@@ -234,26 +233,12 @@ textarea{resize:vertical;min-height:48px}
   </div>
 </div>
 
-<div class="overlay" id="ovlSpec" onclick="if(event.target===this)chiudiSpeciale()"></div>
-<div class="modal" id="modalSpeciale" style="max-width:480px">
-  <h2>🎬 Discorso Speciale</h2>
-  <div class="sub">Si tiene circa ogni sei mesi: è un discorso pubblico senza numero di schema. Scrivi (o correggi) il tema di questa volta.</div>
-  <div class="field">
-    <label>Tema del Discorso Speciale</label>
-    <input type="text" id="temaSpeciale" placeholder="es. Come può esserti d'aiuto la Bibbia">
-  </div>
-  <div class="modal-foot">
-    <button class="btn ghost" onclick="chiudiSpeciale()">Annulla</button>
-    <button class="btn" onclick="confermaSpeciale()" style="background:var(--teal);color:#fff;border-color:var(--teal)">✓ Inserisci nel messaggio</button>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 /* ===== Lista fratelli con privilegi (presa dall'app Incarichi) ===== */
 var COLS=["Preghiera","Usciere","Microf.","Tesori","Gemme","Lett. Studio Biblico","Lett. Torre di Guardia","Parti Vita Cristiana","Presid. Vita Cristiana","Condut. Studio Bibl.","Presid. Adunanza","Orat. Pubblico","Condut. Comitiva","Podio","Audio/Video"];
-var MEMBERS_DEFAULT=[{"nome": "Affuso Giovanni", "ruolo": "Servitore", "incarico": "Resp. Uscieri / Microfonisti / Disc. Pubblici", "p": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0]}, {"nome": "Catalano Rosario", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0]}, {"nome": "Mazzotta M.", "ruolo": "Servitore", "incarico": "Assistente Pulizie", "p": [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Palano G.", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Innocenti Mario", "ruolo": "Anziano", "incarico": "Sorvegliante Vita e Ministero Cristiano", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Recchia Franco", "ruolo": "Anziano", "incarico": " Responsabile KHCC", "p": [1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Orrico Giuseppe", "ruolo": "Anziano", "incarico": "Segretario / Resp. Contabilità ", "p": [1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Marinoni Daniele", "ruolo": "Anziano", "incarico": "Sorvegliante del Servizio-responsabile letteratura territori", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Bellan Daniele", "ruolo": "Anziano", "incarico": "CCA / CCG", "p": [1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Barberi Alessandro", "ruolo": "Proclamatore", "incarico": "Assistente Audio / Video / Microfonisti", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Barberi S.", "ruolo": "Proclamatore", "incarico": "Assistente Territori. Audio-Video", "p": [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bocchino Dario", "ruolo": "Proclamatore", "incarico": "Assistente Contabilità", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin Paolo", "ruolo": "Proclamatore", "incarico": "Audio-Video", "p": [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin C.", "ruolo": "Proclamatore", "incarico": "no", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Cazzolla Giovanni", "ruolo": "Proclamatore", "incarico": "Assistente Territori", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Cazzolla P.", "ruolo": "Anziano", "incarico": "Sorvegliante STG / Resp. Pulizie / Resp. GVP", "p": [1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]}, {"nome": "Circosta V.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura-Mix", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Colombo Marco", "ruolo": "Proclamatore", "incarico": "Mixer", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Condello F.", "ruolo": "Proclamatore", "incarico": "Assistente Podio-addetto podio", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Conte Dino", "ruolo": "Proclamatore", "incarico": " Audio / Video ", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Coppola F.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Coppola S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Guarnieri F.", "ruolo": "Proclamatore", "incarico": "Assistente Pulizie", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Luisi F.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura / Assistente Podio/Mix", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Perla A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula G.", "ruolo": "Proclamatore", "incarico": "Assistente Territori/AUDIO-VIDEO", "p": [0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0]}, {"nome": "Aula L.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula V.", "ruolo": "Servitore", "incarico": "Assistente Uscieri", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bruno G.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Del Grosso A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Giacalone S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}];
+var MEMBERS_DEFAULT=[{"nome": "Affuso Giovanni", "ruolo": "Servitore", "incarico": "Resp. Uscieri / Microfonisti / Disc. Pubblici", "p": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0]}, {"nome": "Catalano Rosario", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0]}, {"nome": "Mazzotta M.", "ruolo": "Servitore", "incarico": "Assistente Pulizie", "p": [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Palano G.", "ruolo": "Servitore", "incarico": "NO", "p": [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]}, {"nome": "Innocenti Mario", "ruolo": "Anziano", "incarico": "Sorvegliante Vita e Ministero Cristiano", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Recchia Franco", "ruolo": "Anziano", "incarico": " Responsabile KHCC", "p": [1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Orrico Giuseppe", "ruolo": "Anziano", "incarico": "Segretario / Resp. Contabilità ", "p": [1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Marinoni Daniele", "ruolo": "Anziano", "incarico": "Sorvegliante del Servizio-responsabile letteratura territori", "p": [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Stippelli Davide", "ruolo": "Anziano", "incarico": "CCA", "p": [1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0]}, {"nome": "Barberi Alessandro", "ruolo": "Proclamatore", "incarico": "Assistente Audio / Video / Microfonisti", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Barberi S.", "ruolo": "Proclamatore", "incarico": "Assistente Territori. Audio-Video", "p": [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bocchino Dario", "ruolo": "Proclamatore", "incarico": "Assistente Contabilità", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin Paolo", "ruolo": "Proclamatore", "incarico": "Audio-Video", "p": [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Braghin C.", "ruolo": "Proclamatore", "incarico": "no", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Cazzolla Giovanni", "ruolo": "Proclamatore", "incarico": "Assistente Territori", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Cazzolla P.", "ruolo": "Anziano", "incarico": "Sorvegliante STG / Resp. Pulizie / Resp. GVP", "p": [1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]}, {"nome": "Circosta V.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura-Mix", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Colombo Marco", "ruolo": "Proclamatore", "incarico": "Mixer", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1]}, {"nome": "Condello F.", "ruolo": "Proclamatore", "incarico": "Assistente Podio-addetto podio", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Conte Dino", "ruolo": "Proclamatore", "incarico": " Audio / Video ", "p": [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0]}, {"nome": "Coppola F.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Coppola S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Guarnieri F.", "ruolo": "Proclamatore", "incarico": "Assistente Pulizie", "p": [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Luisi F.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura / Assistente Podio/Mix", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Perla A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula G.", "ruolo": "Proclamatore", "incarico": "Assistente Territori/AUDIO-VIDEO", "p": [0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0]}, {"nome": "Aula L.", "ruolo": "Proclamatore", "incarico": "Assistente Letteratura", "p": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Aula V.", "ruolo": "Servitore", "incarico": "Assistente Uscieri", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Bruno G.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Del Grosso A.", "ruolo": "Proclamatore", "incarico": "NO", "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, {"nome": "Giacalone S.", "ruolo": "Proclamatore", "incarico": "NO", "p": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}];
 var ODEF=[
   {id:'a1',c:'Conti',n:'Giacomo',r:'Anziano',cg:'Arconate',t:'3356814563',e:'giacomoc@jwpub.org',d:[44,45,121,175,181,183,187,188,192,194]},
   {id:'a2',c:'Deponti',n:'Angelo',r:'Anziano',cg:'Arconate',t:'3498901603',e:'depontiag@jwpub.org',d:[14,33,104,105,107,128]},
@@ -273,7 +258,7 @@ var ODEF=[
   {id:'c5',c:'Ferrara',n:'Marco',r:'Anziano',cg:'Castano Primo Stazione',t:'3934366766',e:'3FerraraMarco@jwpub.org',d:[15,18,70,123]},
   {id:'c6',c:'Silvestri',n:'Samuele',r:'Anziano',cg:'Castano Primo Stazione',t:'3477728202',e:'SilvestriS@jwpub.org',d:[11,18,36,183,189]},
   {id:'c7',c:'Zangirolami',n:'Alessandro',r:'Anziano',cg:'Castano Primo Stazione',t:'3403235663',e:'Zangirolamia@jwpub.org',d:[3,16,68,137,179,180]},
-  {id:'ce2',c:'Bellan',n:'Daniele',r:'Anziano',cg:'Cerano',t:'3478169498',e:'belland3@jwpub.org',d:[3,7,8,15,59,70,73,74,105,115,117,165,167,171,176,177,178,179,183,188,189]},
+  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Cerano',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
   {id:'ce3',c:'Cazzolla',n:'Pablo',r:'Anziano',cg:'Cerano',t:'3469790015',e:'1cazzollapablo@jwpub.org',d:[2,33,56,153,164]},
   {id:'ce6',c:'Orrico',n:'Giuseppe',r:'Anziano',cg:'Cerano',t:'3391099256',e:'gorrico@jwpub.org',d:[16,53,180]},
   {id:'ce4',c:'Innocenti',n:'Mario',r:'Anziano',cg:'Cerano',t:'3389011086',e:'innocentim5@jwpub.org',d:[1,16,72,145,192]},
@@ -301,7 +286,6 @@ var ODEF=[
   {id:'cu6',c:'Vezzoli',n:'Sergio',r:'Anziano',cg:'Cuggiono',t:'3406001763',e:'37VezzoliS@jwpub.org',d:[60,99,116,123,173,193]},
   {id:'g1',c:'Cocciolo',n:'Claudio',r:'Anziano',cg:'Galliate',t:'3403606204',e:'ccocciolo22@jwpub.org',d:[1,2,3,8,9,13,18,28,29,33,63,68,73,76,79,87,98,100,115,117,119,138,143,149,157,159,164,165,171,177]},
   {id:'g2',c:'Menegazzo',n:'Stefano',r:'Anziano',cg:'Galliate',t:'3386999176',e:'8StefanoM@jwpub.org',d:[24,132,160,162,165,171,187,188]},
-  {id:'g4',c:'Stippelli',n:'Davide',r:'Anziano',cg:'Galliate',t:'3271704507',e:'DavideStippelli46@jwpub.org',d:[48,70,78]},
   {id:'g5',c:'Strafezza',n:'Antonio',r:'Anziano',cg:'Galliate',t:'3296944627',e:'StrafezzaAntonio1@jwpub.org',d:[6,49,114]},
   {id:'mn2',c:'Giannino',n:'Gioele',r:'Anziano',cg:'Magenta Naviglio',t:'3665218208',e:'GianninoGioele@jwpub.org',d:[108,147]},
   {id:'mn3',c:'Neri',n:'Andrea',r:'Anziano',cg:'Magenta Naviglio',t:'389536208',e:'NeriA@jwpub.org',d:[15,90]},
@@ -410,6 +394,16 @@ function caricaElenchi(){
   }catch(e){}
   return listeBase();
 }
+/* Cambio CCA nov. 2026: Bellan Daniele lascia Cerano, arriva Stippelli Davide.
+   Aggiorna anche gli elenchi gia' salvati sul dispositivo. */
+function cambioBellanStippelli(el){
+  ['pres','lett'].forEach(function(k){
+    if(!el||!Array.isArray(el[k])) return;
+    var i=el[k].indexOf("Bellan Daniele");
+    if(i>=0){ if(el[k].indexOf("Stippelli Davide")<0) el[k][i]="Stippelli Davide"; else el[k].splice(i,1); }
+  });
+  return el;
+}
 function salvaElenchi(){try{localStorage.setItem(STORAGE_KEY_ELENCHI,JSON.stringify(elenchi));}catch(e){}}
 function popolaTendine(){
   riempiSelect("presidente",elenchi.pres);
@@ -456,11 +450,6 @@ function trovaOratore(id){for(var i=0;i<ODEF.length;i++){if(ODEF[i].id===id)retu
 function onOratore(){
   var id=document.getElementById("oratoreSel").value;
   var ds=document.getElementById("discSel");
-  /* ogni volta che cambi oratore si riparte puliti: niente Video/Tema/Schema
-     rimasti da una settimana precedente (es. il Discorso Speciale) */
-  document.getElementById("video").value="";
-  document.getElementById("tema").value="";
-  document.getElementById("schema").value="";
   if(id===""||id==="__manual__"){
     ds.innerHTML='<option value="">— scegli prima l\'oratore —</option>';
     genera();return;
@@ -555,35 +544,6 @@ function modificaSV(){
   document.getElementById("oratore").focus();
 }
 
-/* ===== Discorso Speciale (ogni ~6 mesi) ===== */
-var STORAGE_KEY_SPEC="promAdunanza_temaSpeciale";
-function apriSpeciale(){
-  var ultimo="";
-  try{ultimo=localStorage.getItem(STORAGE_KEY_SPEC)||"";}catch(e){}
-  var inp=document.getElementById("temaSpeciale");
-  inp.value=ultimo||"Come può esserti d'aiuto la Bibbia";
-  document.getElementById("ovlSpec").classList.add("show");
-  document.getElementById("modalSpeciale").classList.add("show");
-  inp.focus();
-  inp.select();
-}
-function chiudiSpeciale(){
-  document.getElementById("ovlSpec").classList.remove("show");
-  document.getElementById("modalSpeciale").classList.remove("show");
-}
-function confermaSpeciale(){
-  var t=document.getElementById("temaSpeciale").value.trim();
-  if(!t){toast("Scrivi il tema del discorso");return;}
-  document.getElementById("video").value="DISCORSO SPECIALE – "+t;
-  document.getElementById("schema").value="";
-  document.getElementById("tema").value="";
-  var ds=document.getElementById("discSel");if(ds)ds.value="";
-  try{localStorage.setItem(STORAGE_KEY_SPEC,t);}catch(e){}
-  chiudiSpeciale();
-  genera();
-  toast("Discorso Speciale inserito ✅");
-}
-
 function val(id){var el=document.getElementById(id);return el?el.value.trim():"";}
 function nomeSel(id){
   var sel=document.getElementById(id);
@@ -593,17 +553,6 @@ function nomeSel(id){
 }
 
 function riga(etichetta,valore){return valore?(etichetta+valore+"\n"):"";}
-/* Video vero (es. visita del sorvegliante) → "Discorso Pubblico - Video:" + "Discorso finale".
-   Discorso Speciale (tasto 🎬) → solo "Discorso Speciale: tema", senza "Video" e senza "Discorso finale". */
-function rigaDiscorsoOVideo(video){
-  if(!video)return "";
-  var pref="DISCORSO SPECIALE";
-  if(video.indexOf(pref)===0){
-    var t=video.slice(pref.length).replace(/^[\s–-]+/,"");
-    return "\n"+riga("Discorso Speciale: ",t);
-  }
-  return "\n"+riga("Discorso Pubblico - Video: ",video)+"\nDiscorso finale\n";
-}
 
 function nomeProprio(full){if(!full)return "";var p=full.trim().split(/\s+/);return p[p.length-1];}
 function primaParola(s){if(!s)return "";return s.trim().split(/\s+/)[0];}
@@ -654,7 +603,10 @@ function genera(){
   m1+="per l'Adunanza Pubblica di "+data+" il presidente sei tu.\n\n";
   m1+=riga("Oratore: ",oratore);
   m1+=riga("Congregazione: ",cong);
-  m1+=rigaDiscorsoOVideo(video);
+  if(video){
+    m1+="\n"+riga("Discorso Pubblico - Video: ",video);
+    m1+="\nDiscorso finale\n";
+  }
   m1+=riga("Schema n. ",schema);
   m1+=riga("Tema: ",tema);
   m1+=riga("Cantico n. ",cantico);
@@ -666,10 +618,13 @@ function genera(){
   m2+="per la Torre di Guardia di "+data+" il lettore sei tu.\n\n";
   m2+="Per qualsiasi impossibilit\u00e0 a fare il lettore della Torre di Guardia chiamami pure, cos\u00ec provvedo alla sostituzione. Grazie.";
 
-  /* 3 - Bellan */
-  var m3="Ciao Daniele,\npromemoria oratore di "+data+":\n\n";
+  /* 3 - Stippelli (CCA) */
+  var m3="Ciao Davide,\npromemoria oratore di "+data+":\n\n";
   m3+=riga("Oratore: ",oratore);
-  m3+=rigaDiscorsoOVideo(video);
+  if(video){
+    m3+="\n"+riga("Discorso Pubblico - Video: ",video);
+    m3+="\nDiscorso finale\n";
+  }
   m3+=(schemaTema?(schemaTema.replace("Schema ","Schema n. ")+"\n"):"");
   m3+=riga("Cellulare oratore: ",cell);
   m3+=riga("Presidente: ",nomeIntero(pres));
@@ -726,10 +681,7 @@ function caricaSettimana(){
   try{
     var s=localStorage.getItem(STORAGE_KEY_SETT);if(!s)return;
     var d=JSON.parse(s);
-    /* "video" NON va ricaricato in automatico: è un campo eccezionale
-       (Discorso Speciale / visita del sorvegliante), deve restare vuoto
-       ogni volta che riapri l'app e va compilato solo apposta */
-    ["data","oratore","cong","schema","cantico","tema","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
+    ["data","oratore","cong","schema","cantico","tema","video","prox","cell","presManual","lettManual"].forEach(function(k){if(d[k]!=null&&document.getElementById(k))document.getElementById(k).value=d[k];});
     if(d.pres)document.getElementById("presidente").value=d.pres;
     if(d.lett)document.getElementById("lettore").value=d.lett;
     if(d.imgMode){var b=document.querySelector('#segImg button[data-img="'+d.imgMode+'"]');if(b)setImg(b);}
@@ -772,7 +724,7 @@ function importaBackup(input){
       var dati=JSON.parse(e.target.result);
       if(!dati || !dati.elenchi) throw new Error('formato');
       if(!confirm('Ripristinare i dati da questo backup? I dati attuali nell\'app verranno sostituiti.')){ input.value=''; return; }
-      elenchi=dati.elenchi;
+      elenchi=cambioBellanStippelli(dati.elenchi);
       salvaElenchi();
       if(dati.settimana) localStorage.setItem(STORAGE_KEY_SETT, JSON.stringify(dati.settimana));
       popolaTendine();
@@ -793,12 +745,9 @@ window.onload=function(){
   popolaOratori();
   popolaProx();
   popolaCantici();
-  elenchi=caricaElenchi();
+  elenchi=cambioBellanStippelli(caricaElenchi());salvaElenchi();
   popolaTendine();
   caricaSettimana();
-  /* forza il campo Video vuoto ad ogni apertura, anche se il browser
-     (Chrome) prova a riproporre da solo l'ultimo testo scritto */
-  document.getElementById("video").value="";
   genera();
   try{var a=localStorage.getItem(STORAGE_KEY_AGG);if(a)mostraAgg(a);}catch(e){}
   avviato=true;
