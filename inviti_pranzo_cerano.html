@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b4541f">
+<title>Inviti a Pranzo – Congregazione Cerano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f1e8;--bg2:#fdf9f2;--card:#ffffff;--ink:#3a2c22;--ink-soft:#7a6a5c;
+  --line:#e7dccc;--accent:#b4541f;--accent-2:#d98f3a;--accent-soft:#fbeede;
+  --green:#5d7244;--green-soft:#eef2e6;--danger:#b3402f;
+  --shadow:0 10px 30px -12px rgba(90,60,30,.28);--radius:16px;
+}
+body.dark{
+  --bg:#1c1714;--bg2:#241d18;--card:#2a221c;--ink:#f3e8da;--ink-soft:#b69e89;
+  --line:#3a2f26;--accent:#e0813f;--accent-2:#d98f3a;--accent-soft:#3a2a1c;
+  --green:#9bb072;--green-soft:#2b3320;--danger:#e0775f;
+  --shadow:0 12px 32px -14px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:radial-gradient(1200px 400px at 100% -10%, var(--accent-soft), transparent 60%),var(--bg);
+  color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;transition:background .3s,color .3s;
+}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 90px}
+header{display:flex;align-items:center;gap:14px;padding:6px 2px 18px}
+.logo{width:52px;height:52px;flex:none;border-radius:15px;background:linear-gradient(140deg,var(--accent),var(--accent-2));display:grid;place-items:center;font-size:26px;box-shadow:var(--shadow)}
+header h1{font-family:'Fraunces',serif;font-weight:600;font-size:1.45rem;line-height:1.1;margin:0;letter-spacing:-.01em}
+header .sub{font-size:.82rem;color:var(--ink-soft);margin-top:2px}
+.icon-btn{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;flex:none;transition:.15s}
+.icon-btn:active{transform:scale(.92)}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);padding:6px;border-radius:14px;margin-bottom:20px;box-shadow:var(--shadow);position:sticky;top:8px;z-index:30}
+.tab{flex:1;border:none;background:transparent;color:var(--ink-soft);padding:11px 6px;border-radius:10px;font-weight:700;font-size:.86rem;cursor:pointer;transition:.18s;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab .ic{font-size:1.25rem}
+.tab.active{background:linear-gradient(140deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 6px 14px -6px var(--accent)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+.sec-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;margin:0}
+.count{font-size:.78rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:3px 10px;border-radius:20px}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:700;border-radius:11px;padding:11px 16px;font-size:.9rem;transition:.15s;display:inline-flex;align-items:center;gap:7px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(140deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 18px -8px var(--accent)}
+.btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.btn-sm{padding:7px 12px;font-size:.82rem;border-radius:9px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.inv-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.date-pill{background:var(--accent-soft);color:var(--accent);font-weight:700;padding:7px 12px;border-radius:10px;font-size:.92rem;border:1px solid var(--line)}
+body.dark .date-pill{color:var(--accent-2)}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:.74rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+select,input[type=text],input[type=date],input[type=tel],input[type=email],textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--ink);font-family:inherit;font-size:.95rem;transition:.15s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical;min-height:46px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.info-line{font-size:.84rem;color:var(--ink-soft);margin-top:-4px;margin-bottom:11px}
+.info-line b{color:var(--green);font-weight:700}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;padding-top:13px;border-top:1px dashed var(--line)}
+.link-del{margin-left:auto;background:none;border:none;color:var(--danger);font-weight:700;cursor:pointer;font-family:inherit;font-size:.84rem;padding:7px 4px}
+.person{padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:9px;box-shadow:var(--shadow)}
+.person-main{display:flex;align-items:center;gap:12px}
+.avatar{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;font-weight:700;color:#fff;font-size:.95rem}
+.person .meta{flex:1;min-width:0}
+.person .nm{font-weight:700;font-size:.97rem}
+.person .dt{font-size:.8rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis}
+.person .dt a{color:var(--accent);text-decoration:none}
+.mini{border:1px solid var(--line);background:var(--bg2);color:var(--ink-soft);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:15px;flex:none}
+.mini:active{transform:scale(.9)}
+.last-line{margin-top:10px;font-size:.82rem;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.b-free{background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+.b-recent{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-2)}
+.b-mid{background:var(--bg2);color:var(--ink-soft);border:1px solid var(--line)}
+.hist-toggle{background:none;border:none;color:var(--accent);font-weight:700;cursor:pointer;font-family:inherit;font-size:.8rem;padding:8px 0 2px;display:inline-flex;align-items:center;gap:5px}
+.hist{margin-top:8px;padding:10px 12px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;font-size:.84rem}
+.hist .h-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.hist .h-row:last-child{border-bottom:none}
+.hist .h-row b{color:var(--ink)}
+.hist .h-empty{color:var(--ink-soft);font-style:italic}
+.sortbar{display:flex;gap:6px;margin-bottom:14px}
+.sortbar button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);font-family:inherit;font-weight:700;font-size:.8rem;padding:9px;border-radius:10px;cursor:pointer}
+.sortbar button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-2)}
+#yearBar{flex-wrap:wrap}
+#yearBar button{flex:0 0 auto;padding:9px 13px}
+.empty{text-align:center;padding:38px 20px;color:var(--ink-soft)}
+.empty .em{font-size:2.6rem;margin-bottom:10px}
+.empty p{margin:6px 0 0;font-size:.92rem;line-height:1.5}
+.overlay{position:fixed;inset:0;background:rgba(40,28,18,.55);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;z-index:100}
+.overlay.show{display:flex}
+.sheet{background:var(--bg2);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:22px 20px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:slideup .28s ease;max-height:92vh;overflow:auto}
+@media(min-width:560px){.overlay{align-items:center}.sheet{border-radius:22px}}
+@keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h3{font-family:'Fraunces',serif;font-weight:600;margin:0 0 16px;font-size:1.2rem}
+.sheet .btn{width:100%;justify-content:center;margin-top:6px}
+.sub-h{font-size:.74rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+.st-row{display:flex;gap:7px;align-items:center;margin-bottom:7px}
+.st-row input[type=date]{flex:0 0 42%}
+.st-row input[type=text]{flex:1}
+.st-row .mini{flex:none}
+.tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.saved-note{text-align:center;font-size:.74rem;color:var(--ink-soft);margin-top:12px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--bg2);padding:12px 20px;border-radius:12px;font-weight:600;font-size:.88rem;z-index:200;opacity:0;transition:.3s;box-shadow:var(--shadow)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🍽️</div>
+    <div><h1>Inviti a Pranzo</h1><div class="sub">Congregazione di Cerano</div><div class="sub" id="lastUpd" style="color:var(--accent);font-weight:700;margin-top:1px"></div></div>
+    <button class="icon-btn" id="themeBtn" title="Modalità notte">🌙</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="inviti"><span class="ic">📋</span>Inviti</button>
+    <button class="tab" data-tab="oratori"><span class="ic">🎤</span>Oratori</button>
+    <button class="tab" data-tab="ospitanti"><span class="ic">🍽️</span>Ospitanti</button>
+  </div>
+
+  <section id="tab-inviti">
+    <div class="sec-head"><h2>Programma inviti</h2><span class="count" id="cntInviti"></span></div>
+    <div class="sortbar" id="yearBar"></div>
+    <div id="storicoAnno"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:16px" onclick="addInvito()">➕ Nuovo invito</button>
+    <div id="listInviti"></div>
+  </section>
+
+  <section id="tab-oratori" class="hidden">
+    <div class="sec-head"><h2>Oratori in visita</h2><span class="count" id="cntOratori"></span></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:16px" onclick="openOratore()">➕ Aggiungi oratore</button>
+    <div id="listOratori"></div>
+  </section>
+
+  <section id="tab-ospitanti" class="hidden">
+    <div class="sec-head"><h2>Fratelli che ospitano</h2><span class="count" id="cntOspitanti"></span></div>
+    <div class="sortbar">
+      <button id="sortAZ" class="on" onclick="setSort('az')">↕ Ordine A–Z</button>
+      <button id="sortDisp" onclick="setSort('disp')">⏱ Per disponibilità</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:16px" onclick="openOspitante()">➕ Aggiungi ospitante</button>
+    <div id="listOspitanti"></div>
+  </section>
+
+  <div class="tools">
+    <button class="btn btn-ghost btn-sm" onclick="openRubrica()">📖 Collega Rubrica</button>
+    <button class="btn btn-ghost btn-sm" onclick="esporta()">💾 Backup (esporta)</button>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('imp').click()">📂 Ripristina (importa)</button>
+    <input type="file" id="imp" accept=".json" class="hidden" onchange="importa(event)">
+  </div>
+  <div class="saved-note">Tutto viene salvato automaticamente su questo dispositivo.</div>
+</div>
+
+<!-- MODAL ORATORE -->
+<div class="overlay" id="ovOratore">
+  <div class="sheet">
+    <h3 id="ttlOratore">Nuovo oratore</h3>
+    <div class="field"><label>Nome e cognome</label><input type="text" id="o_nome" placeholder="Es. Mario Rossi"></div>
+    <div class="field"><label>Paese / Congregazione</label><input type="text" id="o_cong" list="dlCong" placeholder="Es. Novara Est"><datalist id="dlCong"></datalist></div>
+    <div class="row2">
+      <div class="field"><label>Orario discorso</label><input type="text" id="o_orario" list="dlOrari" placeholder="Es. 10:00"><datalist id="dlOrari"><option value="9:30"><option value="10:00"><option value="10:30"><option value="11:00"><option value="15:00"><option value="16:00"><option value="17:00"><option value="18:00"></datalist></div>
+      <div class="field"><label>Telefono</label><input type="tel" id="o_tel" placeholder="Facoltativo"></div>
+    </div>
+    <button class="btn btn-primary" onclick="salvaOratore()">Salva oratore</button>
+    <button class="btn btn-ghost" onclick="chiudi('ovOratore')">Annulla</button>
+  </div>
+</div>
+
+<!-- MODAL OSPITANTE -->
+<div class="overlay" id="ovOspitante">
+  <div class="sheet">
+    <h3 id="ttlOspitante">Nuovo ospitante</h3>
+    <div class="field" id="rbPickWrap" style="display:none"><label>📖 Prendi dalla Rubrica</label><select id="rb_pick" onchange="prendiDaRubrica(this.value)"></select></div>
+    <div class="field"><label>👥 Prendi dal gruppo di servizio</label><select id="g_pick" onchange="prendiDaGruppo(this.value)"></select></div>
+    <div class="field"><label>Nome e cognome</label><input type="text" id="h_nome" placeholder="Es. Petrillo Tommaso"></div>
+    <div class="field"><label>Telefono</label><input type="tel" id="h_tel" placeholder="Es. 3204162490"></div>
+    <div class="field"><label>Email</label><input type="email" id="h_email" placeholder="Facoltativo"></div>
+    <div class="sub-h">📜 Storico — oratori già ospitati</div>
+    <div id="stList"></div>
+    <div class="st-row">
+      <input type="date" id="st_data">
+      <input type="text" id="st_orat" list="dlOratoriStorico" placeholder="Nome oratore ospitato">
+      <button class="mini" onclick="aggiungiVoceStorico()" title="Aggiungi">➕</button>
+    </div>
+    <datalist id="dlOratoriStorico"></datalist>
+    <button class="btn btn-primary" onclick="salvaOspitante()">Salva ospitante</button>
+    <button class="btn btn-ghost" onclick="chiudi('ovOspitante')">Annulla</button>
+  </div>
+</div>
+
+<div class="overlay" id="ovRubrica">
+  <div class="sheet">
+    <h3>📖 Collega la Rubrica</h3>
+    <div class="info-line" style="margin-bottom:10px">Inserisci la stessa <b>API Key</b> e lo stesso <b>Bin ID</b> che usi nella Rubrica. Se metti le due app sullo stesso sito, le ritrova da sole.</div>
+    <div class="field"><label>API Key (JSONBin)</label><input type="password" id="rb_key" placeholder="$2a$10$..."></div>
+    <div class="field"><label>Bin ID</label><input type="text" id="rb_bin" placeholder="es. 6a08a637..."></div>
+    <div id="rbStato" class="info-line"></div>
+    <button class="btn btn-primary" onclick="scaricaRubrica()">⬇️ Scarica i contatti</button>
+    <button class="btn btn-ghost" onclick="chiudi('ovRubrica')">Chiudi</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Gruppi di servizio, Congregazione di Cerano (ottobre 2026; dal 1/11/2026 il Gruppo Bellan diventa Gruppo Stippelli) */
+var GRUPPI=[
+ {g:"Innocenti",m:["Innocenti Mario","Aula Vincenzo","Aula Gabriel","Aula Salvina","Bruni Daniela","Calienni Pasquale","Catalano Rita","Catalano Rosario","Cavallo Immacolata","Cavallo Saverio","Condello Franco","Coppola Filippo","Coppola Luisa","De Luca Valentina","Guarnieri Franco","Innocenti Rossana","Maffini Anna","Manago' Michela"]},
+ {g:"Orrico",m:["Orrico Giuseppe","Bocchino Dario","Bocchino Lidia","Boscaino Claudia","Bruno Alessandro","Circosta Vincenzo","Circosta Rocchina","Cazzolla Giovanni","Cazzaro Francesco","Danieli Egidio","Danieli Filomena","De Chiara Davide","De Chiara Federico","De Chiara Ripalta","Del Grosso Alessandro","Khvashchevka Isora Lyudmyla","Mutascio Carmela","Orrico Nadia","Palano Gianfranco","Perez Fiorenza"]},
+ {g:"Marinoni",m:["Marinoni Daniele","Recchia Franco","Barberi Alessandro","Barberi Samuele","Barberi Rossana","Bondi Maria","Colombo Cristina","Colombo Marco","De Luca Daniela","Giacalone Lidia","Giacalone Salvatore","Gozzi Aurora","Marinoni Valentina","Miraglia Emilio","Murgia Silvia","Peluso Anna","Perla Alan","Perla Anna","Presta Luigina","Recchia Carmela","Ubezio Giovanna","Vetri Adima"]},
+ {g:"Stippelli",m:["Stippelli Davide","Affuso Giovanni","Affuso Teresa","Stippelli (moglie)","Belvisi Anna","Blanco Anna","Braghin Christian","Braghin Elisa","Braghin Paolo","Bruno Gerardina","Bruno Giuseppe","Cattaneo Liliana","Celin Elisabetta","Coppola Anca","Coppola Stefano","D'Amore Antonia","Ferraresi Cristina","Petrillo Cristina","Petrillo Emma","Petrillo Tommaso","Scruzzi Natalino","Scruzzi Consuelo"]},
+ {g:"Cazzolla",m:["Cazzolla Pablo","Mazzotta Michele","Aula Leonard","Aula Vanessa","Bonanno Concetta","Buglione Angela","Buglione Giuseppe","Cazzolla Ilenia","Concas Antonella","Concas Antonio","Conte Bernardino","Conte Emanuela","D'amore Mario","Lombardo Giuseppina","Luisi Domenico","Luisi Filippo","Luisi Giuseppina","Luisi Marika","Mazzotta Giuseppina","Meduri Antonio","Meduri Cecilia","Sofia Martina"]}
+];
+
+const KEY='invitiPranzoCerano_v1';
+let db={oratori:[],ospitanti:[],inviti:[]};
+let sortMode='az';
+let filtroAnno='tutti';
+let ospFromInvito=null;
+let oratFromInvito=null;
+let rubricaContatti=[];
+const histOpen={};
+
+const OSPITANTI_INIZIALI=[
+ ["Petrillo Tommaso","3204162490","petrillotommaso@hotmail.it",[["2024-02-11","Bozzetti Giancarlo"]]],
+ ["Cazzolla Pablo","3469790015","paxtime83@hotmail.com",[]],
+ ["Bellan Daniele","3478169498","danielebellan@gmail.com",[["2025-05-25","Davide Correale"],["2025-06-01","Cristian Pusceddu"]]],
+ ["Recchia Franco","3476466446","recchia.franco@gmail.com",[["2024-06-09","Luigi Deirossi"]]],
+ ["Mazzotta Michele","3497101045","michele.mazzotta55@gmail.com",[["2024-08-04","Guidace Marco"]]],
+ ["Cavallo Saverio","3405671468","saveriocavallo1@gmail.com",[["2024-02-18","Bovolenta Gianluca"]]],
+ ["Bocchino Dario","3341350377","darliva74@gmail.com",[["2024-03-10","De Ponti Angelo"]]],
+ ["Barberi Alessandro","3297413670","ioperte2014@gmail.com",[["2024-08-11","Frezzato Fabio"]]],
+ ["Aula Vincenzo","3484775942","",[["2025-03-09","Massimo Berta"]]],
+ ["Orrico Giuseppe","3391099256","g.orrico@alice.it",[["2025-05-18","Benetti Daniele"]]],
+ ["Catalano Rosario","3386678991","catalanor@jwpub.org",[["2025-05-04","Cancelli Giorgio"]]],
+ ["Alan Perla","3402729237","",[]],
+ ["Aurora Gozzi","3470765316","aurora.gozzi@hotmail.it",[["2025-09-07","Bellan Daniele"]]]
+];
+
+function carica(){
+  try{const s=localStorage.getItem(KEY);if(s)db=JSON.parse(s);}catch(e){}
+  try{const rc=localStorage.getItem(KEY+'_rubricaCache');if(rc)rubricaContatti=JSON.parse(rc);}catch(e){}
+  if(!db.oratori)db.oratori=[];
+  if(!db.ospitanti)db.ospitanti=[];
+  if(!db.inviti)db.inviti=[];
+  db.ospitanti.forEach(o=>{if(!o.storico)o.storico=[];});
+  if(!localStorage.getItem(KEY+'_seed2')){
+    if(db.ospitanti.length===0){
+      OSPITANTI_INIZIALI.forEach(o=>db.ospitanti.push({id:uid(),nome:o[0],tel:o[1],email:o[2],storico:o[3].map(s=>({data:s[0],oratore:s[1]}))}));
+    }else{
+      OSPITANTI_INIZIALI.forEach(init=>{
+        const ex=db.ospitanti.find(x=>(x.nome||'').trim().toLowerCase()===init[0].trim().toLowerCase());
+        if(ex&&(!ex.storico||ex.storico.length===0)&&init[3].length)ex.storico=init[3].map(s=>({data:s[0],oratore:s[1]}));
+      });
+    }
+    localStorage.setItem(KEY+'_seed2','1');
+    salva();
+  }
+  if(!db._agg){db._agg=Date.now();localStorage.setItem(KEY,JSON.stringify(db));}
+}
+function salva(){db._agg=Date.now();localStorage.setItem(KEY,JSON.stringify(db));mostraAggiornamento();}
+function mostraAggiornamento(){const el=$('lastUpd');if(!el)return;if(db._agg){const d=new Date(db._agg);el.textContent='\uD83D\uDD52 Aggiornato il '+d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'})+' alle '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});}else el.textContent='';}
+function renderBarraAnni(){
+  const annoCorr=new Date().getFullYear();
+  /* anni dal 2020 fino a due anni dopo quello corrente, oppure fino all'anno più lontano già usato */
+  let maxA=annoCorr+2;
+  let minA=2020;
+  db.inviti.forEach(i=>{if(i.data){const y=+i.data.slice(0,4);if(y>maxA)maxA=y;if(y<minA)minA=y;}});
+  db.ospitanti.forEach(h=>(h.storico||[]).forEach(s=>{if(s.data){const y=+s.data.slice(0,4);if(y<minA)minA=y;}}));
+  const anni=[];for(let y=minA;y<=maxA;y++)anni.push(y);
+  let html='<button class="'+(filtroAnno==='tutti'?'on':'')+'" onclick="setAnno(\'tutti\')">Tutti</button>';
+  html+=anni.map(y=>'<button class="'+(filtroAnno===String(y)?'on':'')+'" onclick="setAnno(\''+y+'\')">'+y+'</button>').join('');
+  $('yearBar').innerHTML=html;
+}
+function setAnno(a){filtroAnno=a;render();}
+function rigaStorico(v){return '<div class="h-row"><span><b>'+esc(v.oratore)+'</b><br><span style="color:var(--ink-soft);font-size:.8rem">\uD83C\uDFE0 ospitato da '+esc(v.ospitante)+'</span></span><span style="white-space:nowrap">'+fmtBreve(v.data)+'</span></div>';}
+function renderStoricoAnno(){
+  const el=$('storicoAnno');if(!el)return;
+  const voci=[];
+  db.ospitanti.forEach(h=>(h.storico||[]).forEach(s=>{if(s.data&&(filtroAnno==='tutti'||s.data.slice(0,4)===filtroAnno))voci.push({data:s.data,oratore:s.oratore,ospitante:h.nome});}));
+  voci.sort((a,b)=>a.data<b.data?-1:1);
+  const titolo=filtroAnno==='tutti'?'\uD83D\uDCDC Tutte le ospitalit\u00E0 registrate':'\uD83D\uDCDC Chi ha ospitato chi nel '+filtroAnno;
+  if(!voci.length){el.innerHTML='<div class="card" style="margin-bottom:16px"><b>'+titolo+'</b><div class="info-line" style="margin-top:8px">Nessuna ospitalit\u00E0 registrata'+(filtroAnno==='tutti'?'':' in questo anno')+'.</div></div>';return;}
+  let html='<div class="card" style="margin-bottom:16px"><b>'+titolo+' ('+voci.length+')</b>';
+  if(filtroAnno==='tutti'){
+    const anni=[...new Set(voci.map(v=>v.data.slice(0,4)))].sort();
+    anni.forEach(an=>{
+      const gruppo=voci.filter(v=>v.data.slice(0,4)===an);
+      html+='<div style="margin-top:13px;margin-bottom:2px;font-weight:700;color:var(--accent)">'+an+' \u00B7 '+gruppo.length+' ospitalit\u00E0</div><div class="hist">'+gruppo.map(rigaStorico).join('')+'</div>';
+    });
+  }else{
+    html+='<div class="hist" style="margin-top:10px">'+voci.map(rigaStorico).join('')+'</div>';
+  }
+  el.innerHTML=html+'</div>';
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+const $=id=>document.getElementById(id);
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300);}
+function iniziali(n){const p=(n||'?').trim().split(/\s+/);return ((p[0]||'')[0]||'')+((p[1]||'')[0]||'');}
+function coloreDa(s){let h=0;for(let i=0;i<(s||'').length;i++)h=s.charCodeAt(i)+((h<<5)-h);const c=['#b4541f','#5d7244','#a9762a','#7a5a8f','#3f7a8c','#a04646','#5a6e3a'];return c[Math.abs(h)%c.length];}
+function fmtData(d){if(!d)return 'Data da definire';const dt=new Date(d+'T00:00');return dt.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+function fmtBreve(d){if(!d)return '';const dt=new Date(d+'T00:00');return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function ultimaData(o){if(!o.storico||!o.storico.length)return null;return o.storico.map(s=>s.data).sort().slice(-1)[0];}
+function mesiFa(d){if(!d)return null;const diff=(Date.now()-new Date(d+'T00:00'))/(1000*60*60*24*30.4);return Math.max(0,Math.round(diff));}
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  ['inviti','oratori','ospitanti'].forEach(t=>$('tab-'+t).classList.add('hidden'));
+  $('tab-'+b.dataset.tab).classList.remove('hidden');
+});
+
+$('themeBtn').onclick=()=>{
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  $('themeBtn').textContent=d?'☀️':'🌙';
+  localStorage.setItem(KEY+'_dark',d?'1':'0');
+};
+if(localStorage.getItem(KEY+'_dark')==='1'){document.body.classList.add('dark');$('themeBtn').textContent='☀️';}
+
+function setSort(m){sortMode=m;$('sortAZ').classList.toggle('on',m==='az');$('sortDisp').classList.toggle('on',m==='disp');render();}
+
+/* ORATORI */
+let editOratore=null;
+function openOratore(id,fromInvito){
+  editOratore=id||null;
+  oratFromInvito=fromInvito||null;
+  const o=id?db.oratori.find(x=>x.id===id):null;
+  $('ttlOratore').textContent=id?'Modifica oratore':'Nuovo oratore';
+  $('o_nome').value=o?o.nome:'';$('o_cong').value=o?o.cong:'';$('o_orario').value=o?o.orario:'';$('o_tel').value=o?o.tel:'';
+  aggiornaDatalistCong();apri('ovOratore');
+}
+function salvaOratore(){
+  const nome=$('o_nome').value.trim();
+  if(!nome){toast('Scrivi il nome dell\u2019oratore');return;}
+  const dati={nome,cong:$('o_cong').value.trim(),orario:$('o_orario').value.trim(),tel:$('o_tel').value.trim()};
+  if(editOratore){Object.assign(db.oratori.find(x=>x.id===editOratore),dati);}
+  else{const nid=uid();db.oratori.push({id:nid,...dati});if(oratFromInvito){const inv=db.inviti.find(x=>x.id===oratFromInvito);if(inv){inv.oratoreId=nid;if(dati.orario&&!inv.orario)inv.orario=dati.orario;}}}
+  oratFromInvito=null;
+  salva();chiudi('ovOratore');render();toast('Oratore salvato \u2713');
+}
+function delOratore(id){
+  if(!confirm('Eliminare questo oratore?'))return;
+  db.oratori=db.oratori.filter(x=>x.id!==id);
+  db.inviti.forEach(i=>{if(i.oratoreId===id)i.oratoreId='';});
+  salva();render();
+}
+function aggiornaDatalistCong(){
+  const set=[...new Set(db.oratori.map(o=>o.cong).filter(Boolean))];
+  $('dlCong').innerHTML=set.map(c=>'<option value="'+esc(c)+'">').join('');
+}
+
+/* OSPITANTI */
+let editOspitante=null;let tmpStorico=[];
+function openOspitante(id,fromInvito){
+  editOspitante=id||null;
+  ospFromInvito=fromInvito||null;
+  aggiornaDatalistOratoriStorico();
+  const o=id?db.ospitanti.find(x=>x.id===id):null;
+  $('ttlOspitante').textContent=id?'Modifica ospitante':'Nuovo ospitante';
+  $('h_nome').value=o?o.nome:'';$('h_tel').value=o?o.tel:'';$('h_email').value=o?o.email:'';
+  tmpStorico=o?JSON.parse(JSON.stringify(o.storico||[])):[];
+  $('st_data').value='';$('st_orat').value='';
+  const sel=$('rb_pick'),wrap=$('rbPickWrap');
+  if(rubricaContatti.length){wrap.style.display='';sel.innerHTML='<option value="">\u2014 scegli dalla Rubrica \u2014</option>'+rubricaContatti.map((c,i)=>'<option value="'+i+'">'+esc(c.name)+(c.phone?' \u00B7 '+esc(c.phone):'')+'</option>').join('');}
+  else{wrap.style.display='none';}
+  popolaGruppi();
+  renderStoricoModal();apri('ovOspitante');
+}
+function aggiornaDatalistOratoriStorico(){
+  const set=new Set();
+  db.oratori.forEach(o=>{if(o.nome)set.add(o.nome);});
+  db.ospitanti.forEach(h=>(h.storico||[]).forEach(s=>{if(s.oratore)set.add(s.oratore);}));
+  const el=$('dlOratoriStorico');if(el)el.innerHTML=[...set].sort().map(n=>'<option value="'+esc(n)+'">').join('');
+}
+function renderStoricoModal(){
+  const el=$('stList');
+  if(!tmpStorico.length){el.innerHTML='<div class="hist" style="margin:0 0 8px"><span class="h-empty">Nessuna ospitalità registrata.</span></div>';return;}
+  el.innerHTML=tmpStorico.slice().sort((a,b)=>a.data<b.data?1:-1).map((s)=>{
+    const realIdx=tmpStorico.indexOf(s);
+    return '<div class="st-row"><input type="date" value="'+(s.data||'')+'" onchange="tmpStorico['+realIdx+'].data=this.value"><input type="text" list="dlOratoriStorico" value="'+esc(s.oratore)+'" onchange="tmpStorico['+realIdx+'].oratore=this.value"><button class="mini" onclick="tmpStorico.splice('+realIdx+',1);renderStoricoModal()" title="Elimina">\uD83D\uDDD1</button></div>';
+  }).join('');
+}
+function aggiungiVoceStorico(){
+  const d=$('st_data').value,o=$('st_orat').value.trim();
+  if(!o){toast('Scrivi il nome dell\u2019oratore ospitato');return;}
+  tmpStorico.push({data:d,oratore:o});
+  $('st_data').value='';$('st_orat').value='';renderStoricoModal();
+}
+function salvaOspitante(){
+  const nome=$('h_nome').value.trim();
+  if(!nome){toast('Scrivi il nome del fratello');return;}
+  const pend=$('st_orat').value.trim();
+  if(pend){tmpStorico.push({data:$('st_data').value,oratore:pend});$('st_orat').value='';$('st_data').value='';}
+  const dati={nome,tel:$('h_tel').value.trim(),email:$('h_email').value.trim(),storico:tmpStorico.filter(s=>s.oratore&&s.oratore.trim())};
+  if(editOspitante){Object.assign(db.ospitanti.find(x=>x.id===editOspitante),dati);}
+  else{const nid=uid();db.ospitanti.push({id:nid,...dati});if(ospFromInvito){const inv=db.inviti.find(x=>x.id===ospFromInvito);if(inv)inv.ospitanteId=nid;}}
+  ospFromInvito=null;
+  salva();chiudi('ovOspitante');render();toast('Ospitante salvato \u2713');
+}
+function delOspitante(id){
+  if(!confirm('Eliminare questo ospitante?'))return;
+  db.ospitanti=db.ospitanti.filter(x=>x.id!==id);
+  db.inviti.forEach(i=>{if(i.ospitanteId===id)i.ospitanteId='';});
+  salva();render();
+}
+function popolaGruppi(){
+  let h='<option value="">\u2014 scegli dal gruppo \u2014</option>';
+  GRUPPI.forEach(G=>{
+    const nomi=G.m.slice().sort((a,b)=>a.localeCompare(b,'it'));
+    h+='<optgroup label="Gruppo '+esc(G.g)+'">'+nomi.map(n=>'<option value="'+esc(n+'||'+G.g)+'">'+esc(n)+'</option>').join('')+'</optgroup>';
+  });
+  $('g_pick').innerHTML=h;
+}
+function prendiDaGruppo(v){
+  if(!v)return;
+  const nome=v.split('||')[0];
+  const gia=db.ospitanti.find(x=>(x.nome||'').trim().toLowerCase()===nome.trim().toLowerCase());
+  $('h_nome').value=nome;
+  if(gia)toast(nome+' \u00E8 gi\u00E0 tra gli ospitanti');
+  $('g_pick').value='';
+}
+function toggleHist(id){histOpen[id]=!histOpen[id];render();}
+
+/* INVITI */
+function addInvito(){
+  db.inviti.push({id:uid(),data:'',oratoreId:'',ospitanteId:'',orario:'',note:''});
+  salva();render();
+}
+function updInvito(id,campo,val){
+  const inv=db.inviti.find(x=>x.id===id);if(!inv)return;
+  inv[campo]=val;
+  if(campo==='oratoreId'){const o=db.oratori.find(x=>x.id===val);if(o&&o.orario&&!inv.orario)inv.orario=o.orario;}
+  salva();render();
+}
+function delInvito(id){if(!confirm('Eliminare questo invito?'))return;db.inviti=db.inviti.filter(x=>x.id!==id);salva();render();}
+function copiaWA(id){
+  const inv=db.inviti.find(x=>x.id===id);
+  const o=db.oratori.find(x=>x.id===inv.oratoreId);
+  const h=db.ospitanti.find(x=>x.id===inv.ospitanteId);
+  let t='\uD83C\uDF7D\uFE0F *INVITO A PRANZO*\n';
+  t+='\uD83D\uDCC5 '+fmtData(inv.data)+'\n';
+  if(o)t+='\uD83C\uDFA4 Oratore: '+o.nome+(o.cong?' ('+o.cong+')':'')+'\n';
+  if(inv.orario)t+='\uD83D\uDD50 Orario discorso: '+inv.orario+'\n';
+  if(h)t+='\uD83C\uDFE0 Ospita: '+h.nome+(h.tel?' \u2013 '+h.tel:'')+'\n';
+  if(inv.note)t+='\uD83D\uDCDD '+inv.note+'\n';
+  navigator.clipboard.writeText(t.trim()).then(()=>toast('Copiato! Incollalo su WhatsApp \uD83D\uDCF2'),()=>toast('Copia non riuscita'));
+}
+function registraStorico(id){
+  const inv=db.inviti.find(x=>x.id===id);
+  const o=db.oratori.find(x=>x.id===inv.oratoreId);
+  const h=db.ospitanti.find(x=>x.id===inv.ospitanteId);
+  if(!o||!h){toast('Servono oratore e ospitante');return;}
+  if(!confirm('Aggiungere "'+o.nome+'" allo storico di '+h.nome+'?'))return;
+  const gia=h.storico.some(s=>s.data===inv.data&&s.oratore===o.nome);
+  if(gia){toast('Gi\u00E0 presente nello storico');return;}
+  h.storico.push({data:inv.data,oratore:o.nome});
+  salva();render();toast('Registrato nello storico di '+h.nome+' \u2713');
+}
+
+/* RENDER */
+function render(){
+  renderBarraAnni();
+  renderStoricoAnno();
+  const li=$('listInviti');
+  const ordinati=[...db.inviti].sort((a,b)=>(a.data||'9999')<(b.data||'9999')?-1:1);
+  const visibili=filtroAnno==='tutti'?ordinati:ordinati.filter(i=>!i.data||i.data.slice(0,4)===filtroAnno);
+  const nConteggio=filtroAnno==='tutti'?db.inviti.length:visibili.filter(i=>i.data).length;
+  $('cntInviti').textContent=nConteggio+' inviti'+(filtroAnno!=='tutti'?' \u00B7 '+filtroAnno:'');
+  if(visibili.length===0){
+    li.innerHTML='<div class="empty"><div class="em">\uD83D\uDCCB</div><p><b>'+(filtroAnno==='tutti'?'Nessun invito ancora.':'Nessun invito pianificato per il '+filtroAnno+'.')+'</b><br>Premi \u201CNuovo invito\u201D, scegli la data, l\u2019oratore e il fratello che lo ospita a pranzo.</p></div>';
+  }else{
+    li.innerHTML=visibili.map(inv=>{
+      const o=db.oratori.find(x=>x.id===inv.oratoreId);
+      const h=db.ospitanti.find(x=>x.id===inv.ospitanteId);
+      const optOratori='<option value="">\u2014 scegli oratore \u2014</option>'+db.oratori.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).map(x=>'<option value="'+x.id+'" '+(x.id===inv.oratoreId?'selected':'')+'>'+esc(x.nome)+'</option>').join('');
+      const optOsp='<option value="">\u2014 scegli ospitante \u2014</option>'+db.ospitanti.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).map(x=>'<option value="'+x.id+'" '+(x.id===inv.ospitanteId?'selected':'')+'>'+esc(x.nome)+'</option>').join('');
+      const orari=['9:30','10:00','10:30','11:00','15:00','16:00','17:00','18:00'];
+      const optOrari='<option value="">\u2014 orario \u2014</option>'+orari.map(t=>'<option '+(t===inv.orario?'selected':'')+'>'+t+'</option>').join('')+(inv.orario&&!orari.includes(inv.orario)?'<option selected>'+esc(inv.orario)+'</option>':'');
+      return '<div class="card">'
+        +'<div class="inv-top"><span class="date-pill">\uD83D\uDCC5 '+fmtData(inv.data)+'</span></div>'
+        +'<div class="field"><label>Data</label><input type="date" value="'+(inv.data||'')+'" onchange="updInvito(\''+inv.id+'\',\'data\',this.value)"></div>'
+        +'<div class="row2"><div class="field"><label>\uD83C\uDFA4 Oratore</label><div style="display:flex;gap:7px"><select style="flex:1" onchange="updInvito(\''+inv.id+'\',\'oratoreId\',this.value)">'+optOratori+'</select><button class="mini" title="Aggiungi nuovo oratore" onclick="openOratore(null,\''+inv.id+'\')">\u2795</button></div></div>'
+        +'<div class="field"><label>\uD83D\uDD50 Orario</label><select onchange="updInvito(\''+inv.id+'\',\'orario\',this.value)">'+optOrari+'</select></div></div>'
+        +(o?'<div class="info-line">Da <b>'+esc(o.cong||'congregazione n.d.')+'</b>'+(o.tel?' \u00B7 \u260E '+esc(o.tel):'')+'</div>':'')
+        +'<div class="field"><label>\uD83C\uDF7D\uFE0F Ospita a pranzo</label><div style="display:flex;gap:7px"><select style="flex:1" onchange="updInvito(\''+inv.id+'\',\'ospitanteId\',this.value)">'+optOsp+'</select><button class="mini" title="Aggiungi nuovo ospitante" onclick="openOspitante(null,\''+inv.id+'\')">\u2795</button></div></div>'
+        +(h?'<div class="info-line">'+(h.tel?'\u260E <b>'+esc(h.tel)+'</b>':'')+(h.email?' \u00B7 \u2709 '+esc(h.email):'')+'</div>':'')
+        +'<div class="field"><label>\uD83D\uDCDD Note</label><textarea placeholder="Allergie, preferenze, n. persone..." onchange="updInvito(\''+inv.id+'\',\'note\',this.value)">'+esc(inv.note)+'</textarea></div>'
+        +'<div class="card-actions"><button class="btn btn-ghost btn-sm" onclick="copiaWA(\''+inv.id+'\')">\uD83D\uDCF2 Copia WhatsApp</button>'
+        +(o&&h?'<button class="btn btn-ghost btn-sm" onclick="registraStorico(\''+inv.id+'\')">\uD83D\uDCCC Registra nello storico</button>':'')
+        +'<button class="link-del" onclick="delInvito(\''+inv.id+'\')">\uD83D\uDDD1 Elimina</button></div>'
+        +'</div>';
+    }).join('');
+  }
+
+  $('cntOratori').textContent=db.oratori.length+' oratori';
+  const lo=$('listOratori');
+  if(db.oratori.length===0){
+    lo.innerHTML='<div class="empty"><div class="em">\uD83C\uDFA4</div><p><b>Nessun oratore inserito.</b><br>Aggiungi gli oratori che vengono a Cerano: nome, paese/congregazione, orario e telefono.</p></div>';
+  }else{
+    lo.innerHTML=db.oratori.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).map(o=>
+      '<div class="person"><div class="person-main"><div class="avatar" style="background:'+coloreDa(o.nome)+'">'+esc(iniziali(o.nome)).toUpperCase()+'</div>'
+      +'<div class="meta"><div class="nm">'+esc(o.nome)+'</div><div class="dt">'+(o.cong?esc(o.cong):'<i>paese n.d.</i>')+(o.orario?' \u00B7 \uD83D\uDD50 '+esc(o.orario):'')+(o.tel?' \u00B7 '+esc(o.tel):'')+'</div></div>'
+      +'<button class="mini" onclick="openOratore(\''+o.id+'\')" title="Modifica">\u270F\uFE0F</button>'
+      +'<button class="mini" onclick="delOratore(\''+o.id+'\')" title="Elimina">\uD83D\uDDD1</button></div></div>').join('');
+  }
+
+  $('cntOspitanti').textContent=db.ospitanti.length+' fratelli';
+  const lh=$('listOspitanti');
+  if(db.ospitanti.length===0){
+    lh.innerHTML='<div class="empty"><div class="em">\uD83C\uDF7D\uFE0F</div><p><b>Nessun ospitante.</b><br>Aggiungi i fratelli disponibili a ospitare gli oratori.</p></div>';
+  }else{
+    let lista=db.ospitanti.slice();
+    if(sortMode==='az'){lista.sort((a,b)=>a.nome.localeCompare(b.nome));}
+    else{lista.sort((a,b)=>{const da=ultimaData(a),dbb=ultimaData(b);if(!da&&!dbb)return a.nome.localeCompare(b.nome);if(!da)return -1;if(!dbb)return 1;return da<dbb?-1:1;});}
+    lh.innerHTML=lista.map(h=>{
+      const ud=ultimaData(h);const mf=mesiFa(ud);
+      let badge,last;
+      if(!ud){badge='<span class="badge b-free">\uD83D\uDFE2 Mai ospitato</span>';last='Non ha ancora ospitato nessuno';}
+      else{
+        const ult=h.storico.slice().sort((a,b)=>a.data<b.data?1:-1)[0];
+        last='Ultima volta: <b style="color:var(--ink)">'+fmtBreve(ud)+'</b> \u2013 '+esc(ult.oratore);
+        if(mf>=12)badge='<span class="badge b-free">\uD83D\uDFE2 '+mf+' mesi fa</span>';
+        else if(mf<=3)badge='<span class="badge b-recent">\uD83D\uDD34 '+(mf<=1?'da poco':mf+' mesi fa')+'</span>';
+        else badge='<span class="badge b-mid">'+mf+' mesi fa</span>';
+      }
+      const n=(h.storico||[]).length;
+      const open=histOpen[h.id];
+      let histHtml='';
+      if(open){
+        histHtml='<div class="hist">'+(n?h.storico.slice().sort((a,b)=>a.data<b.data?1:-1).map(s=>'<div class="h-row"><b>'+esc(s.oratore)+'</b><span>'+(s.data?fmtBreve(s.data):'')+'</span></div>').join(''):'<span class="h-empty">Nessuna ospitalit\u00E0 registrata.</span>')+'</div>';
+      }
+      return '<div class="person"><div class="person-main"><div class="avatar" style="background:'+coloreDa(h.nome)+'">'+esc(iniziali(h.nome)).toUpperCase()+'</div>'
+      +'<div class="meta"><div class="nm">'+esc(h.nome)+'</div><div class="dt">'+(h.tel?'<a href="tel:'+esc(h.tel)+'">\u260E '+esc(h.tel)+'</a>':'')+(h.email?' \u00B7 \u2709 '+esc(h.email):'')+'</div></div>'
+      +'<button class="mini" onclick="openOspitante(\''+h.id+'\')" title="Modifica">\u270F\uFE0F</button>'
+      +'<button class="mini" onclick="delOspitante(\''+h.id+'\')" title="Elimina">\uD83D\uDDD1</button></div>'
+      +'<div class="last-line">'+badge+'<span style="color:var(--ink-soft)">'+last+'</span></div>'
+      +'<button class="hist-toggle" onclick="toggleHist(\''+h.id+'\')">\uD83D\uDCDC Storico ('+n+') '+(open?'\u25B2':'\u25BC')+'</button>'
+      +histHtml
+      +'</div>';
+    }).join('');
+  }
+  aggiornaDatalistCong();
+}
+
+function apri(id){$(id).classList.add('show');}
+function chiudi(id){$(id).classList.remove('show');}
+document.querySelectorAll('.overlay').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('show');}));
+
+function openRubrica(){
+  $('rb_key').value=localStorage.getItem('rb_apikey')||'';
+  $('rb_bin').value=localStorage.getItem('rb_binid')||'';
+  aggiornaStatoRubrica();apri('ovRubrica');
+}
+function aggiornaStatoRubrica(){
+  const el=$('rbStato');if(!el)return;
+  el.innerHTML=rubricaContatti.length?('\u2705 '+rubricaContatti.length+' contatti pronti nelle tendine'):'Nessun contatto ancora scaricato.';
+}
+async function scaricaRubrica(){
+  const key=($('rb_key').value||'').trim()||localStorage.getItem('rb_apikey')||'';
+  const bin=($('rb_bin').value||'').trim()||localStorage.getItem('rb_binid')||'';
+  if(!key||!bin){toast('Inserisci API Key e Bin ID');return;}
+  localStorage.setItem('rb_apikey',key);localStorage.setItem('rb_binid',bin);
+  toast('Scarico dalla Rubrica...');
+  try{
+    const res=await fetch('https://api.jsonbin.io/v3/b/'+bin+'/latest',{headers:{'X-Master-Key':key}});
+    const json=await res.json();
+    if(!res.ok)throw json;
+    const arr=(json.record&&json.record.rubrica)||[];
+    if(!Array.isArray(arr))throw new Error('Formato Rubrica non valido');
+    rubricaContatti=arr.map(c=>({name:(c.name||'').trim(),phone:(c.phone||'').trim(),email:(c.email||'').trim()})).filter(c=>c.name).sort((a,b)=>a.name.localeCompare(b.name));
+    localStorage.setItem(KEY+'_rubricaCache',JSON.stringify(rubricaContatti));
+    aggiornaStatoRubrica();
+    toast('\u2705 '+rubricaContatti.length+' contatti caricati dalla Rubrica');
+  }catch(e){toast('\u274C Errore: '+(e.message||JSON.stringify(e)));}
+}
+function prendiDaRubrica(i){
+  if(i===''||i==null)return;
+  const c=rubricaContatti[+i];if(!c)return;
+  $('h_nome').value=c.name;$('h_tel').value=c.phone;$('h_email').value=c.email;
+}
+function esporta(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='inviti_pranzo_cerano_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Backup salvato \uD83D\uDCBE');
+}
+function importa(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    if(!d.oratori||!d.ospitanti||!d.inviti){toast('File non valido');return;}
+    if(!confirm('Sostituire tutti i dati con quelli del backup?'))return;
+    db=d;db.ospitanti.forEach(o=>{if(!o.storico)o.storico=[];});salva();render();toast('Dati ripristinati \u2713');
+  }catch(err){toast('File non leggibile');}};
+  r.readAsText(f);e.target.value='';
+}
+
+carica();render();mostraAggiornamento();
+</script>
+</body>
+</html>
