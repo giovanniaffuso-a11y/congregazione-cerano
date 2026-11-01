@@ -1,65 +1,42 @@
-// Service Worker per "Felici Per Sempre — Congresso 2026"
-// Salva la pagina nella memoria del telefono al primo caricamento
-// (con connessione), così l'app si apre anche senza campo/internet.
+// Service Worker del cruscotto "Congregazione di Cerano" (aggiornato 01/11/2026)
+// Prima la rete, poi la copia salvata:
+// - se c'è internet, apre SEMPRE la versione più nuova delle app e la salva;
+// - se non c'è internet, apre l'ultima copia salvata sul dispositivo.
 
-const CACHE_NAME = 'congresso2026-v2'; // versione aumentata: forza il rinnovo della cache
-const URLS_TO_CACHE = [
-  './Congresso2026_Appunti_Interattivi.html'
-];
+const CACHE_NAME = 'cerano-v3';
 
-// All'installazione, salva subito la pagina principale in cache.
-// Ogni file viene salvato singolarmente: se uno fallisse, non blocca gli altri
-// (prima il problema era che un errore su un singolo file bloccava tutto).
 self.addEventListener('install', function (event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return Promise.all(
-        URLS_TO_CACHE.map(function (url) {
-          return cache.add(url).catch(function (err) {
-            console.log('Impossibile salvare in cache:', url, err);
-          });
-        })
-      );
-    })
-  );
   self.skipWaiting();
 });
 
-// Alla riattivazione, elimina eventuali cache vecchie di versioni precedenti
+// Cancella le cache vecchie (anche quella "congresso2026-v2" della versione precedente)
 self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(
-        keys.filter(function (key) { return key !== CACHE_NAME; })
+        keys.filter(function (key) { return key !== CACHE_NAME && key !== 'offline-pagine-v1'; })
             .map(function (key) { return caches.delete(key); })
       );
-    })
+    }).then(function () { return self.clients.claim(); })
   );
-  self.clients.claim();
 });
 
-// Per ogni richiesta: se c'è già in cache, usa quella (veloce e offline);
-// nel frattempo prova comunque ad aggiornarla dalla rete, se disponibile.
 self.addEventListener('fetch', function (event) {
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  if (!req.url.startsWith(self.location.origin)) return; // siti esterni (jsonbin, Google...) non toccati
 
   event.respondWith(
-    caches.match(event.request).then(function (cached) {
-      const networkFetch = fetch(event.request)
-        .then(function (response) {
-          if (response && response.status === 200 && event.request.url.startsWith(self.location.origin)) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(function (cache) {
-              cache.put(event.request, clone);
-            });
-          }
-          return response;
-        })
-        .catch(function () {
-          return cached; // niente rete: usa la copia salvata, se c'è
-        });
-
-      return cached || networkFetch;
-    })
+    fetch(req, { cache: 'no-store' })
+      .then(function (response) {
+        if (response && response.status === 200) {
+          const copia = response.clone();
+          caches.open(CACHE_NAME).then(function (cache) { cache.put(req, copia); });
+        }
+        return response;
+      })
+      .catch(function () {
+        return caches.match(req, { ignoreSearch: true });
+      })
   );
 });
