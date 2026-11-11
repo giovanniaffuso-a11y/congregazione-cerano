@@ -172,6 +172,7 @@
           <button type="button" id="rgDom" onclick="rSetGiorno('Domenica')">Domenica</button>
         </div>
       </div>
+      <div class="field"><label>Data (calendario)</label><input type="date" id="rData" onchange="rDataPick()"></div>
       <div class="row">
         <div class="field"><label>Orario</label><input type="time" id="rOra" value="20:00" onchange="rAgg()"></div>
         <div class="field"><label>Cantico (facolt.)</label><input type="text" id="rCant" placeholder="Es. 2" inputmode="numeric" oninput="rAgg()"></div>
@@ -557,18 +558,23 @@ function renderCal(){
   }
   box.innerHTML=h;
 }
-function msgTesto(nome, quando, ora, sch, cant){
+function msgTesto(nome, quando, ora, sch, cant, pranzo){
   var s='Ciao '+(nome||'')+', sono il frat Affuso Giovanni della congregazione di Cerano. '
     +quando+' alle ore '+ora+' sei ospite da noi come oratore con lo schema n '+(sch||'___');
   if(cant) s+=' e il cantico n '+cant+'. Mandami per favore appena puoi le immagini se ne hai. ';
   else s+='. Mandami per favore appena puoi il cantico e le immagini se ne hai. ';
-  s+='Fammi sapere se ti fermi tutta l\'adunanza. A presto.';
+  s+='Fammi sapere se ti fermi tutta l\'adunanza. ';
+  if(pranzo) s+='Ci farebbe piacere averti anche a pranzo da una famiglia della congregazione: se ti va, dimmelo così li avviso. ';
+  s+='A presto.';
   return s;
 }
+// Invito a pranzo: solo la domenica, a partire da gennaio 2027
+var PRANZO_DAL=new Date(2027,0,1);
+function pranzoOk(d){ return !!(d && !isNaN(d) && d.getDay()===0 && d.getTime()>=PRANZO_DAL.getTime()); }
 function msgDa(nome, data, ora, sch, cant){
   var d=dObj(data);
   var quando=(d&&!isNaN(d)) ? (GIORNI[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()]) : '';
-  return msgTesto(nome, quando, String(ora||'20:00').replace(':','.'), sch, cant);
+  return msgTesto(nome, quando, String(ora||'20:00').replace(':','.'), sch, cant, pranzoOk(d));
 }
 function copiaCal(id){
   var c=cal.find(function(x){return x.id===id;}); if(!c) return;
@@ -608,17 +614,38 @@ function rSchPick(){
   rAgg();
 }
 function rSetGiorno(g){
+  var dEl=document.getElementById('rData'), d=dObj(dEl.value);
+  if(d && !isNaN(d) && GIORNI[d.getDay()]!==g) dEl.value='';
   rGiorno=g;
   document.getElementById('rgSab').classList.toggle('on', g==='Sabato');
   document.getElementById('rgDom').classList.toggle('on', g==='Domenica');
   rAgg();
+}
+function rDataPick(){
+  var d=dObj(document.getElementById('rData').value);
+  if(d && !isNaN(d)){
+    rGiorno=GIORNI[d.getDay()];
+    document.getElementById('rgSab').classList.toggle('on', rGiorno==='Sabato');
+    document.getElementById('rgDom').classList.toggle('on', rGiorno==='Domenica');
+  }
+  rAgg();
+}
+function rQuando(){
+  var d=dObj(document.getElementById('rData').value);
+  if(d && !isNaN(d)) return GIORNI[d.getDay()]+' '+d.getDate()+' '+MESI[d.getMonth()];
+  return rGiorno;
 }
 function rComponi(){
   var nome=(document.getElementById('rNome').value||'').trim()||'[nome]';
   var ora=(document.getElementById('rOra').value||'20:00').replace(':','.');
   var sch=(document.getElementById('rSchema').value||'').trim()||'[___]';
   var cant=(document.getElementById('rCant').value||'').trim();
-  return msgTesto(nome, rGiorno, ora, sch, cant);
+  var dom=dObj(document.getElementById('rData').value);
+  if(!dom || isNaN(dom)){
+    dom=null;
+    if(rGiorno==='Domenica'){ dom=new Date(); dom.setHours(0,0,0,0); dom.setDate(dom.getDate()+((7-dom.getDay())%7)); }
+  }
+  return msgTesto(nome, rQuando(), ora, sch, cant, pranzoOk(dom));
 }
 function rAgg(){ if(!rMsgMod) document.getElementById('rTxt').value=rComponi(); }
 function rRigenera(){ rMsgMod=false; document.getElementById('rTxt').value=rComponi(); toast('Testo rigenerato'); }
@@ -764,7 +791,7 @@ function notaRapido(){
   var cong=(document.getElementById('rCong').value||'').trim();
   var sch=(document.getElementById('rSchema').value||'').trim();
   var cant=(document.getElementById('rCant').value||'').trim();
-  var t='Promemoria mandato a '+(nome||'[nome]')+(cong?' ('+cong+')':'')+' - '+rGiorno+' - schema '+(sch||'___');
+  var t='Promemoria mandato a '+(nome||'[nome]')+(cong?' ('+cong+')':'')+' - '+rQuando()+' - schema '+(sch||'___');
   if(cant) t+=' - cantico '+cant;
   notaAMe(t);
 }
