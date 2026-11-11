@@ -230,7 +230,7 @@ const histOpen={};
 const OSPITANTI_INIZIALI=[
  ["Petrillo Tommaso","3204162490","petrillotommaso@hotmail.it",[["2024-02-11","Bozzetti Giancarlo"]]],
  ["Cazzolla Pablo","3469790015","paxtime83@hotmail.com",[]],
- ["Bellan Daniele","3478169498","danielebellan@gmail.com",[["2025-05-25","Davide Correale"],["2025-06-01","Cristian Pusceddu"]]],
+ ["Stippelli Davide","","",[]],
  ["Recchia Franco","3476466446","recchia.franco@gmail.com",[["2024-06-09","Luigi Deirossi"]]],
  ["Mazzotta Michele","3497101045","michele.mazzotta55@gmail.com",[["2024-08-04","Guidace Marco"]]],
  ["Cavallo Saverio","3405671468","saveriocavallo1@gmail.com",[["2024-02-18","Bovolenta Gianluca"]]],
@@ -260,6 +260,15 @@ function carica(){
       });
     }
     localStorage.setItem(KEY+'_seed2','1');
+    salva();
+  }
+  /* Novembre 2026: tolta la famiglia Bellan, inserita la famiglia Stippelli (una volta sola) */
+  if(!localStorage.getItem(KEY+'_stippelli')){
+    const via=db.ospitanti.filter(x=>/bellan/i.test(x.nome||'')).map(x=>x.id);
+    db.ospitanti=db.ospitanti.filter(x=>via.indexOf(x.id)<0);
+    db.inviti.forEach(i=>{if(via.indexOf(i.ospitanteId)>=0)i.ospitanteId='';});
+    if(!db.ospitanti.some(x=>/stippelli/i.test(x.nome||'')))db.ospitanti.push({id:uid(),nome:'Stippelli Davide',tel:'',email:'',storico:[]});
+    localStorage.setItem(KEY+'_stippelli','1');
     salva();
   }
   if(!db._agg){db._agg=Date.now();localStorage.setItem(KEY,JSON.stringify(db));}
