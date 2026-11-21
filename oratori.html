@@ -1830,7 +1830,10 @@ function geSelDisc(ck,val){
     }
   }
   salvaStorage(); salvaSuCloud();
-  var el=document.getElementById('getema_'+ck);if(el){el.textContent=tema;el.title=tema;}
+  var el=document.getElementById('getema_'+ck);
+  // Se la casella del tema era scrivibile (nessun numero) o il numero e' stato tolto, ridisegna la griglia
+  if((el&&el.tagName==='INPUT')||!val){ buildGrigliaEntrata(); }
+  else if(el){el.textContent=tema;el.title=tema;}
 }
 // Tema scritto a mano per un discorso senza numero (nuovo)
 function geSelTema(ck,val){
