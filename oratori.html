@@ -1278,7 +1278,7 @@ function buildDOutStats(){
   var FC=getFratelliCerano();
   // Costruisce mappa: fi -> {cong -> count}
   var frMap={};
-  FC.forEach(function(f,fi){ frMap[fi]={nome:f.cognome+' '+f.nome,cong:{},tot:0,entrate:0}; });
+  FC.forEach(function(f,fi){ frMap[fi]={nome:f.cognome+' '+f.nome,cong:{},tot:0,entrate:0,entrateList:[]}; });
   var MGN2=['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
   Object.keys(sv).forEach(function(ck){
     var s=sv[ck]; if(!s||!s.cong||s.cong==='Cerano'||s.cong==='') return;
@@ -1306,6 +1306,7 @@ function buildDOutStats(){
     });
     if(fi<0||!frMap[fi]) return;
     frMap[fi].entrate++;
+    frMap[fi].entrateList.push({m:parseInt(p[2]),g:parseInt(p[3]),cong:'Cerano'});
   });
   // Conta solo fratelli con almeno un'uscita o un'entrata
   var hasDati=FC.some(function(f,fi){return frMap[fi]&&(frMap[fi].tot>0||frMap[fi].entrate>0);});
@@ -1335,6 +1336,15 @@ function buildDOutStats(){
         +'<span style="color:var(--navy);">'+cong+'</span>'
         +'<span style="color:#888;font-size:.7rem;">'+info.date+'</span>'
         +'<span style="background:'+badge+';color:#fff;border-radius:8px;padding:0 5px;font-size:.7rem;font-weight:700;">'+info.count+'</span>'
+        +'</div>';
+    });
+    // Dettaglio delle entrate (discorsi tenuti a Cerano): congregazione e data
+    d.entrateList.sort(function(a,b){return a.m-b.m||a.g-b.g;});
+    d.entrateList.forEach(function(e){
+      html+='<div style="background:#e8f4f8;border-radius:5px;padding:2px 8px;font-size:.75rem;display:flex;align-items:center;gap:4px;" title="Entrata">'
+        +'<span style="color:var(--navy);">📥 '+e.cong+'</span>'
+        +'<span style="color:#888;font-size:.7rem;">'+e.g+' '+MGN2[e.m]+'</span>'
+        +'<span style="background:var(--teal);color:#fff;border-radius:8px;padding:0 5px;font-size:.7rem;font-weight:700;">1</span>'
         +'</div>';
     });
     html+='</div></div>';
@@ -1964,6 +1974,21 @@ function stampaGrigliaCerano(){
       righe+='<td style="padding:6px 10px;font-size:.85rem;">'+testo+'</td>';
     });
     righe+='</tr>';
+    // Domenica successiva: stampata solo se qualcuno ha qualcosa quel giorno
+    var dDomP=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);
+    if(dDomP.getFullYear()===anno){
+      var rkD=anno+'_'+String(dDomP.getMonth()+1).padStart(2,'0')+'_'+String(dDomP.getDate()).padStart(2,'0');
+      var haDom=FC.some(function(f,fi){var x=sv[rkD+'_'+fi];return x&&x.cong;});
+      if(haDom){
+        righe+='<tr style="background:'+(ri%2===0?'#fff':'#f5f5f5')+';border-bottom:1px solid #ddd;"><td style="padding:6px 10px;font-weight:700;white-space:nowrap;">'+dDomP.getDate()+' '+MGC2[dDomP.getMonth()+1].substring(0,3)+'</td>';
+        FC.forEach(function(f,fi){
+          var x=sv[rkD+'_'+fi]||{};
+          var tx=x.cong?(x.cong+(x.disc?' / N°'+x.disc:(x.tema?' / '+x.tema:''))):'';
+          righe+='<td style="padding:6px 10px;font-size:.85rem;">'+tx+'</td>';
+        });
+        righe+='</tr>';
+      }
+    }
     ri++; d.setDate(d.getDate()+7);
   }
   var header='<tr style="background:#1a2744;color:#fff;"><th style="padding:8px 10px;">Data</th>';
