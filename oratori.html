@@ -1536,6 +1536,7 @@ function inviaRiepilogoWA(fi){
     msg+=i.g+' '+MGC[i.m]+(i.orario?' — ore '+i.orario:'')+NL;
     msg+=i.cong+NL;
     if(i.disc) msg+='Discorso n. '+i.disc+(i.tema?' — '+i.tema:'')+NL;
+    else if(i.tema) msg+='Tema: '+i.tema+NL;
     msg+=NL;
   });
   msg+='A presto e buon servizio!';
@@ -1959,7 +1960,7 @@ function stampaGrigliaCerano(){
     righe+='<tr style="background:'+(ri%2===0?'#fff':'#f5f5f5')+';border-bottom:1px solid #ddd;"><td style="padding:6px 10px;font-weight:700;white-space:nowrap;">'+g+' '+MGC2[m].substring(0,3)+'</td>';
     FC.forEach(function(f,fi){
       var ck=rk+'_'+fi,s=sv[ck]||{};
-      var testo=s.cong?(s.cong+(s.disc?' / N°'+s.disc:'')):'';
+      var testo=s.cong?(s.cong+(s.disc?' / N°'+s.disc:(s.tema?' / '+s.tema:''))):'';
       righe+='<td style="padding:6px 10px;font-size:.85rem;">'+testo+'</td>';
     });
     righe+='</tr>';
