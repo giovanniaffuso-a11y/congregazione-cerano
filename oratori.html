@@ -1727,7 +1727,14 @@ function buildGrigliaEntrata(){
       +'<td style="padding:4px 6px;">'      +'<select onchange="geSelOratore('+q+ck+q+',this.value);aggiornaStiloSelOratore(this)" id="gesel_'+ck+'" style="width:100%;font-size:.8rem;padding:3px;border:1px solid #aaa;border-radius:4px;background:#fff;color:#1a2744;font-weight:600;'+(function(){var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];if(s.orIdx===''||speciali.indexOf(s.orIdx)>=0) return '';var oc=state.oratoriDb[parseInt(s.orIdx)];return(oc&&(oc.congregazione||'').toLowerCase()==='cerano')?'background:#FFF9C4;color:#E65100;font-weight:700;':'';})()+'">'+ orOpts+'</select>'      +'</td>'
       +'<td style="padding:4px 6px;"><div id="gecong_'+ck+'" style="font-size:.8rem;'+(cong.toLowerCase()==='cerano'?'color:#E65100;font-weight:700;':'color:var(--text-muted);')+'">'+cong+'</div></td>'
       +'<td style="padding:4px 6px;text-align:center;"><select onchange="geSelDisc('+q+ck+q+',this.value)" style="width:60px;font-size:.8rem;padding:3px;border:1px solid #ccc;border-radius:4px;">'+disOpts+'</select></td>'
-      +'<td style="padding:4px 6px;"><div id="getema_'+ck+'" style="font-size:.78rem;color:var(--navy);" title="'+tema+'">'+tema+'</div></td>'
+      +'<td style="padding:4px 6px;">'+(function(){
+        var spec=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+        if(s.orIdx!=='' && s.orIdx!==undefined && spec.indexOf(s.orIdx)<0 && !s.disc){
+          var tv=(s.tema||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+          return '<input type="text" id="getema_'+ck+'" value="'+tv+'" placeholder="Tema (discorso senza numero)" onchange="geSelTema('+q+ck+q+',this.value)" style="width:100%;min-width:180px;font-size:.78rem;padding:3px 6px;border:1px solid #ccc;border-radius:4px;color:var(--navy);">';
+        }
+        return '<div id="getema_'+ck+'" style="font-size:.78rem;color:var(--navy);" title="'+tema+'">'+tema+'</div>';
+      })()+'</td>'
       +'<td style="padding:4px 6px;text-align:center;">'+wa+'</td>'
       +'</tr>';
     ri++; d.setDate(d.getDate()+7);
@@ -1813,6 +1820,34 @@ function geSelDisc(ck,val){
   }
   salvaStorage(); salvaSuCloud();
   var el=document.getElementById('getema_'+ck);if(el){el.textContent=tema;el.title=tema;}
+}
+// Tema scritto a mano per un discorso senza numero (nuovo)
+function geSelTema(ck,val){
+  if(!state.grigliaEntrata)state.grigliaEntrata={}; var sv=state.grigliaEntrata;
+  if(!sv[ck])sv[ck]={};
+  var tema=(val||'').trim();
+  sv[ck].tema=tema;
+  var entry=sv[ck];
+  if(entry.orIdx!==''&&entry.orIdx!==undefined){
+    var speciali=['__assemblea__','__commemorazione__','__speciale__','__streaming__','__sorvegliante__','__congresso__'];
+    if(speciali.indexOf(entry.orIdx)<0){
+      var o=state.oratoriDb[parseInt(entry.orIdx)];
+      if(o&&(o.congregazione||'').trim().toLowerCase()==='cerano'){
+        var FC=getFratelliCerano();
+        var fi=FC.findIndex(function(f){
+          return f.cognome.trim().toLowerCase()===(o.cognome||'').trim().toLowerCase()
+              && f.nome.trim().toLowerCase()===(o.nome||'').trim().toLowerCase();
+        });
+        if(fi>=0){
+          var doutCk=entrataKeyToDoutKey(ck)+'_'+fi;
+          if(!state.grigliaCerano)state.grigliaCerano={};
+          if(!state.grigliaCerano[doutCk])state.grigliaCerano[doutCk]={};
+          state.grigliaCerano[doutCk].tema=tema;
+        }
+      }
+    }
+  }
+  salvaStorage(); salvaSuCloud();
 }
 function salvaGrigliaEntrata(){
   salvaStorage();
