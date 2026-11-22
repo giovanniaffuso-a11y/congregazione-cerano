@@ -2454,8 +2454,6 @@ function esportaUsati2027(){
     var disc=parseInt(sv[ck].disc||0);
     if(disc&&!isNaN(disc)) usatiSet[disc]=true;
   });
-  // 2. Schemi predefiniti 2027
-  DISCORSI_2027.forEach(function(n){ usatiSet[n]=true; });
   // 3. Schemi aggiunti manualmente
   if(state.schemiAnno&&state.schemiAnno[anno]){
     state.schemiAnno[anno].forEach(function(n){ usatiSet[n]=true; });
@@ -2507,7 +2505,7 @@ function renderSchemi(q){
       +'<td style="padding:8px 10px;border-bottom:1px solid var(--cream-dark);font-weight:600;color:var(--navy);">'+s.t+'</td>';
     anni.forEach(function(a){
       var fatto=!!(disMap[s.n]&&disMap[s.n][a]);
-      var fattoDoc=(a===2026&&DISCORSI_2026.has(s.n))||(a===2027&&DISCORSI_2027.has(s.n))||(!!(state.schemiAnno&&state.schemiAnno[a]&&state.schemiAnno[a].indexOf(s.n)>=0));
+      var fattoDoc=(a===2026&&DISCORSI_2026.has(s.n))||(!!(state.schemiAnno&&state.schemiAnno[a]&&state.schemiAnno[a].indexOf(s.n)>=0));
       var isOk=fatto||fattoDoc;
       // 2026 = blu (già fatto), altri anni = rosso (programmato)
       var coloreFatto = a===2026 ? '#1a5276' : '#c0392b';
