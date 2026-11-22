@@ -1963,50 +1963,67 @@ function stampaGrigliaCerano(){
   if(!state.grigliaCerano)state.grigliaCerano={};
   var sv=state.grigliaCerano;
   var FC=getFratelliCerano();
-  var MGC2=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  var d=new Date(anno,0,1); while(d.getDay()!==6) d.setDate(d.getDate()+1);
-  var righe=''; var mp=-1; var ri=0;
-  while(d.getFullYear()===anno){
-    var m=d.getMonth()+1,g=d.getDate();
-    var rk=anno+'_'+String(m).padStart(2,'0')+'_'+String(g).padStart(2,'0');
-    if(m!==mp){righe+='<tr style="background:#1a2744;color:#fff;"><td colspan="'+(FC.length+1)+'" style="padding:6px 10px;font-weight:700;font-size:.85rem;">'+MGC2[m].toUpperCase()+' '+anno+'</td></tr>';mp=m;}
-    righe+='<tr style="background:'+(ri%2===0?'#fff':'#f5f5f5')+';border-bottom:1px solid #ddd;"><td style="padding:6px 10px;font-weight:700;white-space:nowrap;">'+g+' '+MGC2[m].substring(0,3)+'</td>';
-    FC.forEach(function(f,fi){
-      var ck=rk+'_'+fi,s=sv[ck]||{};
-      var testo=s.cong?(s.cong+(s.disc?' / N°'+s.disc:(s.tema?' / '+s.tema:''))):'';
-      righe+='<td style="padding:6px 10px;font-size:.85rem;">'+testo+'</td>';
-    });
-    righe+='</tr>';
-    // Domenica successiva: stampata solo se qualcuno ha qualcosa quel giorno
-    var dDomP=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);
-    if(dDomP.getFullYear()===anno){
-      var rkD=anno+'_'+String(dDomP.getMonth()+1).padStart(2,'0')+'_'+String(dDomP.getDate()).padStart(2,'0');
-      var haDom=FC.some(function(f,fi){var x=sv[rkD+'_'+fi];return x&&x.cong;});
-      if(haDom){
-        righe+='<tr style="background:'+(ri%2===0?'#fff':'#f5f5f5')+';border-bottom:1px solid #ddd;"><td style="padding:6px 10px;font-weight:700;white-space:nowrap;">'+dDomP.getDate()+' '+MGC2[dDomP.getMonth()+1].substring(0,3)+'</td>';
-        FC.forEach(function(f,fi){
-          var x=sv[rkD+'_'+fi]||{};
-          var tx=x.cong?(x.cong+(x.disc?' / N°'+x.disc:(x.tema?' / '+x.tema:''))):'';
-          righe+='<td style="padding:6px 10px;font-size:.85rem;">'+tx+'</td>';
-        });
-        righe+='</tr>';
-      }
+  var MESI=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function p2(n){return String(n).padStart(2,'0');}
+  var SPEC_STAMPA={'__assemblea__':'ASSEMBLEA DI CIRCOSCRIZIONE','__commemorazione__':'COMMEMORAZIONE','__speciale__':'DISCORSO SPECIALE','__streaming__':'DISCORSO STREAMING','__sorvegliante__':'SORVEGLIANTE DI CIRCOSCRIZIONE','__congresso__':'CONGRESSO'};
+  var righe='', mp=-1;
+  // Tutti i sabati e le domeniche dell'anno, in ordine di data
+  for(var d=new Date(anno,0,1); d.getFullYear()===anno; d.setDate(d.getDate()+1)){
+    var dow=d.getDay(); if(dow!==6&&dow!==0) continue;
+    var m=d.getMonth()+1, g=d.getDate();
+    var rk=anno+'_'+p2(m)+'_'+p2(g);
+    if(m!==mp){
+      righe+='<tr class="mese"><td colspan="6">'+MESI[m].toUpperCase()+' '+anno+'</td></tr>';
+      mp=m;
     }
-    ri++; d.setDate(d.getDate()+7);
+    var dataTxt=g+' '+MESI[m], giornoTxt=(dow===6?'Sabato':'Domenica');
+    var voci=[];
+    FC.forEach(function(f,fi){ var x=sv[rk+'_'+fi]; if(x&&x.cong) voci.push({f:f,x:x}); });
+    // Voci speciali del Programma (assemblea, discorso speciale, congresso, ecc.)
+    var ev=(state.grigliaEntrata||{})['e_'+rk];
+    var evTxt=(ev&&SPEC_STAMPA[ev.orIdx])?SPEC_STAMPA[ev.orIdx]:'';
+    if(evTxt){
+      righe+='<tr><td class="dt">'+dataTxt+'</td><td>'+giornoTxt+'</td><td class="nm ev" colspan="4">'+evTxt+'</td></tr>';
+    }
+    voci.forEach(function(v){
+      var ci=(state.congregazioni||[]).find(function(c){return c.nome===v.x.cong;});
+      var ora=(ci&&ci.orario)?'ore '+ci.orario:'';
+      var sch=v.x.disc?'N°'+v.x.disc:(v.x.tema||'');
+      righe+='<tr><td class="dt">'+dataTxt+'</td><td>'+giornoTxt+'</td>'
+        +'<td class="nm">'+esc(v.f.cognome+' '+v.f.nome)+'</td>'
+        +'<td>'+esc(v.x.cong)+'</td><td>'+esc(ora)+'</td>'
+        +'<td>'+esc(sch)+'</td></tr>';
+    });
+    // Sempre almeno due righe per ogni sabato e domenica (possono uscire due fratelli lo stesso giorno)
+    for(var nb=(evTxt?1:0)+voci.length; nb<2; nb++){
+      righe+='<tr><td class="dt">'+dataTxt+'</td><td>'+giornoTxt+'</td><td></td><td></td><td></td><td></td></tr>';
+    }
   }
-  var header='<tr style="background:#1a2744;color:#fff;"><th style="padding:8px 10px;">Data</th>';
-  FC.forEach(function(f){header+='<th style="padding:8px 10px;text-align:center;">'+f.cognome+'<br><span style="font-weight:400;font-size:.75rem;">'+f.nome+'</span></th>';});
-  header+='</tr>';
   var w=window.open('','_blank');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>D-Out '+anno+'</title>'
-    +'<style>body{font-family:Georgia,serif;padding:30px;color:#1a2744;font-size:13px;}'
-    +'h1{font-size:1.4rem;margin-bottom:4px;}h2{font-size:1rem;color:#555;margin-bottom:20px;}'
+    +'<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">'
+    +'<style>'
+    +'body{font-family:"Crimson Pro",Georgia,serif;padding:26px 30px;color:#1a2744;font-size:15px;}'
+    +'h1{font-size:1.7rem;margin:0 0 6px;}'
+    +'h2{font-size:1.05rem;color:#555;margin:0 0 18px;font-weight:600;}'
     +'table{width:100%;border-collapse:collapse;}'
-    +'@media print{button{display:none;}}</style></head><body>'
+    +'th{background:#e8ecf2;color:#1a2744;padding:8px 10px;text-align:left;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid #1a2744;border-bottom:2px solid #1a2744;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:9px 10px;border:1px solid #bdbdbd;height:26px;vertical-align:middle;}'
+    +'td.dt,td.nm{font-weight:700;}td.ev{letter-spacing:.05em;}'
+    +'tr.mese td{background:#f1eee7;border:none;border-top:1px solid #bdbdbd;padding:6px 10px;font-weight:700;font-size:.8rem;letter-spacing:.1em;height:auto;color:#1a2744;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'thead{display:table-header-group;}'
+    +'tr{page-break-inside:avoid;break-inside:avoid;}'
+    +'tr.mese{page-break-after:avoid;break-after:avoid;}'
+    +'th:nth-child(1){width:17%;}th:nth-child(2){width:13%;}th:nth-child(3){width:25%;}th:nth-child(4){width:19%;}th:nth-child(5){width:12%;}th:nth-child(6){width:14%;}'
+    +'button{margin-top:18px;padding:10px 24px;background:#1a2744;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem;}'
+    +'@media print{button{display:none;}}'
+    +'</style></head><body>'
     +'<h1>🕊 Pianificazione Discorsi in Uscita</h1>'
-    +'<h2>Fratelli di Cerano — Anno '+anno+'</h2>'
-    +'<table><thead>'+header+'</thead><tbody>'+righe+'</tbody></table>'
-    +'<br><button onclick="window.print()" style="padding:10px 24px;background:#1a2744;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">🖨 Stampa / Salva PDF</button>'
+    +'<h2>Fratelli di Cerano — Anno '+anno+' (foglio da compilare)</h2>'
+    +'<table><thead><tr><th>Data</th><th>Giorno</th><th>Nome</th><th>Paese</th><th>Orario</th><th>N. schema</th></tr></thead>'
+    +'<tbody>'+righe+'</tbody></table>'
+    +'<button onclick="window.print()">🖨 Stampa / Salva PDF</button>'
     +'</body></html>');
   w.document.close();
 }
